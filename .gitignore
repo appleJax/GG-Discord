@@ -56,4 +56,8 @@ typings/
 
 # dotenv environment variables file
 .env
+.env.js
 
+.node-persist
+dist
+app.yaml

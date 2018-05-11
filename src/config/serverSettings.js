@@ -1,7 +1,7 @@
 module.exports = [
   {
     "type": "CATEGORY", // "CATEGORY" for a group of settings, "SETTING" for a setting.
-    "userFacingName": "fun", // This is the name of the category. The user will see it if they use the settings command.
+    "userFacingName": "general", // This is the name of the category. The user will see it if they use the settings command.
     "children": // A category's children can be either other CATEGORYs or SETTINGs, but not both.
     [
       {
