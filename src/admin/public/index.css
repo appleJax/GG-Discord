@@ -1,0 +1,101 @@
+html, body {
+  background: aliceblue;
+  height: 100vh;
+  font-family: Roboto, sans-serif;
+  margin: 0;
+  max-width: 100vw;
+  width: 100vw;
+}
+
+h4 {
+  margin: 10px 5px 10px 0;
+}
+
+nav {
+  align-items: center;
+  background: #1DA1F2;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  color: white;
+  display: flex;
+  font-family: Cabin Sketch;
+  justify-content: space-between;
+  padding: 15px;
+}
+
+.btn {
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2) inset;
+  color: white;
+  padding: 10px;
+}
+
+.btn:hover {
+  cursor: pointer;
+}
+
+.btn--input {
+  background: rgba(0, 0, 0, 0.1);
+  color: #777;
+}
+
+.btn--logout {
+  background: white;
+  color: #1DA1F2;
+}
+
+.btn--logout:hover {
+  background: #f9f9f9;
+}
+
+.btn--submit {
+  background: #4386fa;
+}
+
+.btn--submit:hover {
+  background: #5396ff;
+}
+
+.btn--replace {
+  background: #f44;
+}
+
+.btn--replace:hover {
+  background: #f00;
+}
+
+.card {
+  background: rgba(0, 0, 0, 0.1);
+  margin: 10px 0;
+  padding: 10px;
+}
+
+.container {
+  max-width: 100vw;
+  padding: 0 10px;
+}
+
+.inline {
+  display: inline-block;
+}
+
+.login--form {
+  align-items: center;
+  display: flex;
+  margin-top: 20px;
+}
+
+.login--input {
+  height: 25px;
+  font-size: 1em;
+}
+
+.upload-form {
+  margin: 20px;
+  text-align: center;
+}
+
+.upload-form__label {
+  display: block;
+  margin: 10px;
+}

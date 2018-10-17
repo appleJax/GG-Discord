@@ -1,7 +1,7 @@
-import Mongoose from 'mongoose';
-import { t } from './utils';
+import Mongoose from 'mongoose'
+import { t } from 'DB/utils'
 
-const Schema = Mongoose.Schema;
+const Schema = Mongoose.Schema
 
 const schema = new Schema({
   roomId: String,
@@ -19,6 +19,6 @@ const schema = new Schema({
       }
     ]
   }
-});
+})
 
-export default Mongoose.model('Room', schema);
+export default Mongoose.model('Room', schema)

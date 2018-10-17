@@ -1,0 +1,26 @@
+doctype html
+html
+  head
+    title GameGogakuen Discord
+    link(rel='stylesheet' href='index.css')
+    link(
+      rel='stylesheet'
+      href='https://fonts.googleapis.com/css?family=Roboto:300,400,500|Roboto+Mono|Cabin+Sketch'
+    )
+    meta(name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=no')
+    meta(name='apple-mobile-web-app-capable' content='yes')
+
+  body
+    nav
+      h3 GameGogakuen DISCORD
+      if adminUser
+        form(method='post' action='/logout')
+          input(
+            class='btn btn--logout'
+            type='submit'
+            value='Log Out'
+          )
+
+    .body
+      .container
+        block content

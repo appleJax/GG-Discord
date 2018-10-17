@@ -1,4 +1,5 @@
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
 const webpack = require('webpack');
 const envVars = require('./.env.js');
@@ -6,11 +7,11 @@ const envVars = require('./.env.js');
 module.exports = {
   entry: [
     '@babel/polyfill',
-    './src/index.js'
+    './src/index.js',
   ],
   target: 'node',
   node: {
-    __dirname: false
+    __dirname: true,
   },
   externals: [nodeExternals()],
   module: {
@@ -22,30 +23,30 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             presets: [
-              '@babel/preset-env'
-            ]
-          }
-        }
-      }
-    ]
+              '@babel/preset-env',
+            ],
+          },
+        },
+      },
+    ],
   },
   plugins: [
-    new CleanWebpackPlugin(__dirname + '/dist'),
+    new CleanWebpackPlugin(`${__dirname}/dist`),
+    new CopyWebpackPlugin([{ from: `${__dirname}/src/admin` }]),
     new webpack.DefinePlugin({
-      'process.env.COMMANDS_PATH':           JSON.stringify(envVars.COMMANDS_PATH),
-      'process.env.CONFIG_FILE_PATH':        JSON.stringify(envVars.CONFIG_FILE_PATH),
-      'process.env.MESSAGE_PROCESSORS_PATH': JSON.stringify(envVars.MESSAGE_PROCESSORS_PATH),
-      'process.env.MONGODB_URI':             JSON.stringify(envVars.MONGODB_URI),
-      'process.env.SETTINGS_PATH':           JSON.stringify(envVars.SETTINGS_PATH)
-    })
+      'process.env.ADMIN_PW': JSON.stringify(envVars.ADMIN_PW),
+      'process.env.BOT_TOKEN': JSON.stringify(envVars.BOT_TOKEN),
+      'process.env.MONGODB_URI': JSON.stringify(envVars.MONGODB_URI),
+    }),
   ],
   resolve: {
     alias: {
-      Config:  __dirname + '/src/config',
-      DB:      __dirname + '/src/db',
-      Models:  __dirname + '/src/db/models',
-      Src:     __dirname + '/src',
-      Utils:   __dirname + '/src/utils'
-    }
-  }
+      Anki: `${__dirname }/src/anki`,
+      Config: `${__dirname }/src/config`,
+      DB: `${__dirname }/src/db`,
+      Models: `${__dirname }/src/db/models`,
+      Src: `${__dirname }/src`,
+      Utils: `${__dirname }/src/utils`,
+    },
+  },
 };
