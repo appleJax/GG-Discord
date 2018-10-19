@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack --config webpack.config.js",
-    "start": "webpack-dev-server",
-    "serve": "npm run build && node ./dist/main.js",
+    "dev-start": "webpack-dev-server",
+    "start": "npm run build && node ./dist/main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

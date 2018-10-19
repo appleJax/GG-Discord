@@ -1,10 +1,12 @@
 import fs from 'fs';
 import path from 'path';
 import Discord from 'discord.js';
-import { parseInput, shouldIgnore } from './utils';
+import attachMessageHandler from './messageHandler'
+import attachQuizResponseHandler from './quizResponseHandler'
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
+client.cooldowns = new Discord.Collection();
 
 const commandFiles = fs.readdirSync(path.resolve(__dirname, 'commands'));
 
@@ -14,28 +16,12 @@ async function loadCommands() {
     const command = await import(`./commands/${file}`).then(_module => _module.default);
 
     client.commands.set(command.name, command);
+    client.cooldowns.set(command.name, new Discord.Collection());
   }
 }
 
+attachQuizResponseHandler(client);
+attachMessageHandler(client);
 loadCommands();
-
-client.handleMsg = (msg) => {
-  if (shouldIgnore(msg)) return;
-
-  const [command, args] = parseInput(msg);
-  // console.log('MSG:', msg);
-
-  if (!client.commands.has(command)) {
-    msg.reply(`Sorry, I didn't understand that command: ${command}`);
-    return;
-  }
-  
-  try {
-    client.commands.get(command).execute(msg, args);
-  } catch (err) {
-    console.error(err);
-    msg.reply('Sorry, something went wrong. Please try again.');
-  }
-};
 
 export default client;
