@@ -4,8 +4,8 @@
   "description": "GameGogakuen's Discord Quiz Bot",
   "main": "index.js",
   "scripts": {
-    "build": "webpack --config webpack.config.js",
-    "dev-start": "webpack-dev-server",
+    "build": "webpack --config webpack.prod.js",
+    "dev-start": "webpack && node ./dist/main.js",
     "start": "npm run build && node ./dist/main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

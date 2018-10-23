@@ -1,6 +1,6 @@
 const merge = require('webpack-merge');
-const common = require('./webpack.common');
 const webpack = require('webpack');
+const common = require('./webpack.common');
 
 module.exports = merge(common, {
   mode: 'development',
@@ -9,7 +9,7 @@ module.exports = merge(common, {
     new webpack.BannerPlugin({
       banner: 'require("source-map-support").install();',
       raw: true,
-      entryOnly: false
-    })
-  ]
+      entryOnly: false,
+    }),
+  ],
 });
