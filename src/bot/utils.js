@@ -10,6 +10,29 @@ export const Colors = {
   GOLD: '#F9A602',
 };
 
+export function askNextQuestion(client, channel) {
+  const { activeQuiz } = client;
+
+  activeQuiz.currentQuestion = activeQuiz.questions.pop();
+  /* eslint-disable-next-line */
+  activeQuiz.questionPosition[0]++;
+
+  const [currentPosition, totalQuestions] = activeQuiz.questionPosition;
+  const position = `${currentPosition}/${totalQuestions}`;
+
+  const nextMessage = new Discord.RichEmbed()
+    .setColor(Colors.BLUE)
+    .addField(`Next Question (${position}):`, activeQuiz.currentQuestion.questionText);
+
+  setTimeout(() => {
+    channel.send(nextMessage);
+    activeQuiz.questionTimeout = setTimeout(
+      () => client.nextQuestion(channel),
+      activeQuiz.timePerQuestion,
+    );
+  }, PACE_DELAY);
+}
+
 export function commandNotFound(command) {
   let notFound = `sorry, I don't understand that command: \`${command}\`\n`;
   notFound += `Use \`${PREFIX}help\` to see a list of all my commands.`;
