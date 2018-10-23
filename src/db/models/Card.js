@@ -1,13 +1,14 @@
-import Mongoose from 'mongoose'
-import { t } from 'DB/utils'
+import Mongoose from 'mongoose';
+import { t } from 'DB/utils';
 
-const Schema = Mongoose.Schema
+const { Schema } = Mongoose;
 
 const schema = new Schema({
+  answers: t([String], []),
+  answerText: String,
   cardId: String,
-  deck: String,
-  question: String,
-  answer: t( [String], [] )
-})
+  game: String,
+  questionText: String,
+});
 
-export default Mongoose.model('Card', schema)
+export default Mongoose.model('Card', schema);

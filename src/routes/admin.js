@@ -1,32 +1,44 @@
 import passport from 'Config/passport';
 import authorization from 'express-authorization';
 import multer from 'multer';
-// import DB from 'DB/ops';
-import { tryCatch } from 'Utils';
+import DB from 'DB/ops';
 
 const upload = multer({ dest: 'uploads/' });
 
+const ensureAdmin = authorization
+  .ensureRequest
+  .redirectTo('/login')
+  .isPermitted('admin');
 
 export default (app) => {
+  app.use(passport.initialize());
+  app.use(passport.session());
+
+  // if there's a flash message in the session request,
+  // make it available in the response, then delete it
+  app.use((req, res, next) => {
+    if (req.session) {
+      res.locals.flash = req.session.flash;
+      delete req.session.flash;
+      next();
+    } else next();
+  });
 
   // Admin Panel
 
   app.get('/',
     redirectAdmin,
-    (req, res) => res.render('index')
-  );
+    (req, res) => res.render('index'));
 
   app.get('/login',
     redirectAdmin,
-    (req, res) => res.render('login')
-  );
+    (req, res) => res.render('login'));
 
   app.post('/login',
     passport.authenticate('local', {
       failureRedirect: '/',
-      successRedirect: '/admin'
-    })
-  );
+      successRedirect: '/admin',
+    }));
 
   app.post('/logout', (req, res) => {
     req.session.destroy(console.error);
@@ -34,25 +46,37 @@ export default (app) => {
   });
 
   app.get('/admin',
-    authorization.ensureRequest.isPermitted('admin'),
-    (req, res) => res.render('admin', { adminUser: true })
-  );
+    ensureAdmin,
+    serveAdminPage);
 
-  // app.post('/deck/new',
-  //   authorization.ensureRequest.isPermitted('admin'),
-  //   upload.single('zipfile'), (req, res) =>
-  //     DB.addDeck(req).then(_ => res.redirect('/admin'))
-  // );
-
-  // app.post('/scores/edit',
-  //   authorization.ensureRequest.isPermitted('admin'),
-  //   DB.adjustScore
-  // );
-
-}
+  app.post('/deck/new',
+    ensureAdmin,
+    upload.single('zipfile'), (req, res) => DB.addDeck(req)
+      .then(() => {
+        req.session.flash = {
+          type: 'success',
+          message: 'Deck uploaded successfully.',
+        };
+        res.redirect('/admin');
+      })
+      .catch((err) => {
+        req.session.flash = {
+          type: 'error',
+          message: err.message || 'Something went wrong. Please try again.',
+        };
+        res.redirect('/admin');
+      }));
+};
 
 function redirectAdmin(req, res, next) {
-  if (authorization.considerSubject(req.user).isPermitted('admin'))
+  if (authorization.considerSubject(req.user).isPermitted('admin')) {
     res.redirect('/admin');
-  else next();
+  } else next();
+}
+
+function serveAdminPage(req, res) {
+  res.render('admin', {
+    adminUser: true,
+    flash: res.locals.flash,
+  });
 }

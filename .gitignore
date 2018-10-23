@@ -60,4 +60,5 @@ typings/
 
 .node-persist
 dist
+uploads
 TODO.txt

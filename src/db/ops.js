@@ -5,7 +5,6 @@ import Models from 'Models';
 const { Card } = Models;
 
 export default ({
-
   async addDeck(req, res) {
     const filePath = req.file.path;
     const newCards = await tryCatch(processUpload(filePath));
@@ -16,18 +15,18 @@ export default ({
       const { cardId } = newCard;
       ops.push({
         replaceOne: {
-            filter: { cardId },
-            replacement: newCard,
-            upsert: true
-        }
+          filter: { cardId },
+          replacement: newCard,
+          upsert: true,
+        },
       });
     }
 
-    if (ops.length === 0)
+    if (ops.length === 0) {
       return;
+    }
 
     await tryCatch(Card.bulkWrite(ops));
     console.log('Finished uploading/updating cards!');
   },
-
 });

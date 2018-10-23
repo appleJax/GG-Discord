@@ -1,104 +1,82 @@
-
-export function formatAnswerAltText(expression) {
-  return expression.replace(/\{\{.*?\:\:(.+?)\:\:.*?\}\}/g, '$1');
-}
-
-export function formatAnswerText(answers, cardId, engMeaning, webLookup) {
+export function formatAnswerText(answers, engMeaning) {
   const s = answers.length > 1 ? 's' : '';
   let answerText = `Answer${s}: ${answers.join(', ')}`;
   answerText += `\nEnglish: "${engMeaning}"`;
 
-  if (webLookup)
-    answerText += '\nLookup: ' + WEBLOOKUP_URL + urlencode(webLookup);
-
-  answerText += `\nLeaderboard: ${APP_URL}/stats`;
-  answerText += `\nQID${cardId}`;
   return answerText;
 }
 
-export function formatQuestionAltText(expression) {
-  const hint = formatHint(expression);
-  const [min, max] = minMaxChars(hint);
-  const minMax = min === max ? min : `${min} to ${max}`;
-  const s = max > 1 ? 's' : '';
-  const screenReaderHint = `(${minMax} character${s})`;
-  return expression.replace(/\{\{.+?\}\}/g, screenReaderHint);
-}
-
 export function formatQuestionText(
-  cardId,
   engMeaning,
   expression,
   game,
-  notes
+  notes,
 ) {
-
   const hint = formatHint(expression);
   const [min, max] = minMaxChars(hint);
   const minMax = min === max ? min : `${min}-${max}`;
   let tweetText = `What ${minMax} character answer means "${engMeaning}"?`;
-  if (needsHint(hint))
-    tweetText += `\nHint: ${hint}`;
 
-  if (notes)
+  if (needsHint(hint)) {
+    tweetText += `\nHint: ${hint}`;
+  }
+
+  if (notes) {
     tweetText += `\nNotes: ${notes}`;
+  }
 
   tweetText += `\nGame: ${game.replace(/\s(ENG|JP)$/, '')}`;
-  tweetText += `\nHow to Play: ${APP_URL}/how-to-play`;
-  tweetText += `\nSubmit Answer ➡️ ${DM_URL}${cardId}%20`;
-  tweetText += `\nQID${cardId}`;
 
   return tweetText;
 }
 
 export function getAnswers(expression, altAnswers) {
-  const acceptedAnswer = expression.match(/\:\:(.+?)\:\:/)[1];
+  const acceptedAnswer = expression.match(/::(.+?)::/)[1];
   let otherAnswers = [];
-  if (altAnswers && altAnswers.length > 0)
+  if (altAnswers && altAnswers.length > 0) {
     otherAnswers = altAnswers.split(',');
+  }
 
   return [acceptedAnswer].concat(otherAnswers);
 }
 
-
 // private functions
 
 function flatten(deep, flat = []) {
-  if (deep.length === 0)
-    return flat;
+  if (deep.length === 0) { return flat; }
 
-  let [head, ...tail] = deep;
+  const [head, ...tail] = deep;
   return scalar(head)
     ? flatten(tail, flat.concat(head))
     : flatten(tail, flat.concat(flatten(head)));
 }
 
 function formatHint(expression) {
-  const legend = expression.match(/\:\:.+?\:\:(.+?)\}\}/)[1];
+  const legend = expression.match(/::.+?::(.+?)\}\}/)[1];
   const normalized = groupMultiXs(groupXs(groupQuestionMarks(legend)));
 
-  return flatten(split(normalized)).map(group => {
-    if (group === '.')
-      return '[_]';
+  return flatten(split(normalized)).map((group) => {
+    if (group === '.') { return '[_]'; }
 
-    if (group === '-')
-      return '[_] [_] [_] [_] [_]'
+    if (group === '-') { return '[_] [_] [_] [_] [_]'; }
 
     if (/\?/.test(group)) {
       const result = [];
-      const numChars = Number(group.match(/\d+/)[0])
-      for (let i = 0; i < numChars; i++)
-        result.push('[?]')
+      const numChars = Number(group.match(/\d+/)[0]);
+      for (let i = 0; i < numChars; i++) {
+        result.push('[?]');
+      }
 
-      if (result.length === 1)
+      if (result.length === 1) {
         return '[?]';
+      }
 
-      return '(' + result.join(' ') + ')'
+      return `(${result.join(' ')})`;
     }
 
     if (/[≠x]/.test(group)) {
       const negatedChars = group.replace(/[≠x]/g, '');
-      return `[≠${negatedChars}]`
+      return `[≠${negatedChars}]`;
     }
     // else (character gimme)
     return group;
@@ -106,7 +84,7 @@ function formatHint(expression) {
 }
 
 function groupMultiXs(string) {
-  return string.replace(/[≠x]\((.*?)\)/g, '(≠$1)')
+  return string.replace(/[≠x]\((.*?)\)/g, '(≠$1)');
 }
 
 function groupQuestionMarks(string) {
@@ -135,12 +113,10 @@ function needsHint(hint) {
 }
 
 function split(str) {
-  return str.split(/[\(\)]/)
-            .map(group =>
-              /\?|≠|x/.test(group)
-              ? group
-              : group.split('')
-            );
+  return str.split(/[()]/)
+    .map(group => (/\?|≠|x/.test(group)
+      ? group
+      : group.split('')));
 }
 
 function scalar(v) {

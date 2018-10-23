@@ -1,33 +1,24 @@
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
-// import { isCorrect, tryCatch } from 'Utils';
+import { isCorrect } from 'Utils';
 
 passport.use(
   new LocalStrategy(
-    async (username, password, done) => {
-      // if (isCorrect(password)) {
-      //   const user = await getUser({ handle: username })
-      //   if (user && user.permissions.includes('admin')) {
-      //     return done(null, user)
-      //   }
-      // }
-      done(null, false, { message: 'Not Authorized' });
+    (username, password, done) => {
+      if (isCorrect(username, password)) {
+        return done(null, { permissions: 'admin' });
+      }
+      return done(null, false, { message: 'Not Authorized' });
     },
   ),
 );
 
 passport.serializeUser(
-  (user, done) => done(null, user.userId),
+  (user, done) => done(null, user),
 );
 
 passport.deserializeUser(
-  async (userId, done) => {
-    // const user = await tryCatch(
-    //   getUser({ userId })
-    // )
-    // done(null, user);
-    done(null);
-  },
+  (userId, done) => done(null, { permissions: 'admin' }),
 );
 
 export default passport;
