@@ -6,7 +6,8 @@
   "scripts": {
     "build": "webpack --config webpack.prod.js",
     "dev-start": "webpack && node ./dist/main.js",
-    "start": "npm run build && node ./dist/main.js",
+    "shipit": "git checkout -b deploy && npm run build && rm .gitignore && rm -rf node_modules && rm -rf src && rm -rf uploads && gadcom . 'build' && push heroku deploy:master && gcm && git branch -D deploy",
+    "start": "node ./dist/main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
