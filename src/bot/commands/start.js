@@ -10,8 +10,9 @@ export default {
   aliases: ['s'],
   description: 'Start a new quiz',
   usage: '[number of quiz questions]',
-  async execute(msg, [quizSize = 10]) {
+  async execute(msg, quizSize = 10) {
     const self = this;
+    quizSize = Number(quizSize);
 
     /* eslint-disable-next-line */
     const questions = await tryCatch(newQuiz(quizSize));

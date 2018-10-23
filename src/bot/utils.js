@@ -1,6 +1,6 @@
 import Discord from 'discord.js';
 
-export const PACE_DELAY = 3500;
+export const PACE_DELAY = 5000;
 export const PREFIX = 'gg!';
 
 export const Colors = {

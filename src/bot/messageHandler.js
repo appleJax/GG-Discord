@@ -54,7 +54,7 @@ export default (client) => {
     setTimeout(() => timestamps.delete(msg.author.id), cooldownAmount);
 
     try {
-      command.execute.call(client, msg, args);
+      command.execute.call(client, msg, ...args);
     } catch (err) {
       console.error(err);
       msg.reply('sorry, something went wrong. Please try again.');
