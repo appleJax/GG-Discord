@@ -1,6 +1,6 @@
 import Discord from 'discord.js';
 import {
-  PACE_DELAY, PREFIX, Colors, endQuiz,
+  PACE_DELAY, PREFIX, Colors, endQuiz, sendImage,
 } from './utils';
 
 const STOP_COMMAND = `${PREFIX}stop`;
@@ -28,10 +28,20 @@ export default (client) => {
     }
 
     activeQuiz.currentQuestion = activeQuiz.questions.pop();
+    /* eslint-disable-next-line */
+    activeQuiz.questionPosition[0]++;
+    const [currentPosition, totalQuestions] = activeQuiz.questionPosition;
+    const position = `${currentPosition}/${totalQuestions}`;
 
     const askNext = new Discord.RichEmbed()
       .setColor(Colors.BLUE)
-      .addField('Next Question:', activeQuiz.currentQuestion.questionText);
+      .addField(`Next Question: (${position})`, activeQuiz.currentQuestion.questionText);
+
+    const answerImages = currentQuestion.mediaUrls.slice(currentQuestion.mainImageSlice[1]);
+
+    answerImages.forEach((imageUrl) => {
+      sendImage(channel, imageUrl.image);
+    });
 
     setTimeout(() => {
       channel.send(askNext);

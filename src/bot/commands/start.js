@@ -1,7 +1,7 @@
 import Discord from 'discord.js';
 import Models from 'Models';
 import { tryCatch } from 'Utils';
-import { Colors } from '../utils';
+import { Colors, sendImage } from '../utils';
 
 const { Card } = Models;
 
@@ -9,18 +9,19 @@ export default {
   name: 'start',
   aliases: ['s'],
   description: 'Start a new quiz',
-  usage: '',
-  async execute(msg, args) {
+  usage: '[number of quiz questions]',
+  async execute(msg, [quizSize = 10]) {
     const self = this;
 
     /* eslint-disable-next-line */
-    const questions = await tryCatch(newQuiz());
+    const questions = await tryCatch(newQuiz(quizSize));
     const currentQuestion = questions.pop();
 
     const activeQuiz = {
       currentQuestion,
       questions,
-      timePerQuestion: 30000,
+      timePerQuestion: 35000,
+      questionPosition: [1, quizSize],
     };
 
     const startMsg = new Discord.RichEmbed()
@@ -28,6 +29,12 @@ export default {
       .addField('Starting quiz, first question (1/10):', currentQuestion.questionText);
 
     msg.channel.send(startMsg);
+
+    const questionImages = currentQuestion.mediaUrls.slice(0, currentQuestion.mainImageSlice[1]);
+
+    questionImages.forEach((imageUrl) => {
+      sendImage(msg.channel, imageUrl.image);
+    });
 
     activeQuiz.questionTimeout = setTimeout(
       () => self.nextQuestion(msg.channel),
@@ -37,8 +44,8 @@ export default {
   },
 };
 
-function newQuiz() {
+function newQuiz(quizSize) {
   return Card.aggregate([
-    { $sample: { size: 10 } },
+    { $sample: { size: quizSize } },
   ]);
 }

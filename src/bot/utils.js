@@ -1,6 +1,6 @@
 import Discord from 'discord.js';
 
-export const PACE_DELAY = 1200;
+export const PACE_DELAY = 3500;
 export const PREFIX = 'gg!';
 
 export const Colors = {
@@ -31,6 +31,14 @@ export function parseInput(msg) {
   const args = msg.content.substr(PREFIX.length).split(/\s+/);
   const command = args.shift().toLowerCase();
   return [command, args];
+}
+
+export function sendImage(channel, url) {
+  const message = new Discord.RichEmbed()
+    .setColor(Colors.BLUE)
+    .setImage(url);
+
+  channel.send(message);
 }
 
 export function shouldIgnore(msg) {
