@@ -17,6 +17,7 @@ export function askNextQuestion(client, channel) {
   /* eslint-disable-next-line */
   activeQuiz.questionPosition[0]++;
 
+  const { currentQuestion } = activeQuiz;
   const [currentPosition, totalQuestions] = activeQuiz.questionPosition;
   const position = `${currentPosition}/${totalQuestions}`;
 
@@ -24,8 +25,15 @@ export function askNextQuestion(client, channel) {
     .setColor(Colors.BLUE)
     .addField(`Next Question (${position}):`, activeQuiz.currentQuestion.questionText);
 
+  const questionImages = currentQuestion.mediaUrls.slice(0, currentQuestion.mainImageSlice[1]);
+
   setTimeout(() => {
     channel.send(nextMessage);
+
+    questionImages.forEach((imageUrl) => {
+      sendImage(channel, imageUrl.image);
+    });
+
     activeQuiz.questionTimeout = setTimeout(
       () => client.nextQuestion(channel),
       activeQuiz.timePerQuestion,

@@ -10,9 +10,15 @@ export default {
   aliases: ['s'],
   description: 'Start a new quiz',
   usage: '[number of quiz questions]',
-  async execute(msg, quizSize = 10) {
+  async execute(msg, args) {
     const self = this;
-    quizSize = Number(quizSize);
+    let [quizSize] = args;
+
+    if (quizSize) {
+      quizSize = Number(quizSize);
+    } else {
+      quizSize = 10;
+    }
 
     /* eslint-disable-next-line */
     const questions = await tryCatch(newQuiz(quizSize));
@@ -27,7 +33,7 @@ export default {
 
     const startMsg = new Discord.RichEmbed()
       .setColor(Colors.BLUE)
-      .addField('Starting quiz, first question (1/10):', currentQuestion.questionText);
+      .addField(`Starting quiz, first question (1/${quizSize}):`, currentQuestion.questionText);
 
     msg.channel.send(startMsg);
 
