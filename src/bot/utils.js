@@ -69,7 +69,7 @@ export function sendImage(channel, image) {
   const message = new Discord.RichEmbed()
     .setColor(Colors.BLUE)
     .setImage(image.image)
-    .setDescription(image.altText);
+    .setDescription(image.altText || '');
 
   channel.send(message);
 }

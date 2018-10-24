@@ -14,7 +14,7 @@ export default {
     if (!args.length) {
       let commandList = '';
       msg.client.commands.forEach((command) => {
-        commandList += `\`${command.name} ${command.usage}\`\n`;
+        commandList += `\`${PREFIX}${command.name} ${command.usage}\`\n`;
       });
 
       /* eslint-disable-next-line */
