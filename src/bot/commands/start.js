@@ -1,7 +1,7 @@
 import Discord from 'discord.js';
 import Models from 'Models';
 import { tryCatch } from 'Utils';
-import { Colors, sendImage } from '../utils';
+import { Colors, TIME_PER_QUESTION, sendImage } from '../utils';
 
 const { Card } = Models;
 
@@ -27,7 +27,7 @@ export default {
     const activeQuiz = {
       currentQuestion,
       questions,
-      timePerQuestion: 35000,
+      timePerQuestion: TIME_PER_QUESTION,
       questionPosition: [1, quizSize],
     };
 
