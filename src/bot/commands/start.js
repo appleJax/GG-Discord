@@ -9,7 +9,7 @@ export default {
   name: 'start',
   aliases: ['s'],
   description: 'Start a new quiz',
-  usage: '[number of quiz questions]',
+  usage: '[number of questions (default: 10)]',
   async execute(msg, args) {
     const self = this;
     let [quizSize] = args;
