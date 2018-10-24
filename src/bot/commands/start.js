@@ -16,6 +16,7 @@ export default {
 
     if (quizSize) {
       quizSize = Number(quizSize);
+      quizSize = Math.min(quizSize, 30);
     } else {
       quizSize = 10;
     }
