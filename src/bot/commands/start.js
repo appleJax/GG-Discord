@@ -14,12 +14,13 @@ export default {
     const self = this;
     let [quizSize] = args;
 
-    if (quizSize) {
-      quizSize = Number(quizSize);
-      quizSize = Math.min(quizSize, 30);
-    } else {
+    quizSize = Math.round(Number(quizSize));
+
+    if (Number.isNaN(quizSize) || quizSize < 1) {
       quizSize = 10;
     }
+
+    quizSize = Math.min(quizSize, 30);
 
     /* eslint-disable-next-line */
     const questions = await tryCatch(newQuiz(quizSize));
