@@ -6,7 +6,7 @@ export default (client) => {
   client.activeQuiz = null;
 
   client.handleMsg = (msg) => {
-    if (msg.channel.id !== '501934607076163595') {
+    if (msg.channel.id !== '504554082984525854') {
       return;
     }
 
