@@ -30,8 +30,8 @@ export function askNextQuestion(client, channel) {
   setTimeout(() => {
     channel.send(nextMessage);
 
-    questionImages.forEach((imageUrl) => {
-      sendImage(channel, imageUrl.image);
+    questionImages.forEach((image) => {
+      sendImage(channel, image);
     });
 
     activeQuiz.questionTimeout = setTimeout(
@@ -64,10 +64,11 @@ export function parseInput(msg) {
   return [command, args];
 }
 
-export function sendImage(channel, url) {
+export function sendImage(channel, image) {
   const message = new Discord.RichEmbed()
     .setColor(Colors.BLUE)
-    .setImage(url);
+    .setImage(image.image)
+    .setDescription(image.altText);
 
   channel.send(message);
 }

@@ -39,8 +39,8 @@ export default {
 
     const questionImages = currentQuestion.mediaUrls.slice(0, currentQuestion.mainImageSlice[1]);
 
-    questionImages.forEach((imageUrl) => {
-      sendImage(msg.channel, imageUrl.image);
+    questionImages.forEach((image) => {
+      sendImage(msg.channel, image);
     });
 
     activeQuiz.questionTimeout = setTimeout(

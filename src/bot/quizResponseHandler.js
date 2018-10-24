@@ -23,8 +23,8 @@ export default (client) => {
 
     const answerImages = currentQuestion.mediaUrls.slice(currentQuestion.mainImageSlice[1]);
 
-    answerImages.forEach((imageUrl) => {
-      sendImage(channel, imageUrl.image);
+    answerImages.forEach((image) => {
+      sendImage(channel, image);
     });
 
     if (questions.length === 0) {
@@ -64,6 +64,12 @@ export default (client) => {
       .addField(`@${msg.author.username} answered correctly!`, currentQuestion.answerText);
 
     msg.channel.send(congrats);
+
+    const answerImages = currentQuestion.mediaUrls.slice(currentQuestion.mainImageSlice[1]);
+
+    answerImages.forEach((image) => {
+      sendImage(msg.channel, image);
+    });
 
     if (questions.length === 0) {
       client.activeQuiz = null;
