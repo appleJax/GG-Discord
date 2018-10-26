@@ -32,7 +32,10 @@ export function askNextQuestion(client, channel) {
     .setColor(Colors.BLUE)
     .addField(`Next Question (${position}):`, activeQuiz.currentQuestion.questionText);
 
-  const questionImages = currentQuestion.mediaUrls.slice(0, currentQuestion.mainImageSlice[1]);
+  let questionImages = [];
+  if (currentQuestion.mediaUrls) {
+    questionImages = currentQuestion.mediaUrls.slice(0, currentQuestion.mainImageSlice[1]);
+  }
 
   setTimeout(() => {
     channel.send(nextMessage);
