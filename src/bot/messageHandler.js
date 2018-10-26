@@ -1,16 +1,17 @@
 import {
-  PREFIX, commandNotFound, parseInput, shouldIgnore,
+  DECKS, PREFIX, commandNotFound, parseInput, shouldIgnore,
 } from './utils';
 
-export default (client) => {
-  client.activeQuiz = null;
+const quizRooms = Object.keys(DECKS);
 
+export default (client) => {
   client.handleMsg = (msg) => {
-    if (msg.channel.id !== '504554082984525854') {
+    const roomId = msg.channel.id;
+    if (!quizRooms.includes(roomId)) {
       return;
     }
 
-    if (client.activeQuiz) {
+    if (client.quizzes.get(roomId)) {
       client.handleQuizResponse(msg);
       return;
     }

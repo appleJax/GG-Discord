@@ -7,6 +7,7 @@ import attachQuizResponseHandler from './quizResponseHandler'
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 client.cooldowns = new Discord.Collection();
+client.quizzes = new Discord.Collection();
 
 const commandFiles = fs.readdirSync(path.resolve(__dirname, 'commands'));
 

@@ -2,7 +2,7 @@ import Discord from 'discord.js';
 import Models from 'Models';
 import { tryCatch } from 'Utils';
 import {
- Colors, DECKS, TIME_PER_QUESTION, sendImage 
+  Colors, DECKS, TIME_PER_QUESTION, sendImage,
 } from '../utils';
 
 const { Card } = Models;
@@ -14,8 +14,9 @@ export default {
   usage: '[number of questions (defaults to 10, max is 30)]',
   async execute(msg, args) {
     const self = this;
-    let [quizSize] = args;
+    const roomId = msg.channel.id;
 
+    let [quizSize] = args;
     quizSize = Math.round(Number(quizSize));
 
     if (Number.isNaN(quizSize) || quizSize < 1) {
@@ -25,7 +26,7 @@ export default {
     quizSize = Math.min(quizSize, 30);
 
     const deckQuery = {
-      deck: DECKS[msg.channel.id],
+      deck: DECKS[roomId],
     };
 
     /* eslint-disable-next-line */
@@ -55,7 +56,7 @@ export default {
       () => self.nextQuestion(msg.channel),
       activeQuiz.timePerQuestion,
     );
-    this.activeQuiz = activeQuiz;
+    this.quizzes.set(roomId, activeQuiz);
   },
 };
 

@@ -18,7 +18,7 @@ export const DECKS = {
 };
 
 export function askNextQuestion(client, channel) {
-  const { activeQuiz } = client;
+  const activeQuiz = client.quizzes.get(channel.id);
 
   activeQuiz.currentQuestion = activeQuiz.questions.pop();
   /* eslint-disable-next-line */

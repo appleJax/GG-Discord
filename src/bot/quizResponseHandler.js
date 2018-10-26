@@ -7,7 +7,8 @@ const STOP_COMMAND = `${PREFIX}stop`;
 
 export default (client) => {
   client.nextQuestion = (channel) => {
-    const { activeQuiz } = client;
+    const roomId = channel.id;
+    const activeQuiz = client.quizzes.get(roomId);
     if (activeQuiz == null) {
       return;
     }
@@ -28,7 +29,7 @@ export default (client) => {
     });
 
     if (questions.length === 0) {
-      client.activeQuiz = null;
+      client.quizzes.set(roomId, null);
       endQuiz(channel);
       return;
     }
@@ -37,13 +38,14 @@ export default (client) => {
   };
 
   client.handleQuizResponse = (msg) => {
+    const roomId = msg.channel.id;
     const response = msg.content.toLowerCase();
-    const { activeQuiz } = client;
+    const activeQuiz = client.quizzes.get(roomId);
     const { currentQuestion, questions } = activeQuiz;
 
     if (response.startsWith(STOP_COMMAND)) {
       clearTimeout(activeQuiz.questionTimeout);
-      client.activeQuiz = null;
+      client.quizzes.set(roomId, null);
 
       const stopMsg = new Discord.RichEmbed()
         .setColor(Colors.RED)
@@ -72,7 +74,7 @@ export default (client) => {
     });
 
     if (questions.length === 0) {
-      client.activeQuiz = null;
+      client.quizzes.set(roomId, null);
       endQuiz(msg.channel);
       return;
     }
