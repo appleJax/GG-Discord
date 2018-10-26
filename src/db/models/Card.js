@@ -7,6 +7,7 @@ const schema = new Schema({
   answers: t([String], []),
   answerText: String,
   cardId: String,
+  deck: String,
   game: String,
   questionText: String,
 });

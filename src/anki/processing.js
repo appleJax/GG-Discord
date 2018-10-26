@@ -60,16 +60,19 @@ export function parseAnkiJson(filePath) {
 
     engMeaning = engMeaning.replace(/"/g, "'");
     const clozes = getClozes(expression);
+    let answers;
 
     clozes.forEach((cloze, i) => {
       if (i > 0) {
         cardId += i;
       }
+      answers = [ getAnswer(cloze) ];
       newCards.push({
         cardId,
         deck,
-        answerText: formatAnswerText(engMeaning, expression),
-        questionText: formatQuestionText(engMeaning, expression),
+        answers,
+        answerText: formatAnswerText(engMeaning, cloze),
+        questionText: formatQuestionText(engMeaning, cloze),
       });
     });
   });
