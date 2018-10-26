@@ -51,7 +51,7 @@ export function getClozes(expression) {
     let answer;
 
     clozesToReplace.forEach((singleCloze) => {
-      answer = getAnswer(singleCloze);
+      [answer] = getAnswers(singleCloze);
       newExpression = newExpression.replace(singleCloze, answer);
     });
 
