@@ -2,8 +2,8 @@ export function formatAnswerText(engMeaning, expression, pageNum) {
   const answer = getAnswer(expression);
 
   let answerText = `Answer: ${answer}`;
-  answerText += `\nEnglish: ${engMeaning}`;
-  answerText += `\nJapanese: ${fillAnswer(expression, answer)}`;
+  answerText += `\n${'```glsl'}\nEnglish: ${engMeaning}${'```'}`;
+  answerText += `\n${'```css'}\nJapanese: ${fillAnswer(expression, answer)}${'```'}`;
   answerText += `\nReference: ${pageNum}`;
 
   return answerText;
@@ -24,8 +24,9 @@ export function formatQuestionText(engMeaning, expression) {
     minMax += ' ';
   }
 
-  let questionText = `Fill in the missing ${minMax}character${s} to make the sentence roughly mean "${engMeaning}":`;
-  questionText += `\n${japaneseWithHint}`;
+  let questionText = `Fill in the missing ${minMax}character${s} to make the sentence roughly mean:`;
+  questionText += `\n${'```glsl'}\n"${engMeaning}"${'```'}`;
+  questionText += `\n${'```ini'}\n${japaneseWithHint}${'```'}`;
 
   return questionText;
 }
