@@ -1,9 +1,10 @@
-export function formatAnswerText(engMeaning, expression) {
+export function formatAnswerText(engMeaning, expression, pageNum) {
   const answer = getAnswer(expression);
 
   let answerText = `Answer: ${answer}`;
   answerText += `\nEnglish: ${engMeaning}`;
   answerText += `\nJapanese: ${fillAnswer(expression, answer)}`;
+  answerText += `\nReference: ${pageNum}`;
 
   return answerText;
 }
@@ -113,7 +114,7 @@ function groupXs(string) {
 }
 
 function maxChars(hint) {
-  return hint.match(/([^\s]+)/g).length;
+  return hint.match(/\[.*?\]/g).length;
 }
 
 function minChars(hint) {

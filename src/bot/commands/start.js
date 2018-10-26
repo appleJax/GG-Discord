@@ -46,11 +46,13 @@ export default {
 
     msg.channel.send(startMsg);
 
-    const questionImages = currentQuestion.mediaUrls.slice(0, currentQuestion.mainImageSlice[1]);
+    if (currentQuestion.mediaUrls) {
+      const questionImages = currentQuestion.mediaUrls.slice(0, currentQuestion.mainImageSlice[1]);
 
-    questionImages.forEach((image) => {
-      sendImage(msg.channel, image);
-    });
+      questionImages.forEach((image) => {
+        sendImage(msg.channel, image);
+      });
+    }
 
     activeQuiz.questionTimeout = setTimeout(
       () => self.nextQuestion(msg.channel),

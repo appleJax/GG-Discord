@@ -72,7 +72,7 @@ export function parseAnkiJson(filePath) {
         cardId,
         deck,
         answers,
-        answerText: formatAnswerText(engMeaning, cloze),
+        answerText: formatAnswerText(engMeaning, cloze, pageNum),
         questionText: formatQuestionText(engMeaning, cloze),
       });
     });

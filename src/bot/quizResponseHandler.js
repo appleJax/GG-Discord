@@ -22,11 +22,13 @@ export default (client) => {
 
     channel.send(revealAnswer);
 
-    const answerImages = currentQuestion.mediaUrls.slice(currentQuestion.mainImageSlice[1]);
+    if (currentQuestion.mediaUrls) {
+      const answerImages = currentQuestion.mediaUrls.slice(currentQuestion.mainImageSlice[1]);
 
-    answerImages.forEach((image) => {
-      sendImage(channel, image);
-    });
+      answerImages.forEach((image) => {
+        sendImage(channel, image);
+      });
+    }
 
     if (questions.length === 0) {
       client.quizzes.set(roomId, null);
@@ -67,11 +69,13 @@ export default (client) => {
 
     msg.channel.send(congrats);
 
-    const answerImages = currentQuestion.mediaUrls.slice(currentQuestion.mainImageSlice[1]);
+    if (currentQuestion.mediaUrls) {
+      const answerImages = currentQuestion.mediaUrls.slice(currentQuestion.mainImageSlice[1]);
 
-    answerImages.forEach((image) => {
-      sendImage(msg.channel, image);
-    });
+      answerImages.forEach((image) => {
+        sendImage(msg.channel, image);
+      });
+    }
 
     if (questions.length === 0) {
       client.quizzes.set(roomId, null);
