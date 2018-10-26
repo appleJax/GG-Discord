@@ -8,6 +8,7 @@ import {
   formatAnswerText,
   getAnswer,
   getClozes,
+  splitSpeakers,
 } from 'Anki/utils';
 import { tryCatch } from 'Utils';
 
@@ -59,7 +60,11 @@ export function parseAnkiJson(filePath) {
       expression,
     ].map(stripHtml);
 
-    engMeaning = engMeaning.replace(/"/g, "'");
+    if (expression.includes('B:')) {
+      expression = splitSpeakers(expression);
+      engMeaning = splitSpeakers(engMeaning);
+    }
+
     const clozes = getClozes(expression);
     let answers;
 

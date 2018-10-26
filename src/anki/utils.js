@@ -51,6 +51,10 @@ export function getClozes(expression) {
   });
 }
 
+export function splitSpeakers(phrase) {
+  return phrase.replace('B:', '\nB:');
+}
+
 // private functions
 
 function fillAnswer(expression, answer) {
