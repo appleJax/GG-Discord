@@ -1,9 +1,10 @@
 export function formatAnswerText(engMeaning, expression, pageNum) {
-  const answer = getAnswer(expression);
+  const answers = getAnswers(expression);
+  const s = answers.length > 1 ? 's' : '';
 
-  let answerText = `Answer: ${answer}`;
+  let answerText = `Answer${s}: ${answers.join(', ')}`;
   answerText += `\n${'```'}\n${engMeaning}${'```'}`;
-  answerText += `\n${'```ini'}\n${fillAnswer(expression, answer)}${'```'}`;
+  answerText += `\n${'```ini'}\n${fillAnswer(expression, answers[0])}${'```'}`;
   answerText += `\nReference: ${pageNum}`;
 
   return answerText;
@@ -31,8 +32,15 @@ export function formatQuestionText(engMeaning, expression) {
   return questionText;
 }
 
-export function getAnswer(expression) {
-  return expression.match(/::(.+?)::/)[1];
+export function getAnswers(expression, altAnswers) {
+  const officialAnswer = expression.match(/::(.+?)::/)[1];
+
+  let otherAnswers = [];
+  if (altAnswers && altAnswers.length > 0) {
+    otherAnswers = altAnswers.split(',');
+  }
+
+  return [officialAnswer].concat(otherAnswers);
 }
 
 export function getClozes(expression) {

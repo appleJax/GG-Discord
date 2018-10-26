@@ -6,7 +6,7 @@ import unzip from 'unzip-stream';
 import {
   formatQuestionText,
   formatAnswerText,
-  getAnswer,
+  getAnswers,
   getClozes,
   splitSpeakers,
 } from 'Anki/utils';
@@ -48,7 +48,7 @@ export function parseAnkiJson(filePath) {
       , // prevLineImages,
       , // prevLineAltText,
       , // otherVisibleContext,
-      , // altAnswers,
+      altAnswers,
       , // webLookup,
       pageNum,
     ] = card.fields;
@@ -72,7 +72,7 @@ export function parseAnkiJson(filePath) {
       if (i > 0) {
         cardId += i;
       }
-      answers = [ getAnswer(cloze) ];
+      answers = getAnswers(cloze, altAnswers);
       newCards.push({
         cardId,
         deck,

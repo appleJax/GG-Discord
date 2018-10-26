@@ -13,7 +13,7 @@ export const Colors = {
 
 export const DECKS = {
   '504554082984525854': 'TwitterBot',
-  '448017005493354501': 'DBJG',
+  '505262797572276254': 'DBJG',
   '448017333907095562': 'DIJG',
 };
 
