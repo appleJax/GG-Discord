@@ -69,7 +69,7 @@ function formatHint(expression) {
   const legend = expression.match(/::.+?::(.+?)}}/)[1];
   const normalized = groupMultiXs(groupXs(groupQuestionMarks(legend)));
 
-  return flatten(split(normalized)).map((group) => {
+  const hint = flatten(split(normalized)).map((group) => {
     if (group === '.') {
       return '[]';
     }
@@ -98,7 +98,9 @@ function formatHint(expression) {
     }
     // else (character gimme)
     return group;
-  }).join('');
+  });
+
+  return `**${hint.join('')}**`;
 }
 
 function groupMultiXs(string) {

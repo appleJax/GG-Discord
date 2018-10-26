@@ -64,7 +64,7 @@ export function endQuiz(channel) {
 
   setTimeout(
     () => channel.send(quizHasEnded),
-    PACE_DELAY,
+    2000,
   );
 }
 
