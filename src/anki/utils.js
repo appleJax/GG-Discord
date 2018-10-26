@@ -29,6 +29,10 @@ export function formatQuestionText(engMeaning, expression) {
   return questionText;
 }
 
+export function getAnswer(expression) {
+  return expression.match(/::(.+?)::/)[1];
+}
+
 export function getClozes(expression) {
   return expression.match(/{{.+?}}/g).map((cloze, i, allClozes) => {
     const clozesToReplace = allClozes.slice(0, i).concat(allClozes.slice(i + 1));
@@ -94,10 +98,6 @@ function formatHint(expression) {
     // else (character gimme)
     return group;
   }).join(' ');
-}
-
-function getAnswer(expression) {
-  return expression.match(/::(.+?)::/)[1];
 }
 
 function groupMultiXs(string) {

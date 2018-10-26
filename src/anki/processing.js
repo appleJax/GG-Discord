@@ -6,6 +6,7 @@ import unzip from 'unzip-stream';
 import {
   formatQuestionText,
   formatAnswerText,
+  getAnswer,
   getClozes,
 } from 'Anki/utils';
 import { tryCatch } from 'Utils';
