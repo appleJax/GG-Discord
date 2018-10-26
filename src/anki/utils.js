@@ -3,7 +3,7 @@ export function formatAnswerText(engMeaning, expression, pageNum) {
 
   let answerText = `Answer: ${answer}`;
   answerText += `\n${'```'}\n${engMeaning}${'```'}`;
-  answerText += `\n${'```ini'}\nJapanese: ${fillAnswer(expression, answer)}${'```'}`;
+  answerText += `\n${'```ini'}\n${fillAnswer(expression, answer)}${'```'}`;
   answerText += `\nReference: ${pageNum}`;
 
   return answerText;
