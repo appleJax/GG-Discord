@@ -1,14 +1,20 @@
 import Discord from 'discord.js';
 
-export const PACE_DELAY = 10000;
+export const PACE_DELAY = 12000;
 export const PREFIX = 'gg!';
-export const TIME_PER_QUESTION = 45000;
+export const TIME_PER_QUESTION = 60000;
 
 export const Colors = {
   BLUE: '#1DA1F2',
   GREEN: '#008140',
   RED: '#CA0401',
   GOLD: '#F9A602',
+};
+
+export const DECKS = {
+  '504554082984525854': 'TwitterBot',
+  '448017005493354501': 'DBJG',
+  '448017333907095562': 'DIJG',
 };
 
 export function askNextQuestion(client, channel) {

@@ -6,7 +6,7 @@ import unzip from 'unzip-stream';
 import {
   formatQuestionText,
   formatAnswerText,
-  getAnswers,
+  getClozes,
 } from 'Anki/utils';
 import { tryCatch } from 'Utils';
 
@@ -31,48 +31,45 @@ export function parseAnkiJson(filePath) {
   const contents = JSON.parse(fs.readFileSync(filePath, 'utf8'));
   const newCards = [];
 
-  contents.children.forEach((deck) => {
-    const game = deck.name;
-    deck.notes.forEach((card) => {
-      let [
-        cardId,
-        expression,
-        , // reading,
-        , // jpMeaning,
-        engMeaning,
-        , // officialEng,
-        , // questionImages,
-        , // answerImages,
-        , // audio
-        , // prevLineImages,
-        , // prevLineAltText,
-        , // otherVisibleContext,
-        altAnswers,
-        , // webLookup, // use for every answer so people can look up pronunciation
-                  // https://ejje.weblio.jp/content/[webLookup (e.g. 切り換える)]
-        notes,
-      ] = card.fields;
+  const deck = contents.name;
+  contents.notes.forEach((card) => {
+    let [
+      cardId,
+      expression,
+      , // reading,
+      , // jpMeaning,
+      engMeaning,
+      , // officialEng,
+      , // questionImages,
+      , // answerImages,
+      , // audio
+      , // prevLineImages,
+      , // prevLineAltText,
+      , // otherVisibleContext,
+      , // altAnswers,
+      , // webLookup,
+      pageNum,
+    ] = card.fields;
 
-      [ altAnswers,
-        engMeaning,
-        expression,
-        notes,
-      ] = [
-        altAnswers,
-        engMeaning,
-        expression,
-        notes,
-      ].map(stripHtml);
+    [ engMeaning,
+      expression,
+    ] = [
+      engMeaning,
+      expression,
+    ].map(stripHtml);
 
-      engMeaning = engMeaning.replace(/"/g, "'");
-      const answers = getAnswers(expression, altAnswers);
+    engMeaning = engMeaning.replace(/"/g, "'");
+    const clozes = getClozes(expression);
 
+    clozes.forEach((cloze, i) => {
+      if (i > 0) {
+        cardId += i;
+      }
       newCards.push({
         cardId,
-        game,
-        questionText: formatQuestionText(engMeaning, expression, game, notes),
-        answerText: formatAnswerText(answers, engMeaning),
-        answers,
+        deck,
+        answerText: formatAnswerText(engMeaning, expression),
+        questionText: formatQuestionText(engMeaning, expression),
       });
     });
   });

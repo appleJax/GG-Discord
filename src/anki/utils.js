@@ -1,46 +1,55 @@
-export function formatAnswerText(answers, engMeaning) {
-  const s = answers.length > 1 ? 's' : '';
-  let answerText = `Answer${s}: ${answers.join(', ')}`;
-  answerText += `\nEnglish: "${engMeaning}"`;
+export function formatAnswerText(engMeaning, expression) {
+  const answer = getAnswer(expression);
+
+  let answerText = `Answer: ${answer}`;
+  answerText += `\nEnglish: ${engMeaning}`;
+  answerText += `\nJapanese: ${fillAnswer(expression, answer)}`;
 
   return answerText;
 }
 
-export function formatQuestionText(
-  engMeaning,
-  expression,
-  game,
-  notes,
-) {
+export function formatQuestionText(engMeaning, expression) {
   const hint = formatHint(expression);
+  const japaneseWithHint = expression.replace(/{{.+?}}/, hint);
+
   const [min, max] = minMaxChars(hint);
-  const minMax = min === max ? min : `${min}-${max}`;
-  let tweetText = `What ${minMax} character answer means "${engMeaning}"?`;
+  let minMax = min === max ? min : `${min}-${max}`;
+  let s = 's';
 
-  if (needsHint(hint)) {
-    tweetText += `\nHint: ${hint}`;
+  if (minMax === 1) {
+    minMax = '';
+    s = '';
+  } else {
+    minMax += ' ';
   }
 
-  if (notes) {
-    tweetText += `\nNotes: ${notes}`;
-  }
+  let questionText = `Fill in the missing ${minMax}character${s} to make the sentence roughly mean "${engMeaning}":`;
+  questionText += `\n${japaneseWithHint}`;
 
-  tweetText += `\nGame: ${game.replace(/\s(ENG|JP)$/, '')}`;
-
-  return tweetText;
+  return questionText;
 }
 
-export function getAnswers(expression, altAnswers) {
-  const acceptedAnswer = expression.match(/::(.+?)::/)[1];
-  let otherAnswers = [];
-  if (altAnswers && altAnswers.length > 0) {
-    otherAnswers = altAnswers.split(',');
-  }
+export function getClozes(expression) {
+  return expression.match(/{{.+?}}/g).map((cloze, i, allClozes) => {
+    const clozesToReplace = allClozes.slice(0, i).concat(allClozes.slice(i + 1));
 
-  return [acceptedAnswer].concat(otherAnswers);
+    let newExpression = expression;
+    let answer;
+
+    clozesToReplace.forEach((singleCloze) => {
+      answer = getAnswer(singleCloze);
+      newExpression = newExpression.replace(singleCloze, answer);
+    });
+
+    return newExpression;
+  });
 }
 
 // private functions
+
+function fillAnswer(expression, answer) {
+  return expression.replace(/{{.+?}}/, answer);
+}
 
 function flatten(deep, flat = []) {
   if (deep.length === 0) { return flat; }
@@ -52,13 +61,17 @@ function flatten(deep, flat = []) {
 }
 
 function formatHint(expression) {
-  const legend = expression.match(/::.+?::(.+?)\}\}/)[1];
+  const legend = expression.match(/::.+?::(.+?)}}/)[1];
   const normalized = groupMultiXs(groupXs(groupQuestionMarks(legend)));
 
   return flatten(split(normalized)).map((group) => {
-    if (group === '.') { return '[_]'; }
+    if (group === '.') {
+      return '[]';
+    }
 
-    if (group === '-') { return '[_] [_] [_] [_] [_]'; }
+    if (group === '-') {
+      return '[] [] [] [] []';
+    }
 
     if (/\?/.test(group)) {
       const result = [];
@@ -81,6 +94,10 @@ function formatHint(expression) {
     // else (character gimme)
     return group;
   }).join(' ');
+}
+
+function getAnswer(expression) {
+  return expression.match(/::(.+?)::/)[1];
 }
 
 function groupMultiXs(string) {
@@ -106,10 +123,6 @@ function minChars(hint) {
 
 function minMaxChars(hint) {
   return [minChars(hint), maxChars(hint)];
-}
-
-function needsHint(hint) {
-  return hint.replace(/\[_\]/g, '').trim().length !== 0;
 }
 
 function split(str) {
