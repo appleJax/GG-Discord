@@ -74,7 +74,7 @@ function formatHint(expression) {
     }
 
     if (group === '-') {
-      return '[] [] [] [] []';
+      return '[][][][][]';
     }
 
     if (/\?/.test(group)) {
@@ -88,7 +88,7 @@ function formatHint(expression) {
         return '[?]';
       }
 
-      return `(${result.join(' ')})`;
+      return `(${result.join('')})`;
     }
 
     if (/[≠x]/.test(group)) {
@@ -97,7 +97,7 @@ function formatHint(expression) {
     }
     // else (character gimme)
     return group;
-  }).join(' ');
+  }).join('');
 }
 
 function groupMultiXs(string) {
