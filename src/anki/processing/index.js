@@ -7,7 +7,7 @@ import { tryCatch } from 'Utils';
 import parseDJG from './D_JG';
 import parseIKnowCore from './iKnowCore';
 
-const UPLOADS_PATH = path.resolve(__dirname, '../../uploads');
+const UPLOADS_PATH = path.resolve(__dirname, '../../../uploads');
 
 export function processUpload(zipfilePath) {
   return tryCatch(new Promise(async (resolve, reject) => {

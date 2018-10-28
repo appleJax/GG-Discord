@@ -32,19 +32,20 @@ export function formatQuestionText(engMeaning, expression) {
 }
 
 export function getAnswers(expression, altAnswers, i) {
-  const officialAnswer = expression.match(/::(.+?)::/)[1];
-
+  const [officialAnswer] = expression.match(/::(.+?)::/);
   let otherAnswers = [];
 
   if (altAnswers) {
     otherAnswers = altAnswers
       .replace(/\s+/g, '')
-      .split('::')[i || 0]
-      .split(',')
-      .filter(Boolean);
+      .split('::')[i || 0];
+
+    if (otherAnswers) {
+      otherAnswers = otherAnswers.split(',');
+    }
   }
 
-  return [officialAnswer].concat(otherAnswers);
+  return [officialAnswer].concat(otherAnswers).filter(Boolean);
 }
 
 export function getClozes(expression) {
