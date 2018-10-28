@@ -32,7 +32,9 @@ app.use(session(options));
 
 route(app);
 
-bot.start();
+if (process.env.NODE_ENV === 'production') {
+  bot.start();
+}
 
 const PORT = app.get('port');
 

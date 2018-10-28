@@ -32,7 +32,7 @@ export function formatQuestionText(engMeaning, expression) {
 }
 
 export function getAnswers(expression, altAnswers, i) {
-  const [officialAnswer] = expression.match(/::(.+?)::/);
+  const officialAnswer = expression.match(/::(.+?)::/)[1];
   let otherAnswers = [];
 
   if (altAnswers) {
