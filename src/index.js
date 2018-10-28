@@ -32,7 +32,7 @@ app.use(session(options));
 
 route(app);
 
-bot.start();
+// bot.start();
 
 const PORT = app.get('port');
 

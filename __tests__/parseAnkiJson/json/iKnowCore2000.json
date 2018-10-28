@@ -1,0 +1,41 @@
+{
+  "name": "iKnow Core 2000",
+  "notes": [],
+  "children": [
+    {
+      "name": "Lesson 01",
+      "children": [],
+      "notes": [
+        {
+          "fields": [
+            "id1",
+            "some{{::CLOZE::...≠(X,Y)?}}text",
+            "",
+            "english",
+            "alt answer",
+            "",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Lesson 02",
+      "children": [],
+      "notes": [
+        {
+          "fields": [
+            "id2",
+            "another{{::C::.}}expression", 
+            "",
+            "english", 
+            "",
+            "",
+            ""
+          ]
+        }
+      ]
+    }
+
+  ]
+}

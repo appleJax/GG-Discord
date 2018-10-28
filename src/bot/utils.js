@@ -6,15 +6,16 @@ export const TIME_PER_QUESTION = 60000;
 
 export const Colors = {
   BLUE: '#1DA1F2',
+  GOLD: '#F9A602',
   GREEN: '#008140',
   RED: '#CA0401',
-  GOLD: '#F9A602',
 };
 
 export const DECKS = {
   '504554082984525854': 'TwitterBot',
   '505262797572276254': 'DBJG',
   '448017333907095562': 'DIJG',
+  someId: 'iKnow Core 2000',
 };
 
 export function askNextQuestion(client, channel) {
@@ -84,5 +85,5 @@ export function sendImage(channel, image) {
 }
 
 export function shouldIgnore(msg) {
-  return !msg.content.startsWith(PREFIX) || msg.author.bot;
+  return !msg.content.toLowerCase().startsWith(PREFIX) || msg.author.bot;
 }

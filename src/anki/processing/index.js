@@ -3,14 +3,9 @@
 import fs from 'fs';
 import path from 'path';
 import unzip from 'unzip-stream';
-import {
-  formatQuestionText,
-  formatAnswerText,
-  getAnswers,
-  getClozes,
-  splitSpeakers,
-} from 'Anki/utils';
 import { tryCatch } from 'Utils';
+import parseDJG from './D_JG';
+import parseIKnowCore from './iKnowCore';
 
 const UPLOADS_PATH = path.resolve(__dirname, '../../uploads');
 
@@ -31,59 +26,10 @@ export function processUpload(zipfilePath) {
 
 export function parseAnkiJson(filePath) {
   const contents = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-  const newCards = [];
 
-  const deck = contents.name;
-  contents.notes.forEach((card) => {
-    let [
-      cardId,
-      expression,
-      , // reading,
-      , // jpMeaning,
-      engMeaning,
-      , // officialEng,
-      , // questionImages,
-      , // answerImages,
-      , // audio
-      , // prevLineImages,
-      , // prevLineAltText,
-      , // otherVisibleContext,
-      altAnswers,
-      , // webLookup,
-      pageNum,
-    ] = card.fields;
-
-    [ engMeaning,
-      expression,
-    ] = [
-      engMeaning,
-      expression,
-    ].map(stripHtml);
-
-    if (expression.includes('B:')) {
-      expression = splitSpeakers(expression);
-      engMeaning = splitSpeakers(engMeaning);
-    }
-
-    const clozes = getClozes(expression);
-    let answers;
-
-    clozes.forEach((cloze, i) => {
-      if (i > 0) {
-        cardId += i;
-      }
-      answers = getAnswers(cloze, altAnswers);
-      newCards.push({
-        cardId,
-        deck,
-        answers,
-        answerText: formatAnswerText(engMeaning, cloze, pageNum),
-        questionText: formatQuestionText(engMeaning, cloze),
-      });
-    });
-  });
-
-  return newCards;
+  return (contents.notes.length > 0)
+    ? parseDJG(contents)
+    : parseIKnowCore(contents);
 }
 
 // private functions
@@ -100,10 +46,6 @@ function extractCardInfo(files) {
     }
   }
   return allNewCards;
-}
-
-function stripHtml(string) {
-  return string.replace(/<.*?>|&.*?;/g, '');
 }
 
 function cleanUp(files) {

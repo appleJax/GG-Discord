@@ -1,11 +1,10 @@
-export function formatAnswerText(engMeaning, expression, pageNum) {
-  const answers = getAnswers(expression);
+export function formatAnswerText(engMeaning, expression, answers, ref) {
   const s = answers.length > 1 ? 's' : '';
 
   let answerText = `Answer${s}: ${answers.join(', ')}`;
   answerText += `\n${'```'}\n${engMeaning}${'```'}`;
   answerText += `\n${'```ini'}\n${fillAnswer(expression, answers[0])}${'```'}`;
-  answerText += `\nReference: ${pageNum}`;
+  answerText += `\nReference: ${ref}`;
 
   return answerText;
 }
@@ -32,12 +31,17 @@ export function formatQuestionText(engMeaning, expression) {
   return questionText;
 }
 
-export function getAnswers(expression, altAnswers) {
+export function getAnswers(expression, altAnswers, i) {
   const officialAnswer = expression.match(/::(.+?)::/)[1];
 
   let otherAnswers = [];
-  if (altAnswers && altAnswers.length > 0) {
-    otherAnswers = altAnswers.split(',');
+
+  if (altAnswers) {
+    otherAnswers = altAnswers
+      .replace(/\s+/g, '')
+      .split('::')[i || 0]
+      .split(',')
+      .filter(Boolean);
   }
 
   return [officialAnswer].concat(otherAnswers);
@@ -61,6 +65,10 @@ export function getClozes(expression) {
 
 export function splitSpeakers(phrase) {
   return phrase.replace('B:', '\nB:');
+}
+
+export function stripHtml(string) {
+  return string.replace(/<.*?>|&.*?;/g, '');
 }
 
 // private functions

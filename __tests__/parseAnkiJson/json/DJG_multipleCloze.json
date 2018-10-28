@@ -1,0 +1,26 @@
+
+{
+  "name": "DIJG-MultipleCloze",
+  "children": [],
+  "notes": [
+   {
+      "fields": [
+        "id",
+        "One{{::C::≠A}}Two{{::C2::..}}Three{{::C3::.?}}Four",
+        "",
+        "",
+        "english",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ":: c2Alt1 :: c3Alt1, c3Alt2",
+        "",
+        "pg1"
+      ]
+    }
+  ]
+}
