@@ -9,7 +9,7 @@ const TIME_PER_QUESTION = 60;
 export default {
   name: 'survival',
   description: `This quiz serves questions continuously until one expires without being answered correctly. You have ${TIME_PER_QUESTION} seconds to answer each question.`,
-  usage: '(survival mode)',
+  usage: '(Survival Mode)',
   async execute(msg) {
     const self = this;
     const roomId = msg.channel.id;
