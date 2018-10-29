@@ -26,6 +26,15 @@ export const DECKS = {
 
 export async function askNextQuestion(client, channel) {
   const activeQuiz = client.quizzes.get(channel.id);
+  const { questionPosition, highScore } = activeQuiz;
+
+  if (highScore && questionPosition[0] === highScore) {
+    const tiedHighScore = new Discord.RichEmbed()
+      .setColor(Colors.GREEN)
+      .setDescription(`You are now tied with the previous record of ${highScore} correct answers in a row!`);
+
+    channel.send(tiedHighScore);
+  }
 
   activeQuiz.currentQuestion = activeQuiz.questions.pop();
   /* eslint-disable-next-line */
