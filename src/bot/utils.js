@@ -12,7 +12,7 @@ export const Colors = {
   BLUE: '#1DA1F2',
   GOLD: '#F9A602',
   GREEN: '#008140',
-  PURPLE: '#6A33EA',
+  PURPLE: '#633193',
   RED: '#CA0401',
 };
 
@@ -29,9 +29,10 @@ export async function askNextQuestion(client, channel) {
   const { questionPosition, highScore } = activeQuiz;
 
   if (highScore && questionPosition[0] === highScore) {
+    const s = highScore === 1 ? '' : 's';
     const tiedHighScore = new Discord.RichEmbed()
       .setColor(Colors.GREEN)
-      .setDescription(`You are now tied with the previous record of ${highScore} correct answers in a row!`);
+      .setDescription(`👔 You are now TIED with the previous record of ${highScore} correct answer${s} in a row!`);
 
     channel.send(tiedHighScore);
   }
@@ -91,24 +92,27 @@ export function endQuiz(channel, activeQuiz) {
   const currentScore = activeQuiz.questionPosition[0] - 1;
   const endMsg = new Discord.RichEmbed();
 
+  const playAgain = command => `Type \`${PREFIX}${command}\` to play again.`;
+  const s = currentScore === 1 ? '' : 's';
+
   if (survivalMode && currentScore > highScore) {
     endMsg
       .setColor(Colors.PURPLE)
-      .setDescription(`🏆 Congratulations, you set a new record for this quiz with ${currentScore} correct answers in a row, beating the previous record of ${highScore}!`);
+      .setDescription(`🏆 Congratulations, you set a new record for this quiz with ${currentScore} correct answer${s} in a row, beating the previous record of ${highScore}!\n${playAgain('survival')}`);
 
     setHighScore(channel.id, currentScore);
   } else if (survivalMode && currentScore === highScore) {
     endMsg
       .setColor(Colors.GREEN)
-      .setDescription(`Congratulations, you tied the current record of ${currentScore} correct answers in a row!`);
+      .setDescription(`Congratulations, you tied the current record of ${currentScore} correct answer${s} in a row!\n${playAgain('survival')}`);
   } else if (survivalMode) {
     endMsg
       .setColor(Colors.BLUE)
-      .setDescription(`That's it, thanks for playing! Type \`${PREFIX}survival\` to play again.`);
+      .setDescription(`Thanks for playing, you correctly answered ${currentScore} question${s} in a row! Current record: ${highScore}\n${playAgain('survival')}`);
   } else {
     endMsg
       .setColor(Colors.BLUE)
-      .setDescription(`That's it, thanks for playing! Type \`${PREFIX}start\` to play again.`);
+      .setDescription(`That's it, thanks for playing! ${playAgain('start')}`);
   }
 
   setTimeout(

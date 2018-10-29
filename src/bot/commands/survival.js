@@ -48,7 +48,7 @@ export default {
 
     const startMsg = new Discord.RichEmbed()
       .setColor(Colors.BLUE)
-      .addField('Starting quiz, first question:', currentQuestion.questionText);
+      .addField(`Starting quiz, see how long you can survive! Current record: ${highScore} correct answers`, currentQuestion.questionText);
 
     msg.channel.send(startMsg);
 
