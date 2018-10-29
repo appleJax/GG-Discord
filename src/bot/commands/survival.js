@@ -36,7 +36,7 @@ export default {
     const activeQuiz = {
       currentQuestion,
       questions,
-      secondsPerQuestion: TIME_PER_QUESTON * 1000,
+      secondsPerQuestion: TIME_PER_QUESTION * 1000,
       questionPosition: [1, '???'],
       survivalMode: 'survival',
     };
