@@ -5,10 +5,14 @@ import DB from 'DB/ops';
 
 const upload = multer({ dest: 'uploads/' });
 
-const ensureAdmin = authorization
+let ensureAdmin = authorization
   .ensureRequest
   .redirectTo('/login')
   .isPermitted('admin');
+
+if (process.env.NODE_ENV === 'development') {
+  ensureAdmin = (req, res, next) => next();
+}
 
 export default (app) => {
   app.use(passport.initialize());
