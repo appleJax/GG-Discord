@@ -1,63 +1,57 @@
 import Discord from 'discord.js';
-import Models from 'Models';
 import { tryCatch } from 'Utils';
 import {
-  Colors, DECKS, sendImage,
+  Colors, DECKS, fetchCards, sendImage,
 } from '../utils';
 
-const { Card } = Models;
-const QUIZ_SIZE = {
+// exported for testing
+export const QUIZ_SIZE = {
   default: 10,
   min: 1,
   max: 30,
 };
 
-const TIME_PER_QUESTION = {
+// exported for testing
+export const TIME_PER_QUESTION = {
   default: 60,
   min: 10,
   max: 180,
 };
 
-const usage = '[quizSize] - number of questions (defaults to 10, max is 30)'
-  + '\n[timePerQuestion] timeout for each question (in seconds - defaults to 60, max is 180)';
+const usage = `[quizSize] - number of questions (defaults to ${QUIZ_SIZE.default}, max is ${QUIZ_SIZE.max})`
+  + `\n[secondsPerQuestion] timeout for each question (in seconds - defaults to ${TIME_PER_QUESTION.default}, max is ${TIME_PER_QUESTION.max})`;
 
-function validateArgs([size, time]) {
-  let quizSize = size;
-  let timePerQuestion = time;
-  let error;
+// exported for testing
+export function validateArgs([size, time]) {
+  const argsResult = {};
 
-  if (timePerQuestion == null) {
-    timePerQuestion = TIME_PER_QUESTION.default;
-  } else {
-    timePerQuestion = Math.round(Number(timePerQuestion));
+  const validate = (param, name, values) => {
+    let paramValue = param;
+    if (paramValue == null) {
+      argsResult[name] = values.default;
+    } else {
+      paramValue = Math.round(Number(param));
+      argsResult[name] = paramValue;
 
-    if (Number.isNaN(timePerQuestion) || timePerQuestion < 10 || timePerQuestion > 180) {
-      error = `("${time}"). \`timePerQuestion\` must be between ${TIME_PER_QUESTION.min} and ${TIME_PER_QUESTION.max}.`;
+      if (Number.isNaN(paramValue) || paramValue < values.min || paramValue > values.max) {
+        argsResult.error = `("${param}"). \`${name}\` must be between ${values.min} and ${values.max}.`;
+      }
     }
-  }
-
-  if (quizSize == null) {
-    quizSize = QUIZ_SIZE.default;
-  } else {
-    quizSize = Math.round(Number(quizSize));
-
-    if (Number.isNaN(quizSize) || quizSize < 1 || quizSize > 30) {
-      error = `("${size}"). \`quizSize\` must be between ${QUIZ_SIZE.min} and ${QUIZ_SIZE.max}.`;
-    }
-  }
-
-  return {
-    quizSize,
-    timePerQuestion: timePerQuestion * 1000,
-    error,
   };
+
+  validate(time, 'secondsPerQuestion', TIME_PER_QUESTION);
+  validate(size, 'quizSize', QUIZ_SIZE);
+
+  argsResult.secondsPerQuestion *= 1000;
+
+  return argsResult;
 }
 
 export default {
   name: 'start',
   aliases: ['s'],
   description: 'Start a new quiz',
-  usageShort: '[quizSize] [timePerQuestion]',
+  usageShort: '[quizSize] [secondsPerQuestion]',
   usage,
   async execute(msg, args) {
     const self = this;
@@ -76,7 +70,7 @@ export default {
 
     /* eslint-disable-next-line */
     const questions = await tryCatch(
-      newQuiz(deckQuery, argsResult.quizSize),
+      fetchCards(deckQuery, argsResult.quizSize),
     );
 
     if (!questions || questions.length === 0) {
@@ -93,7 +87,7 @@ export default {
     const activeQuiz = {
       currentQuestion,
       questions,
-      timePerQuestion: argsResult.timePerQuestion,
+      secondsPerQuestion: argsResult.secondsPerQuestion,
       questionPosition: [1, argsResult.quizSize],
     };
 
@@ -113,15 +107,8 @@ export default {
 
     activeQuiz.questionTimeout = setTimeout(
       () => self.nextQuestion(msg.channel),
-      activeQuiz.timePerQuestion,
+      activeQuiz.secondsPerQuestion,
     );
     this.quizzes.set(roomId, activeQuiz);
   },
 };
-
-function newQuiz(deckQuery, quizSize) {
-  return Card.aggregate([
-    { $match: deckQuery },
-    { $sample: { size: quizSize } },
-  ]);
-}

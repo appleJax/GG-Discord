@@ -44,6 +44,7 @@ module.exports = {
   resolve: {
     alias: {
       Anki: `${__dirname}/src/anki`,
+      Bot: `${__dirname}/src/bot`,
       Config: `${__dirname}/src/config`,
       DB: `${__dirname}/src/db`,
       Models: `${__dirname}/src/db/models`,

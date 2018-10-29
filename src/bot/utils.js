@@ -1,4 +1,8 @@
 import Discord from 'discord.js';
+import Models from 'Models';
+import { tryCatch } from 'Utils';
+
+const { Card } = Models;
 
 export const PACE_DELAY = 12000;
 export const PREFIX = 'gg!';
@@ -19,7 +23,7 @@ export const DECKS = {
   [TEST_ROOM]: 'DBJG',
 };
 
-export function askNextQuestion(client, channel) {
+export async function askNextQuestion(client, channel) {
   const activeQuiz = client.quizzes.get(channel.id);
 
   activeQuiz.currentQuestion = activeQuiz.questions.pop();
@@ -48,9 +52,22 @@ export function askNextQuestion(client, channel) {
 
     activeQuiz.questionTimeout = setTimeout(
       () => client.nextQuestion(channel),
-      activeQuiz.timePerQuestion,
+      activeQuiz.secondsPerQuestion,
     );
   }, PACE_DELAY);
+
+  if (activeQuiz.survivalMode) {
+    if (activeQuiz.questions.length < 5) {
+      const deckQuery = {
+        deck: DECKS[channel.id],
+      };
+
+      const newCards = await tryCatch(
+        fetchCards(deckQuery, 10),
+      );
+      activeQuiz.questions = activeQuiz.questions.concat(newCards);
+    }
+  }
 }
 
 export function commandNotFound(command) {
@@ -59,15 +76,22 @@ export function commandNotFound(command) {
   return notFound;
 }
 
-export function endQuiz(channel) {
+export function endQuiz(channel, command = 'start') {
   const quizHasEnded = new Discord.RichEmbed()
     .setColor(Colors.BLUE)
-    .setDescription(`That's it, thanks for playing! Type \`${PREFIX}start\` to play again.`);
+    .setDescription(`That's it, thanks for playing! Type \`${PREFIX}${command}\` to play again.`);
 
   setTimeout(
     () => channel.send(quizHasEnded),
     2000,
   );
+}
+
+export function fetchCards(deckQuery, quizSize) {
+  return Card.aggregate([
+    { $match: deckQuery },
+    { $sample: { size: quizSize } },
+  ]);
 }
 
 export function parseInput(msg) {

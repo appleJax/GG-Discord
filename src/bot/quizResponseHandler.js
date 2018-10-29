@@ -30,9 +30,9 @@ export default (client) => {
       });
     }
 
-    if (questions.length === 0) {
+    if (activeQuiz.survivalMode || questions.length === 0) {
       client.quizzes.set(roomId, null);
-      endQuiz(channel);
+      endQuiz(channel, activeQuiz.survivalMode);
       return;
     }
 

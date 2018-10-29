@@ -55,6 +55,7 @@
   "jest": {
     "moduleNameMapper": {
       "^Anki(.*)$": "<rootDir>/src/anki$1",
+      "^Bot(.*)$": "<rootDir>/src/bot$1",
       "^Config(.*)$": "<rootDir>/src/config$1",
       "^DB(.*)$": "<rootDir>/src/db$1",
       "^Models(.*)$": "<rootDir>/src/db/models$1",
