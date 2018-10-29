@@ -24,7 +24,7 @@ export default {
 
     /* eslint-disable-next-line */
     const questions = await tryCatch(
-      fetchCards(deckQuery, 10),
+      fetchCards(deckQuery, 200),
     );
 
     if (!questions || questions.length === 0) {

@@ -74,7 +74,7 @@ export async function askNextQuestion(client, channel) {
       };
 
       const newCards = await tryCatch(
-        fetchCards(deckQuery, 10),
+        fetchCards(deckQuery, 200),
       );
       activeQuiz.questions = activeQuiz.questions.concat(newCards);
     }
