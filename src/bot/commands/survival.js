@@ -1,7 +1,7 @@
 import Discord from 'discord.js';
 import { tryCatch } from 'Utils';
 import {
-  Colors, DECKS, fetchCards, sendImage,
+  Colors, DECKS, fetchCards, fetchHighScore, sendImage,
 } from '../utils';
 
 const TIME_PER_QUESTION = 60;
@@ -16,6 +16,10 @@ export default {
     const deckQuery = {
       deck: DECKS[roomId],
     };
+
+    const highScore = await tryCatch(
+      fetchHighScore(roomId),
+    );
 
     /* eslint-disable-next-line */
     const questions = await tryCatch(
@@ -37,8 +41,9 @@ export default {
       currentQuestion,
       questions,
       secondsPerQuestion: TIME_PER_QUESTION * 1000,
-      questionPosition: [1, '???'],
-      survivalMode: 'survival',
+      questionPosition: [1, '??'],
+      highScore,
+      survivalMode: true,
     };
 
     const startMsg = new Discord.RichEmbed()

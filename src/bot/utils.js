@@ -2,7 +2,7 @@ import Discord from 'discord.js';
 import Models from 'Models';
 import { tryCatch } from 'Utils';
 
-const { Card } = Models;
+const { Card, Room } = Models;
 
 export const PACE_DELAY = 12000;
 export const PREFIX = 'gg!';
@@ -12,6 +12,7 @@ export const Colors = {
   BLUE: '#1DA1F2',
   GOLD: '#F9A602',
   GREEN: '#008140',
+  PURPLE: '#6A33EA',
   RED: '#CA0401',
 };
 
@@ -76,13 +77,33 @@ export function commandNotFound(command) {
   return notFound;
 }
 
-export function endQuiz(channel, command = 'start') {
-  const quizHasEnded = new Discord.RichEmbed()
-    .setColor(Colors.BLUE)
-    .setDescription(`That's it, thanks for playing! Type \`${PREFIX}${command}\` to play again.`);
+export function endQuiz(channel, activeQuiz) {
+  const { highScore, survivalMode } = activeQuiz;
+  const currentScore = activeQuiz.questionPosition[0] - 1;
+  const endMsg = new Discord.RichEmbed();
+
+  if (survivalMode && currentScore > highScore) {
+    endMsg
+      .setColor(Colors.PURPLE)
+      .setDescription(`🏆 Congratulations, you set a new record for this quiz with ${currentScore} correct answers in a row, beating the previous record of ${highScore}!`);
+
+    setHighScore(channel.id, currentScore);
+  } else if (survivalMode && currentScore === highScore) {
+    endMsg
+      .setColor(Colors.GREEN)
+      .setDescription(`Congratulations, you tied the current record of ${currentScore} correct answers in a row!`);
+  } else if (survivalMode) {
+    endMsg
+      .setColor(Colors.BLUE)
+      .setDescription(`That's it, thanks for playing! Type \`${PREFIX}survival\` to play again.`);
+  } else {
+    endMsg
+      .setColor(Colors.BLUE)
+      .setDescription(`That's it, thanks for playing! Type \`${PREFIX}start\` to play again.`);
+  }
 
   setTimeout(
-    () => channel.send(quizHasEnded),
+    () => channel.send(endMsg),
     2000,
   );
 }
@@ -92,6 +113,12 @@ export function fetchCards(deckQuery, quizSize) {
     { $match: deckQuery },
     { $sample: { size: quizSize } },
   ]);
+}
+
+export function fetchHighScore(roomId) {
+  return Room
+    .findOne({ roomId })
+    .then(room => room.highScore);
 }
 
 export function parseInput(msg) {
@@ -111,4 +138,13 @@ export function sendImage(channel, image) {
 
 export function shouldIgnore(msg) {
   return !msg.content.toLowerCase().startsWith(PREFIX) || msg.author.bot;
+}
+
+// private
+
+function setHighScore(roomId, highScore) {
+  Room.updateOne(
+    { roomId },
+    { $set: { highScore } },
+  ).catch(console.error);
 }

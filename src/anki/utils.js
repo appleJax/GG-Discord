@@ -14,7 +14,7 @@ export function formatQuestionText(engMeaning, expression) {
   const japaneseWithHint = expression.replace(/{{.+?}}/, hint);
 
   const [min, max] = minMaxChars(hint);
-  let minMax = min === max ? min : `${min}-${max}`;
+  let minMax = min === max ? min : `${min} or ${max}`;
   let s = 's';
 
   if (minMax === 1) {

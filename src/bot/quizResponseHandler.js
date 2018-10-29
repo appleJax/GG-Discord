@@ -32,7 +32,7 @@ export default (client) => {
 
     if (activeQuiz.survivalMode || questions.length === 0) {
       client.quizzes.set(roomId, null);
-      endQuiz(channel, activeQuiz.survivalMode);
+      endQuiz(channel, activeQuiz);
       return;
     }
 
