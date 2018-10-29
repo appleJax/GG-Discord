@@ -6,11 +6,20 @@ import {
 } from '../utils';
 
 const { Card } = Models;
-const QUIZ_SIZE = 10;
-const TIME_PER_QUESTION = 60000;
+const QUIZ_SIZE = {
+  default: 10,
+  min: 1,
+  max: 30,
+};
+
+const TIME_PER_QUESTION = {
+  default: 60,
+  min: 10,
+  max: 180,
+};
 
 const usage = '[quizSize] - number of questions (defaults to 10, max is 30)'
-  + '\n[timePerQuestion] timeout for each question (in seconds - defaults to 70, max is 180)';
+  + '\n[timePerQuestion] timeout for each question (in seconds - defaults to 60, max is 180)';
 
 function validateArgs([size, time]) {
   let quizSize = size;
@@ -18,28 +27,28 @@ function validateArgs([size, time]) {
   let error;
 
   if (timePerQuestion == null) {
-    timePerQuestion = TIME_PER_QUESTION;
+    timePerQuestion = TIME_PER_QUESTION.default;
   } else {
     timePerQuestion = Math.round(Number(timePerQuestion));
 
     if (Number.isNaN(timePerQuestion) || timePerQuestion < 10 || timePerQuestion > 180) {
-      error = `("${time}"). \`timePerQuestion\` must be between 10 and 180.`;
+      error = `("${time}"). \`timePerQuestion\` must be between ${TIME_PER_QUESTION.min} and ${TIME_PER_QUESTION.max}.`;
     }
   }
 
   if (quizSize == null) {
-    quizSize = QUIZ_SIZE;
+    quizSize = QUIZ_SIZE.default;
   } else {
     quizSize = Math.round(Number(quizSize));
 
     if (Number.isNaN(quizSize) || quizSize < 1 || quizSize > 30) {
-      error = `("${size}"). \`quizSize\` must be between 1 and 30.`;
+      error = `("${size}"). \`quizSize\` must be between ${QUIZ_SIZE.min} and ${QUIZ_SIZE.max}.`;
     }
   }
 
   return {
     quizSize,
-    timePerQuestion,
+    timePerQuestion: timePerQuestion * 1000,
     error,
   };
 }
