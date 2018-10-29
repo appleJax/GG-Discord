@@ -2,7 +2,7 @@ import Discord from 'discord.js';
 
 export const PACE_DELAY = 12000;
 export const PREFIX = 'gg!';
-export const TIME_PER_QUESTION = 60000;
+export const TEST_ROOM = '441091794654986244';
 
 export const Colors = {
   BLUE: '#1DA1F2',
@@ -16,6 +16,7 @@ export const DECKS = {
   '505262797572276254': 'DBJG',
   '448017333907095562': 'DIJG',
   someId: 'iKnow Core 2000',
+  [TEST_ROOM]: 'DBJG',
 };
 
 export function askNextQuestion(client, channel) {

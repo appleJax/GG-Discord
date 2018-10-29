@@ -5,7 +5,7 @@ export default {
   name: 'help',
   aliases: ['h'],
   description: 'List all of my commands or info about a specific command',
-  usage: '[command name]',
+  usage: '[commandName]',
   execute(msg, args) {
     const helpMessage = new Discord.RichEmbed()
       .setColor(Colors.BLUE)
@@ -14,7 +14,7 @@ export default {
     if (!args.length) {
       let commandList = '';
       msg.client.commands.forEach((command) => {
-        commandList += `\`${PREFIX}${command.name} ${command.usage}\`\n`;
+        commandList += `\`${PREFIX}${command.name} ${command.usageShort || command.usage}\`\n`;
       });
 
       /* eslint-disable-next-line */
@@ -35,7 +35,7 @@ export default {
       let description = `**Command:** \`${targetCommand}\`\n`;
       if (command.aliases) description += `**Aliases:** \`${command.aliases.join('`, `')}\`\n`;
       if (command.description) description += `**Description:** ${command.description}\n`;
-      if (command.usage) description += `**Usage:** \`${PREFIX}${targetCommand} ${command.usage}\``;
+      if (command.usage) description += `**Usage:** \`${PREFIX}${targetCommand} ${command.usageShort ? `${command.usageShort}\n` : ''}${command.usage}\``;
 
       helpMessage.setDescription(description);
     }
