@@ -7,7 +7,7 @@ import {
 
 const { Card } = Models;
 const QUIZ_SIZE = 10;
-const TIME_PER_QUESTION = 70000;
+const TIME_PER_QUESTION = 60000;
 
 const usage = '[quizSize] - number of questions (defaults to 10, max is 30)'
   + '\n[timePerQuestion] timeout for each question (in seconds - defaults to 70, max is 180)';
