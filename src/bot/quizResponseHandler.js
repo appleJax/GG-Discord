@@ -45,7 +45,7 @@ export default (client) => {
     const activeQuiz = client.quizzes.get(roomId);
     const { currentQuestion, questions } = activeQuiz;
 
-    if (response.startsWith(STOP_COMMAND)) {
+    if (!activeQuiz.survivalMode && response.startsWith(STOP_COMMAND)) {
       clearTimeout(activeQuiz.questionTimeout);
       client.quizzes.set(roomId, null);
 
