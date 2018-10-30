@@ -131,7 +131,7 @@ export function fetchCards(deckQuery, quizSize) {
 export function fetchHighScore(roomId) {
   return Room
     .findOne({ roomId })
-    .then(room => room.highScore);
+    .then(room => (room && room.highScore) || 0);
 }
 
 export function parseInput(msg) {
