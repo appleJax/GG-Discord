@@ -79,7 +79,7 @@ export default (client) => {
 
     if (questions.length === 0) {
       client.quizzes.set(roomId, null);
-      endQuiz(msg.channel);
+      endQuiz(msg.channel, activeQuiz);
       return;
     }
 

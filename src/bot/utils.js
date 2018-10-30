@@ -87,7 +87,7 @@ export function commandNotFound(command) {
   return notFound;
 }
 
-export function endQuiz(channel, activeQuiz) {
+export function endQuiz(channel, activeQuiz = {}) {
   const { highScore, survivalMode } = activeQuiz;
   const currentScore = activeQuiz.questionPosition[0] - 1;
   const endMsg = new Discord.RichEmbed();
