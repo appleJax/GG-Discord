@@ -20,7 +20,7 @@ export const DECKS = {
   '504554082984525854': 'TwitterBot',
   '505262797572276254': 'DBJG',
   '448017333907095562': 'DIJG',
-  someId: 'iKnow Core 2000',
+  '507815046886457344': 'iKnow Core 2000',
   [TEST_ROOM]: 'DBJG',
 };
 
@@ -92,27 +92,27 @@ export function endQuiz(channel, activeQuiz = {}) {
   const currentScore = activeQuiz.questionPosition[0] - 1;
   const endMsg = new Discord.RichEmbed();
 
-  const playAgain = command => `Type \`${PREFIX}${command}\` to play again.`;
+  const playAgain = command => `\n\nType \`${PREFIX}${command}\` to play again.`;
   const s = currentScore === 1 ? '' : 's';
 
   if (survivalMode && currentScore > highScore) {
     endMsg
       .setColor(Colors.PURPLE)
-      .setDescription(`🏆 Congratulations, you set a new record for this quiz with ${currentScore} correct answer${s} in a row, beating the previous record of ${highScore}!\n${playAgain('survival')}`);
+      .setDescription(`🏆 Congratulations, you set a new record for this quiz with ${currentScore} correct answer${s} in a row, beating the previous record of ${highScore}!${playAgain('survival')}`);
 
     setHighScore(channel.id, currentScore);
   } else if (survivalMode && currentScore === highScore) {
     endMsg
       .setColor(Colors.GREEN)
-      .setDescription(`Congratulations, you tied the current record of ${currentScore} correct answer${s} in a row!\n${playAgain('survival')}`);
+      .setDescription(`Congratulations, you tied the current record of ${currentScore} correct answer${s} in a row!${playAgain('survival')}`);
   } else if (survivalMode) {
     endMsg
       .setColor(Colors.BLUE)
-      .setDescription(`Thanks for playing, you correctly answered ${currentScore} question${s} in a row! Current record: ${highScore}\n${playAgain('survival')}`);
+      .setDescription(`Thanks for playing, you correctly answered ${currentScore} question${s} in a row! Current record: ${highScore}${playAgain('survival')}`);
   } else {
     endMsg
       .setColor(Colors.BLUE)
-      .setDescription(`That's it, thanks for playing! ${playAgain('start')}`);
+      .setDescription(`That's it, thanks for playing!${playAgain('start')}`);
   }
 
   setTimeout(
