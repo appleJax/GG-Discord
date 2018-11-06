@@ -1,22 +1,24 @@
 /* eslint-disable */
-
 import fs from 'fs';
 import path from 'path';
 import unzip from 'unzip-stream';
 import { tryCatch } from 'Utils';
+import { UPLOADS_PATH } from 'Anki/utils';
 import parseDJG from './D_JG';
 import parseIKnowCore from './iKnowCore';
 
-const UPLOADS_PATH = path.resolve(__dirname, '../../../uploads');
-
 export function processUpload(zipfilePath) {
-  return tryCatch(new Promise(async (resolve, reject) => {
+  return tryCatch(new Promise((resolve, reject) => {
     const stream = fs.createReadStream(zipfilePath)
-      .pipe(unzip.Extract({ path: 'uploads' }));
+      .pipe(unzip.Extract({ path: path.resolve(__dirname, 'uploads') }));
 
     stream.on('close', async () => {
       const files = fs.readdirSync(UPLOADS_PATH);
-      const newCards = extractCardInfo(files);
+      console.log('Extracting Card Info...');
+      const newCards = await tryCatch(
+        extractCardInfo(files)
+      );
+      console.log('Cards processed:', newCards.length);
 
       cleanUp(files);
       resolve(newCards);
@@ -24,24 +26,37 @@ export function processUpload(zipfilePath) {
   }));
 }
 
-export function parseAnkiJson(filePath) {
+export async function parseAnkiJson(filePath) {
   const contents = JSON.parse(fs.readFileSync(filePath, 'utf8'));
 
-  return (contents.notes.length > 0)
-    ? parseDJG(contents)
-    : parseIKnowCore(contents);
+  let cards;
+  if (contents.notes.length > 0) {
+    console.log('Parsing DJG...');
+    cards = parseDJG(contents);
+  } else {
+    console.log('Parsing I Know Core...');
+    cards = await tryCatch(
+      parseIKnowCore(contents)
+    );
+  }
+  console.log('Done parsing...');
+
+  return cards;
 }
 
 // private functions
 
-function extractCardInfo(files) {
+async function extractCardInfo(files) {
   let allNewCards = [];
   for (const file of files) {
     const currentFile = `${UPLOADS_PATH}/${file}`;
     const stats = fs.statSync(currentFile);
 
     if (stats.isFile() && file.match(/.+\.json$/)) {
-      const newCards = parseAnkiJson(currentFile);
+      console.log('Parsing anki JSON...');
+      const newCards = await tryCatch(
+        parseAnkiJson(currentFile)
+      );
       allNewCards = allNewCards.concat(newCards);
     }
   }

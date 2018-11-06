@@ -6,7 +6,7 @@ import { parseAnkiJson } from 'Anki/processing';
 describe('iKnowCore2000 decks', () => {
   test('it should format cards correctly', () => {
     const file = path.resolve(__dirname, 'json', 'iKnowCore2000.json');
-    const cards = parseAnkiJson(file);
+    // const cards = parseAnkiJson(file); // THIS WILL UPLOAD TO CLOUDINARY DON'T DO IT!!!
     const firstCard = cards[0];
 
     let questionText1 = 'Fill in the missing 4-5 characters to make the sentence roughly mean:';

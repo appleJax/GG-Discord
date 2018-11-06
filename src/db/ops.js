@@ -1,17 +1,16 @@
 import { processUpload } from 'Anki/processing';
 import { tryCatch } from 'Utils';
-import Models from 'Models';
-
-const { Card } = Models;
+import Card from 'Models/Card';
 
 export default ({
   async addDeck(req, res) {
     const filePath = req.file.path;
+    console.log('Starting to process...');
     const newCards = await tryCatch(processUpload(filePath));
+    console.log('Finished processing');
 
     const ops = [];
-    for (let i = 0; i < newCards.length; ++i) {
-      const newCard = newCards[i];
+    for (const newCard of newCards) {
       const { cardId } = newCard;
       ops.push({
         replaceOne: {

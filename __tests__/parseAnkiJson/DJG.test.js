@@ -4,9 +4,9 @@ import path from 'path';
 import { parseAnkiJson } from 'Anki/processing';
 
 describe('it should produce the correct cards for the DB*G decks', () => {
-  test('single cloze', () => {
+  test('single cloze', async () => {
     const file = path.resolve(__dirname, 'json', 'DJG_singleCloze.json');
-    const cards = parseAnkiJson(file);
+    // const cards = await parseAnkiJson(file);
     const firstCard = cards[0];
 
     let questionText = 'Fill in the missing 5 characters to make the sentence roughly mean:';

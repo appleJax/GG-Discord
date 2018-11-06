@@ -1,3 +1,7 @@
+import path from 'path';
+
+export const UPLOADS_PATH = path.resolve(__dirname, 'uploads');
+
 export function formatAnswerText(engMeaning, expression, answers, ref) {
   const s = answers.length > 1 ? 's' : '';
 
