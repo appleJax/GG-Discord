@@ -9,6 +9,14 @@ const schema = new Schema({
   cardId: String,
   deck: String,
   game: String,
+  mainImageSlice: t([Number], []),
+  mediaUrls: t(
+    [{
+      _id: false,
+      altText: String,
+      image: String
+    }], []
+  ),
   questionText: String,
 });
 

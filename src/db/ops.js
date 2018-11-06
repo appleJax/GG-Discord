@@ -5,9 +5,7 @@ import Card from 'Models/Card';
 export default ({
   async addDeck(req, res) {
     const filePath = req.file.path;
-    console.log('Starting to process...');
     const newCards = await tryCatch(processUpload(filePath));
-    console.log('Finished processing');
 
     const ops = [];
     for (const newCard of newCards) {

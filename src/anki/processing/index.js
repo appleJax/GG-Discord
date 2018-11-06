@@ -14,11 +14,9 @@ export function processUpload(zipfilePath) {
 
     stream.on('close', async () => {
       const files = fs.readdirSync(UPLOADS_PATH);
-      console.log('Extracting Card Info...');
       const newCards = await tryCatch(
         extractCardInfo(files)
       );
-      console.log('Cards processed:', newCards.length);
 
       cleanUp(files);
       resolve(newCards);
@@ -31,15 +29,12 @@ export async function parseAnkiJson(filePath) {
 
   let cards;
   if (contents.notes.length > 0) {
-    console.log('Parsing DJG...');
     cards = parseDJG(contents);
   } else {
-    console.log('Parsing I Know Core...');
     cards = await tryCatch(
       parseIKnowCore(contents)
     );
   }
-  console.log('Done parsing...');
 
   return cards;
 }
@@ -53,7 +48,6 @@ async function extractCardInfo(files) {
     const stats = fs.statSync(currentFile);
 
     if (stats.isFile() && file.match(/.+\.json$/)) {
-      console.log('Parsing anki JSON...');
       const newCards = await tryCatch(
         parseAnkiJson(currentFile)
       );

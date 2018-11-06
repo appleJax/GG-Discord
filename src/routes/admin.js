@@ -55,21 +55,23 @@ export default (app) => {
 
   app.post('/deck/new',
     ensureAdmin,
-    upload.single('zipfile'), (req, res) => DB.addDeck(req)
-      .then(() => {
-        req.session.flash = {
-          type: 'success',
-          message: 'Deck uploaded successfully.',
-        };
-        res.redirect('/admin');
-      })
-      .catch((err) => {
-        req.session.flash = {
-          type: 'error',
-          message: err.message || 'Something went wrong. Please try again.',
-        };
-        res.redirect('/admin');
-      }));
+    upload.single('zipfile'),
+    (req, res) => {DB.addDeck(req); res.status(200).send('Ok');})
+    // (req, res) => DB.addDeck(req)
+    //   .then(() => {
+    //     req.session.flash = {
+    //       type: 'success',
+    //       message: 'Deck uploaded successfully.',
+    //     };
+    //     res.redirect('/admin');
+    //   })
+    //   .catch((err) => {
+    //     req.session.flash = {
+    //       type: 'error',
+    //       message: err.message || 'Something went wrong. Please try again.',
+    //     };
+    //     res.redirect('/admin');
+    // }));
 };
 
 function redirectAdmin(req, res, next) {

@@ -13,7 +13,6 @@ function uploadImage(imagePath, options = {}) {
         console.error(err);
         reject(err);
       }
-      console.log('IMAGE URL:', result.secure_url);
       resolve(result.secure_url);
     });
   });

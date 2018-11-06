@@ -41,7 +41,6 @@ async function parseIKnowCore(contents) {
       let cloudinaryUrl;
 
       if (image) {
-        console.log('theres an image');
         const oldCard = await tryCatch(
           Card.findOne({ cardId })
         );
@@ -75,7 +74,6 @@ async function parseIKnowCore(contents) {
       });
     }
   }
-  console.log('Finished parsing iKnowCore 2000');
 
   return newCards;
 }
