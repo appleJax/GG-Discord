@@ -22,7 +22,7 @@ function parseIKnowCore(contents) {
         engMeaning,
         altAnswers,
         , // audio,
-        , // image
+        image,
       ] = card.fields;
 
       [ engMeaning,
@@ -34,7 +34,17 @@ function parseIKnowCore(contents) {
 
       const answers = getAnswers(expression, altAnswers);
 
+      let imageProps = {};
+      if (image) {
+        // await upload image to cloudinary
+        imageProps.mainImageSlice = [ 0, 1 ];
+        imageProps.mediaUrls = [
+          { image: cloudinaryUrl }
+        ];
+      }
+
       newCards.push({
+        ...imageProps,
         cardId,
         deck,
         answers,
