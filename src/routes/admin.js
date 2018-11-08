@@ -10,6 +10,7 @@ let ensureAdmin = authorization
   .redirectTo('/login')
   .isPermitted('admin');
 
+// bypass login
 if (process.env.NODE_ENV === 'development') {
   ensureAdmin = (req, res, next) => next();
 }
