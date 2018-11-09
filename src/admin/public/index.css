@@ -28,7 +28,8 @@ nav {
 }
 
 .banner {
-  color: rgba(0, 0, 0, 0.6);
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: bold;
   padding: 15px 0;
   text-align: center;
   text-shadow: 2px 2px 10px rgba(0,0,0,0.1);
@@ -36,11 +37,15 @@ nav {
 }
 
 .banner--error {
-  background:#e00;
+  background: darkred;
 }
 
 .banner--success {
-  background:#4c3;
+  background: green;
+}
+
+.banner--warning {
+  background: darkgoldenrod;
 }
 
 .btn {

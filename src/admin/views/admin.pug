@@ -12,7 +12,8 @@ block content
     id='new-deck-form'
   )
     label(class='form__label' for='zipfile') Upload Anki Deck</br>(must be exported as json and zipped):
-    input(class='btn btn--input' name='zipfile' type='file')
+    input(id='file-input' class='btn btn--input' name='zipfile' type='file')
     button(id='new-deck-submit' class='btn btn--submit new-deck-submit' type='submit') Add Deck
 
+  script(src='https://unpkg.com/axios/dist/axios.min.js')
   script(src='/admin.js')
