@@ -52,6 +52,12 @@ export function getAnswers(expression, altAnswers, i) {
   return [officialAnswer].concat(otherAnswers).filter(Boolean);
 }
 
+function getImageNames(string) {
+  return (string.match(/src="(.+?)"/g) || [])
+    .map(str => str.slice(5, -1))
+    .map(fileName => `${UPLOADS_PATH}/media/${fileName}`);
+}
+
 export function getClozes(expression) {
   return expression.match(/{{.+?}}/g).map((cloze, i, allClozes) => {
     const clozesToReplace = allClozes.slice(0, i).concat(allClozes.slice(i + 1));

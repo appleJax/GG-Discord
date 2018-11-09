@@ -1,4 +1,5 @@
 /* eslint-disable */
+
 import fs from 'fs';
 import path from 'path';
 import unzip from 'unzip-stream';
@@ -6,6 +7,7 @@ import { tryCatch } from 'Utils';
 import { UPLOADS_PATH } from 'Anki/utils';
 import parseDJG from './D_JG';
 import parseIKnowCore from './iKnowCore';
+import parseVideoGames from './videoGames';
 
 export function processUpload(zipfilePath) {
   return tryCatch(new Promise((resolve, reject) => {

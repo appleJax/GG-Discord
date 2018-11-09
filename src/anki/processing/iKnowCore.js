@@ -1,12 +1,13 @@
 /* eslint-disable */
+
 import uploadImage from 'Config/cloudinary';
 import Card from 'Models/Card';
 import { tryCatch } from 'Utils';
 import {
-  UPLOADS_PATH,
   formatQuestionText,
   formatAnswerText,
   getAnswers,
+  getImageNames,
   stripHtml,
 } from 'Anki/utils';
 
@@ -54,8 +55,10 @@ async function parseIKnowCore(contents) {
             use_filename: true,
             unique_filename: false,
           };
+
+          const cardImg = getImageNames(image)[0];
           cloudinaryUrl = await tryCatch(
-            uploadImage(getImage(image), options)
+            uploadImage(cardImg, options)
           );
           imageProps.mainImageSlice = [ 0, 1 ];
           imageProps.mediaUrls = [
@@ -79,10 +82,3 @@ async function parseIKnowCore(contents) {
 }
 
 export default parseIKnowCore;
-
-// private
-
-function getImage(string) {
-  const imageName = string.match(/src="(.+?)"/)[1];
-  return `${UPLOADS_PATH}/media/${imageName}`;
-}
