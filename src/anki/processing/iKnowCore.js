@@ -44,7 +44,7 @@ async function parseIKnowCore(contents) {
         const oldCard = await tryCatch(
           Card.findOne({ cardId })
         );
-        const hasImage = oldCard && card.mediaUrls;
+        const hasImage = oldCard && oldCard.mediaUrls;
         if (hasImage) {
           imageProps.mainImageSlice = oldCard.mainImageSlice;
           imageProps.mediaUrls = oldCard.mediaUrls;
