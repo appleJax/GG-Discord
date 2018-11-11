@@ -69,7 +69,7 @@ export function getClozes(expression) {
 }
 
 export function splitSpeakers(phrase) {
-  return phrase.replace('B:', '\nB:');
+  return phrase.replace(/(.)([AB]:)/g, '$1\n$2');
 }
 
 export function stripHtml(string) {
