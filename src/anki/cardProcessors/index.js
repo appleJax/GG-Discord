@@ -5,9 +5,10 @@ import path from 'path';
 import unzip from 'unzip-stream';
 import { tryCatch } from 'Utils';
 import { UPLOADS_PATH } from 'Anki/utils';
-import parseDJG from './D_JG';
-import parseIKnowCore from './iKnowCore';
-import parseVideoGames from './videoGames';
+import ImageStorage from 'Config/cloudinary';
+import processDJG from './D_JG';
+import processIKnowCore from './iKnowCore';
+import processVideoGames from './videoGames';
 
 export function processUpload(zipfilePath) {
   return tryCatch(new Promise((resolve, reject) => {
@@ -26,15 +27,15 @@ export function processUpload(zipfilePath) {
   }));
 }
 
-export async function parseAnkiJson(filePath) {
+export async function processAnkiJson(filePath) {
   const contents = JSON.parse(fs.readFileSync(filePath, 'utf8'));
 
   let cards;
   if (contents.notes.length > 0) {
-    cards = parseDJG(contents);
+    cards = processDJG(contents, ImageStorage);
   } else {
     cards = await tryCatch(
-      parseIKnowCore(contents)
+      processIKnowCore(contents, ImageStorage)
     );
   }
 
@@ -51,7 +52,7 @@ async function extractCardInfo(files) {
 
     if (stats.isFile() && file.match(/.+\.json$/)) {
       const newCards = await tryCatch(
-        parseAnkiJson(currentFile)
+        processAnkiJson(currentFile)
       );
       allNewCards = allNewCards.concat(newCards);
     }

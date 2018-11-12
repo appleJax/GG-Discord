@@ -6,16 +6,18 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-function uploadImage(imagePath, options = {}) {
-  return new Promise((resolve, reject) => {
-    cloudinary.v2.uploader.upload(imagePath, options, (err, result) => {
-      if (err) {
-        console.error(err);
-        reject(err);
-      }
-      resolve(result.secure_url);
+const ImageStorage = {
+  upload(imagePath, options = {}) {
+    return new Promise((resolve, reject) => {
+      cloudinary.v2.uploader.upload(imagePath, options, (err, result) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+        }
+        resolve(result.secure_url);
+      });
     });
-  });
-}
+  }
+};
 
-export default uploadImage;
+export default ImageStorage;

@@ -1,18 +1,17 @@
 /* eslint-disable */
 
 import urlencode from 'urlencode';
-import uploadImage from 'Config/cloudinary';
+import persistImages from './persistImages';
 import Card from 'Models/Card';
 import { tryCatch } from 'Utils';
 import {
   formatHint,
   getAnswers,
-  getImageNames,
   minMaxChars,
   stripHtml,
 } from 'Anki/utils';
 
-async function parseVideoGames(contents) {
+async function processVideoGames(contents, ImageStorage) {
   const deck = contents.name;
   const newCards = [];
 
@@ -24,7 +23,7 @@ async function parseVideoGames(contents) {
         cardId,
         expression,
         , // reading,
-        jpMeaning,
+        , // jpMeaning,
         engMeaning,
         , // officialEng,
         questionImages,
@@ -66,70 +65,13 @@ async function parseVideoGames(contents) {
         imageProps.mainImageSlice = oldCard.mainImageSlice;
         imageProps.mediaUrls = oldCard.mediaUrls;
       } else {
-        prevLineImages = getImageNames(prevLineImages);
-        questionImages = getImageNames(questionImages);
-        answerImages = getImageNames(answerImages);
-
-        const lowerSliceIndex = prevLineImages.length;
-        const upperSliceIndex = lowerSliceIndex + questionImages.length;
-        const mainImageSlice = [ lowerSliceIndex, upperSliceIndex ];
-
-        imageProps.mainImageSlice = mainImageSlice;
-        const mediaUrls = [];
-
-        const options = {
-          folder: deck,
-          use_filename: true,
-          unique_filename: false,
+        const imageInfo = {
+          prevLineImages,
+          questionImages,
+          answerImages,
+          expression
         };
-
-        questionAltText = formatQuestionAltText(expression);
-        answerAltText = formatAnswerAltText(expression);
-
-        let altText
-        for (const img of prevLineImages) {
-          cloudinaryUrl = await tryCatch(
-            uploadImage(img, options)
-          );
-
-          altText = mediaUrls.length ? '' : prevLineAltText;
-          mediaUrls.push({
-            altText,
-            image: cloudinaryUrl
-          });
-        }
-
-        for (const img of questionImages) {
-          cloudinaryUrl = await tryCatch(
-            uploadImage(img, options)
-          );
-
-          altText = (mediaUrls.length > prevLineImages.length)
-            ? ''
-            : questionAltText;
-
-          mediaUrls.push({
-            altText,
-            image: cloudinaryUrl
-          });
-        }
-
-        for (const img of answerImages) {
-          cloudinaryUrl = await tryCatch(
-            uploadImage(img, options)
-          );
-
-          altText = (mediaUrls.length > upperSliceIndex)
-            ? ''
-            : answerAltText;
-
-          mediaUrls.push({
-            altText,
-            image: cloudinaryUrl
-          });
-        }
-
-        imageProps.mediaUrls = mediaUrls;
+        imageProps = persistImages(ImageStorage, imageInfo);
       }
 
       newCards.push({
@@ -147,13 +89,9 @@ async function parseVideoGames(contents) {
   return newCards;
 }
 
-export default parseVideoGames;
+export default processVideoGames;
 
 // private
-
-function formatAnswerAltText(expression) {
-  return expression.replace(/\{\{.*?::(.+?)::.*?\}\}/g, '$1');
-}
 
 function formatAnswerText(answers, engMeaning, webLookup) {
   let answerText = `答え: ${answers.join(', ')}`;
@@ -164,15 +102,6 @@ function formatAnswerText(answers, engMeaning, webLookup) {
   }
 
   return answerText;
-}
-
-function formatQuestionAltText(expression) {
-  const hint = formatHint(expression);
-  const [min, max] = minMaxChars(hint);
-  const minMax = min === max ? min : `${min} to ${max}`;
-  const s = max > 1 ? 's' : '';
-  const screenReaderHint = `(${minMax} character${s})`;
-  return expression.replace(/\{\{.+?\}\}/g, screenReaderHint);
 }
 
 function formatQuestionText(

@@ -11,7 +11,7 @@ import {
   stripHtml,
 } from 'Anki/utils';
 
-async function parseIKnowCore(contents) {
+async function processIKnowCore(contents) {
   const deck = contents.name;
   const newCards = [];
 
@@ -81,4 +81,4 @@ async function parseIKnowCore(contents) {
   return newCards;
 }
 
-export default parseIKnowCore;
+export default processIKnowCore;

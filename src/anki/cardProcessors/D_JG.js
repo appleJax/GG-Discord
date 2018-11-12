@@ -9,7 +9,7 @@ import {
   stripHtml,
 } from 'Anki/utils';
 
-function parseDJG(contents) {
+function processDJG(contents) {
   const deck = contents.name;
   const newCards = [];
 
@@ -67,4 +67,4 @@ function parseDJG(contents) {
   return newCards;
 }
 
-export default parseDJG;
+export default processDJG;
