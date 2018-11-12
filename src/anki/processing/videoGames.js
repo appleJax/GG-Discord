@@ -1,11 +1,10 @@
 /* eslint-disable */
 
+import urlencode from 'urlencode';
 import uploadImage from 'Config/cloudinary';
 import Card from 'Models/Card';
 import { tryCatch } from 'Utils';
 import {
-  formatQuestionText,
-  formatAnswerText,
   getAnswers,
   getImageNames,
   stripHtml,
@@ -118,8 +117,8 @@ async function parseVideoGames(contents) {
         cardId,
         deck,
         game,
-        questionText:    formatQuestionText(engMeaning, expression, game, notes),
-        answerText:      formatAnswerText(answers, cardId, engMeaning, webLookup),
+        questionText: formatQuestionText(engMeaning, expression, game, notes),
+        answerText: formatAnswerText(answers, engMeaning, webLookup),
         answers,
       });
     }
@@ -129,3 +128,49 @@ async function parseVideoGames(contents) {
 }
 
 export default parseVideoGames;
+
+// private
+
+function formatAnswerAltText(expression) {
+  return expression.replace(/\{\{.*?::(.+?)::.*?\}\}/g, '$1');
+}
+
+function formatAnswerText(answers, engMeaning, webLookup) {
+  let answerText = `答え: ${answers.join(', ')}`;
+  answerText += `\n英語: "${engMeaning}"`;
+
+  if (webLookup) {
+    answerText += `\n辞典: https://ejje.weblio.jp/content/${urlencode(webLookup)}`;
+  }
+
+  return answerText;
+}
+
+function formatQuestionAltText(expression) {
+  const hint = formatHint(expression);
+  const [min, max] = minMaxChars(hint);
+  const minMax = min === max ? min : `${min} to ${max}`;
+  const s = max > 1 ? 's' : '';
+  const screenReaderHint = `(${minMax} character${s})`;
+  return expression.replace(/\{\{.+?\}\}/g, screenReaderHint);
+}
+
+function formatQuestionText(
+  engMeaning,
+  expression,
+  game,
+  notes
+) {
+  const hint = formatHint(expression);
+  const [min, max] = minMaxChars(hint);
+  const minMax = min === max ? min : `${min}-${max}`;
+  let tweetText = `What ${minMax} character answer means "${engMeaning}"?`;
+
+  if (needsHint(hint)) tweetText += `\nHint: ${hint}`;
+
+  if (notes) tweetText += `\nNotes: ${notes}`;
+
+  tweetText += `\nGame: ${game.replace(/\s+JP$/, '')}`;
+
+  return tweetText;
+}

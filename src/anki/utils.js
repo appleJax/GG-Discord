@@ -52,7 +52,7 @@ export function getAnswers(expression, altAnswers, i) {
   return [officialAnswer].concat(otherAnswers).filter(Boolean);
 }
 
-function getImageNames(string) {
+export function getImageNames(string) {
   return (string.match(/src="(.+?)"/g) || [])
     .map(str => str.slice(5, -1))
     .map(fileName => `${UPLOADS_PATH}/media/${fileName}`);
