@@ -5,8 +5,10 @@ import uploadImage from 'Config/cloudinary';
 import Card from 'Models/Card';
 import { tryCatch } from 'Utils';
 import {
+  formatHint,
   getAnswers,
   getImageNames,
+  minMaxChars,
   stripHtml,
 } from 'Anki/utils';
 
@@ -90,7 +92,7 @@ async function parseVideoGames(contents) {
             uploadImage(img, options)
           );
 
-          altText = mediaUrls.length ? prevLineAltText : '';
+          altText = mediaUrls.length ? '' : prevLineAltText;
           mediaUrls.push({
             altText,
             image: cloudinaryUrl
@@ -98,19 +100,37 @@ async function parseVideoGames(contents) {
         }
 
         for (const img of questionImages) {
+          cloudinaryUrl = await tryCatch(
+            uploadImage(img, options)
+          );
 
+          altText = (mediaUrls.length > prevLineImages.length)
+            ? ''
+            : questionAltText;
+
+          mediaUrls.push({
+            altText,
+            image: cloudinaryUrl
+          });
+        }
+
+        for (const img of answerImages) {
+          cloudinaryUrl = await tryCatch(
+            uploadImage(img, options)
+          );
+
+          altText = (mediaUrls.length > upperSliceIndex)
+            ? ''
+            : answerAltText;
+
+          mediaUrls.push({
+            altText,
+            image: cloudinaryUrl
+          });
         }
 
         imageProps.mediaUrls = mediaUrls;
       }
-
-      game; // INCORPORATE INTO QUESTION/ANSWER TEXT
-      // ??? otherVisibleContext
-
-      // ADD TO mediaUrls
-      // ??? prevLineImages: upperSliceIndex < 5 ? prevLineImages : [],
-      // ADD TO mediaUrls
-
 
       newCards.push({
         ...imageProps,
