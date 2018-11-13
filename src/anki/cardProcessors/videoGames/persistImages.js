@@ -1,10 +1,11 @@
+import { tryCatch } from 'Utils';
 import {
   formatHint,
   getImageNames,
   minMaxChars,
 } from 'Anki/utils';
 
-export default function persistImages(ImageStorage, imageInfo) {
+export default async function persistImages(imageInfo, ImageStorage) {
   let {
     prevLineImages,
     questionImages,
@@ -25,62 +26,46 @@ export default function persistImages(ImageStorage, imageInfo) {
     mediaUrls: [],
   };
 
-  const options = {
-    folder: deck,
-    use_filename: true,
-    unique_filename: false,
-  };
-
   questionAltText = formatQuestionAltText(expression);
   answerAltText = formatAnswerAltText(expression);
 
-  let altText = '';
-  let imageUrl = '';
+  const addMediaUrls = async (imageNames, altText, altTextIndex) => {
+    const options = {
+      folder: deck,
+      use_filename: true,
+      unique_filename: false,
+    };
 
-  for (const img of prevLineImages) {
-    imageUrl = await tryCatch(
-      ImageStorage.upload(img, options)
-    );
+    let altText = '';
+    let imageUrl = '';
 
-    altText = mediaUrls.length === 0
-      ? prevLineAltText
-      : '';
+    for (const img of imageNames) {
+      imageUrl = await tryCatch(
+        ImageStorage.upload(img, options)
+      );
 
-    imageProps.mediaUrls.push({
-      altText,
-      image: imageUrl
-    });
+      altText = (imageProps.mediaUrls.length === altTextIndex)
+        ? altText
+        : '';
+
+      imageProps.mediaUrls.push({
+        altText,
+        image: imageUrl
+      });
+    }
   }
 
-  for (const img of questionImages) {
-    imageUrl = await tryCatch(
-      ImageStorage.upload(img, options)
-    );
+  await tryCatch(
+    addMediaUrls(prevLineImages, prevLineAltText, 0)
+  );
 
-    altText = (mediaUrls.length === prevLineImages.length)
-      ? questionAltText
-      : '';
+  await tryCatch(
+    addMediaUrls(questionImages, questionAltText, prevLineImages.length)
+  );
 
-    imageProps.mediaUrls.push({
-      altText,
-      image: imageUrl
-    });
-  }
-
-  for (const img of answerImages) {
-    imageUrl = await tryCatch(
-      ImageStorage.upload(img, options)
-    );
-
-    altText = (mediaUrls.length === upperSliceIndex)
-      ? answerAltText
-      : '';
-
-    imageProps.mediaUrls.push({
-      altText,
-      image: imageUrl
-    });
-  }
+  await tryCatch(
+    addMediaUrls(answerImages, answerAltText, upperSliceIndex)
+  );
 
   return imageProps;
 }

@@ -1,12 +1,28 @@
-/* eslist-disable */
+// jest.mock('Models/Card');
 
 import path from 'path';
-import { parseAnkiJson } from 'Anki/processing';
+import { processAnkiJson } from 'Anki/cardProcessors';
+// import { Card } from 'Models/Card';
+
+let i;
+const mockStorage = {
+  upload() {
+    return Promise.resolve(`url#${++i}`);
+  }
+}
+
+beforeEach(() => {
+
+});
+
+// afterEach(() => {
+//   Card.remove();
+// });
 
 describe('iKnowCore2000 decks', () => {
   test('it should format cards correctly', () => {
-    const file = path.resolve(__dirname, 'json', 'iKnowCore2000.json');
-    // const cards = parseAnkiJson(file); // THIS WILL UPLOAD TO CLOUDINARY DON'T DO IT!!!
+    const file = path.resolve(__dirname, 'iKnowCore2000.json');
+    const cards = processAnkiJson(file, mockStorage);
     const firstCard = cards[0];
 
     let questionText1 = 'Fill in the missing 4-5 characters to make the sentence roughly mean:';
@@ -24,6 +40,13 @@ describe('iKnowCore2000 decks', () => {
       answers: ['CLOZE', 'altanswer'],
       questionText: questionText1,
       answerText: answerText1,
+      mainImageSlice: [0, 1],
+      mediaUrls: [
+        { 
+          altText: '',
+          image: 'url#1'
+        }
+      ]
     };
 
     const secondCard = cards[1];

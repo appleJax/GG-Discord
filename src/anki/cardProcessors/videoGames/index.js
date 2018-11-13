@@ -1,7 +1,6 @@
 /* eslint-disable */
 
 import urlencode from 'urlencode';
-import persistImages from './persistImages';
 import Card from 'Models/Card';
 import { tryCatch } from 'Utils';
 import {
@@ -10,6 +9,7 @@ import {
   minMaxChars,
   stripHtml,
 } from 'Anki/utils';
+import persistImages from './persistImages';
 
 async function processVideoGames(contents, ImageStorage) {
   const deck = contents.name;
@@ -55,12 +55,13 @@ async function processVideoGames(contents, ImageStorage) {
       engMeaning = engMeaning.replace(/"/g, "'");
       const answers = getAnswers(expression, altAnswers);
 
-      const imageProps = {};
+      let imageProps = {};
 
       const oldCard = await tryCatch(
         Card.findOne({ cardId })
       );
       const hasImage = oldCard && oldCard.mediaUrls;
+
       if (hasImage) {
         imageProps.mainImageSlice = oldCard.mainImageSlice;
         imageProps.mediaUrls = oldCard.mediaUrls;
@@ -71,7 +72,9 @@ async function processVideoGames(contents, ImageStorage) {
           answerImages,
           expression
         };
-        imageProps = persistImages(ImageStorage, imageInfo);
+        imageProps = await tryCatch(
+          persistImages(imageInfo, ImageStorage)
+        );
       }
 
       newCards.push({

@@ -27,15 +27,15 @@ export function processUpload(zipfilePath) {
   }));
 }
 
-export async function processAnkiJson(filePath) {
+export async function processAnkiJson(filePath, storage = ImageStorage) {
   const contents = JSON.parse(fs.readFileSync(filePath, 'utf8'));
 
   let cards;
   if (contents.notes.length > 0) {
-    cards = processDJG(contents, ImageStorage);
+    cards = processDJG(contents);
   } else {
     cards = await tryCatch(
-      processIKnowCore(contents, ImageStorage)
+      processIKnowCore(contents, storage)
     );
   }
 

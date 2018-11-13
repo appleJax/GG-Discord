@@ -1,7 +1,7 @@
 import uuid from 'uuid/v1';
-import { processUpload } from 'Anki/processing';
+import { processUpload } from 'Anki/cardProcessors';
 import { tryCatch } from 'Utils';
-import Card from 'Models/Card';
+import { Card } from 'Models';
 
 const QUEUE = {};
 

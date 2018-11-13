@@ -1,5 +1,6 @@
 module.exports = {
   "extends": "airbnb-base",
+  "plugins": ["jest"],
   "rules": {
     "semi": "always",
     "no-param-reassign": 0,

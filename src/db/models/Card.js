@@ -20,4 +20,6 @@ const schema = new Schema({
   questionText: String,
 });
 
-export default Mongoose.model('Card', schema);
+const Card = Mongoose.model('Card', schema);
+
+export { Card };

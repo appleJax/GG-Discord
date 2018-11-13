@@ -1,7 +1,3 @@
-import Room from './Room';
-import Card from './Card';
-
-export default ({
-  Card,
-  Room,
-});
+export * from './Card';
+export * from './Room';
+export * from './User';

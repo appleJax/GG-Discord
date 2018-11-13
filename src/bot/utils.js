@@ -1,8 +1,6 @@
 import Discord from 'discord.js';
-import Models from 'Models';
+import { Card, Room } from 'Models';
 import { tryCatch } from 'Utils';
-
-const { Card, Room } = Models;
 
 export const PACE_DELAY = 12000;
 export const PREFIX = 'gg!';

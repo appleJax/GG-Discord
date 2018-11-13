@@ -1,6 +1,5 @@
 /* eslint-disable */
 
-import uploadImage from 'Config/cloudinary';
 import Card from 'Models/Card';
 import { tryCatch } from 'Utils';
 import {
@@ -11,7 +10,7 @@ import {
   stripHtml,
 } from 'Anki/utils';
 
-async function processIKnowCore(contents) {
+async function processIKnowCore(contents, ImageStorage) {
   const deck = contents.name;
   const newCards = [];
 
@@ -39,7 +38,6 @@ async function processIKnowCore(contents) {
       const answers = getAnswers(expression, altAnswers);
 
       let imageProps = {};
-      let cloudinaryUrl;
 
       if (image) {
         const oldCard = await tryCatch(
@@ -57,12 +55,12 @@ async function processIKnowCore(contents) {
           };
 
           const cardImg = getImageNames(image)[0];
-          cloudinaryUrl = await tryCatch(
-            uploadImage(cardImg, options)
+          const imageUrl = await tryCatch(
+            ImageStorage.upload(cardImg, options)
           );
           imageProps.mainImageSlice = [ 0, 1 ];
           imageProps.mediaUrls = [
-            { image: cloudinaryUrl }
+            { image: imageUrl }
           ];
         }
       }

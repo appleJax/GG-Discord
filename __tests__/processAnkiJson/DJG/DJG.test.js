@@ -1,12 +1,12 @@
 /* eslist-disable */
 
 import path from 'path';
-import { parseAnkiJson } from 'Anki/processing';
+import { processAnkiJson } from 'Anki/cardProcessors';
 
 describe('it should produce the correct cards for the DB*G decks', () => {
   test('single cloze', async () => {
-    const file = path.resolve(__dirname, 'json', 'DJG_singleCloze.json');
-    // const cards = await parseAnkiJson(file);
+    const file = path.resolve(__dirname, 'DJG_singleCloze.json');
+    const cards = await processAnkiJson(file);
     const firstCard = cards[0];
 
     let questionText = 'Fill in the missing 5 characters to make the sentence roughly mean:';
@@ -31,8 +31,8 @@ describe('it should produce the correct cards for the DB*G decks', () => {
   });
 
   test('multiple clozes', () => {
-    const file = path.resolve(__dirname, 'json', 'DJG_multipleCloze.json');
-    const cards = parseAnkiJson(file);
+    const file = path.resolve(__dirname, 'DJG_multipleCloze.json');
+    const cards = processAnkiJson(file);
     const firstCard = cards[0];
 
     let questionText1 = 'Fill in the missing character to make the sentence roughly mean:';

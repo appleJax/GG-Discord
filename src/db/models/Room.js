@@ -19,4 +19,6 @@ const schema = new Schema({
   )
 });
 
-export default Mongoose.model('Room', schema);
+const Room = Mongoose.model('Room', schema);
+
+export { Room };
