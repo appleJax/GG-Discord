@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-import Card from 'Models/Card';
+import { Card } from 'Models';
 import { tryCatch } from 'Utils';
 import {
   formatQuestionText,

@@ -1,33 +1,28 @@
-// jest.mock('Models/Card');
+jest.mock('Models/Card');
 
 import path from 'path';
 import { processAnkiJson } from 'Anki/cardProcessors';
-// import { Card } from 'Models/Card';
 
-let i;
 const mockStorage = {
+  calls: 0,
   upload() {
-    return Promise.resolve(`url#${++i}`);
+    return Promise.resolve(`url#${++this.calls}`);
   }
 }
 
 beforeEach(() => {
-
+  mockStorage.calls = 0;
 });
 
-// afterEach(() => {
-//   Card.remove();
-// });
-
 describe('iKnowCore2000 decks', () => {
-  test('it should format cards correctly', () => {
+  test('it should format cards correctly', async () => {
     const file = path.resolve(__dirname, 'iKnowCore2000.json');
-    const cards = processAnkiJson(file, mockStorage);
+    const cards = await processAnkiJson(file, mockStorage);
     const firstCard = cards[0];
 
-    let questionText1 = 'Fill in the missing 4-5 characters to make the sentence roughly mean:';
+    let questionText1 = 'Fill in the missing 4 or 5 characters to make the sentence roughly mean:';
     questionText1 += '\n```\nenglish```';
-    questionText1 += '\n```ini\nsome[][][][≠X,Y][?]text```';
+    questionText1 += '\n```ini\nsome[][L][][≠X,Y][?]text```';
 
     let answerText1 = 'Answers: CLOZE, altanswer';
     answerText1 += '\n```\nenglish```';
@@ -43,7 +38,6 @@ describe('iKnowCore2000 decks', () => {
       mainImageSlice: [0, 1],
       mediaUrls: [
         { 
-          altText: '',
           image: 'url#1'
         }
       ]
@@ -69,6 +63,7 @@ describe('iKnowCore2000 decks', () => {
     };
 
     expect(cards.length).toBe(2);
+    expect(mockStorage.calls).toEqual(1); // storage is bypassed if there is no image present
     expect(firstCard).toEqual(expectedFirstCard);
     expect(secondCard).toEqual(expectedSecondCard);
   });

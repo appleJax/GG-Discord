@@ -6,7 +6,7 @@
    {
       "fields": [
         "id",
-        "One{{::C::≠A}}Two{{::C2::..}}Three{{::C3::.?}}Four",
+        "One{{c1::C::≠A}}Two{{c2::C2::.?}}Two{{c2::C2::.?}}Three{{c3::C3::.3}}Four",
         "",
         "",
         "english",
@@ -17,7 +17,7 @@
         "",
         "",
         "",
-        ":: c2Alt1 :: c3Alt1, c3Alt2",
+        ":: c2Alt :: c3Alt1, c3Alt2",
         "",
         "pg1"
       ]

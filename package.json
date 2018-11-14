@@ -57,6 +57,7 @@
     "webpack-node-externals": "^1.7.2"
   },
   "jest": {
+    "automock": false,
     "moduleNameMapper": {
       "^Anki(.*)$": "<rootDir>/src/anki$1",
       "^Bot(.*)$": "<rootDir>/src/bot$1",

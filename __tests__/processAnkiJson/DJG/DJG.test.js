@@ -1,4 +1,4 @@
-/* eslist-disable */
+jest.mock('Models/Card');
 
 import path from 'path';
 import { processAnkiJson } from 'Anki/cardProcessors';
@@ -30,18 +30,18 @@ describe('it should produce the correct cards for the DB*G decks', () => {
     expect(firstCard).toEqual(expectedCard);
   });
 
-  test('multiple clozes', () => {
+  test('multiple clozes', async () => {
     const file = path.resolve(__dirname, 'DJG_multipleCloze.json');
-    const cards = processAnkiJson(file);
+    const cards = await processAnkiJson(file);
     const firstCard = cards[0];
 
     let questionText1 = 'Fill in the missing character to make the sentence roughly mean:';
     questionText1 += '\n```\nenglish```';
-    questionText1 += '\n```ini\nOne[≠A]TwoC2ThreeC3Four```';
+    questionText1 += '\n```ini\nOne[≠A]TwoC2TwoC2ThreeC3Four```';
 
     let answerText1 = 'Answer: C';
     answerText1 += '\n```\nenglish```';
-    answerText1 += '\n```ini\nOne[C]TwoC2ThreeC3Four```';
+    answerText1 += '\n```ini\nOne[C]TwoC2TwoC2ThreeC3Four```';
     answerText1 += '\nReference: pg1';
 
     const expectedFirstCard = {
@@ -52,15 +52,34 @@ describe('it should produce the correct cards for the DB*G decks', () => {
       answerText: answerText1,
     };
 
+    const secondCard = cards[1];
+
+    let questionText2 = 'Fill in the missing 1 or 2 characters to make the sentence roughly mean:';
+    questionText2 += '\n```\nenglish```';
+    questionText2 += '\n```ini\nOneCTwo[][?]Two[][?]ThreeC3Four```';
+
+    let answerText2 = 'Answers: C2, c2Alt';
+    answerText2 += '\n```\nenglish```';
+    answerText2 += '\n```ini\nOneCTwo[C2]Two[C2]ThreeC3Four```';
+    answerText2 += '\nReference: pg1';
+
+    const expectedSecondCard = {
+      cardId: 'id1',
+      deck: 'DIJG-MultipleCloze',
+      answers: ['C2', 'c2Alt'],
+      questionText: questionText2,
+      answerText: answerText2,
+    };
+
     const thirdCard = cards[2];
 
-    let questionText3 = 'Fill in the missing 1-2 characters to make the sentence roughly mean:';
+    let questionText3 = 'Fill in the missing 2 characters to make the sentence roughly mean:';
     questionText3 += '\n```\nenglish```';
-    questionText3 += '\n```ini\nOneCTwoC2Three[][?]Four```';
+    questionText3 += '\n```ini\nOneCTwoC2TwoC2Three[][3]Four```';
 
     let answerText3 = 'Answers: C3, c3Alt1, c3Alt2';
     answerText3 += '\n```\nenglish```';
-    answerText3 += '\n```ini\nOneCTwoC2Three[C3]Four```';
+    answerText3 += '\n```ini\nOneCTwoC2TwoC2Three[C3]Four```';
     answerText3 += '\nReference: pg1';
 
     const expectedThirdCard = {
@@ -73,6 +92,7 @@ describe('it should produce the correct cards for the DB*G decks', () => {
 
     expect(cards.length).toBe(3);
     expect(firstCard).toEqual(expectedFirstCard);
+    expect(secondCard).toEqual(expectedSecondCard);
     expect(thirdCard).toEqual(expectedThirdCard);
   });
 });

@@ -9,7 +9,7 @@
         {
           "fields": [
             "id1",
-            "some{{::CLOZE::...≠(X,Y)?}}text",
+            "some{{::CLOZE::.L.≠(X,Y)?}}text",
             "",
             "english",
             "alt answer",

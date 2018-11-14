@@ -15,7 +15,7 @@ export function formatAnswerText(engMeaning, expression, answers, ref) {
 
 export function formatQuestionText(engMeaning, expression) {
   const hint = formatHint(expression);
-  const japaneseWithHint = expression.replace(/{{.+?}}/, hint);
+  const japaneseWithHint = expression.replace(/{{.+?}}/g, hint);
 
   const [min, max] = minMaxChars(hint);
   let minMax = min === max ? min : `${min} or ${max}`;
@@ -59,15 +59,29 @@ export function getImageNames(string) {
 }
 
 export function getClozes(expression) {
-  return expression.match(/{{.+?}}/g).map((cloze, i, allClozes) => {
+  const rawClozes = expression.match(/{{.+?}}/g);
+  const uniqueClozes = [];
+  rawClozes.forEach(cloze => {
+    if (!uniqueClozes.includes(cloze)) {
+      uniqueClozes.push(cloze);
+    }
+  });
+
+  return uniqueClozes.map((cloze, i, allClozes) => {
     const clozesToReplace = allClozes.slice(0, i).concat(allClozes.slice(i + 1));
 
+    let tempExpression = expression;
     let newExpression = expression;
     let answer;
 
     clozesToReplace.forEach((singleCloze) => {
       [answer] = getAnswers(singleCloze);
-      newExpression = newExpression.replace(singleCloze, answer);
+
+      tempExpression = newExpression.replace(singleCloze, answer);
+      while (tempExpression !== newExpression) {
+        newExpression = tempExpression;
+        tempExpression = newExpression.replace(singleCloze, answer);
+      }
     });
 
     return newExpression;
@@ -85,7 +99,7 @@ export function stripHtml(string) {
 // private functions
 
 function fillAnswer(expression, answer) {
-  return expression.replace(/{{.+?}}/, `[${answer}]`);
+  return expression.replace(/{{.+?}}/g, `[${answer}]`);
 }
 
 function flatten(deep, flat = []) {
@@ -129,7 +143,7 @@ function formatHint(expression) {
       return `[≠${negatedChars}]`;
     }
     // else (character gimme)
-    return group;
+    return `[${group}]`;
   });
 
   return hint.join('');

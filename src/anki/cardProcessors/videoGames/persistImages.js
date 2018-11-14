@@ -36,7 +36,6 @@ export default async function persistImages(imageInfo, ImageStorage) {
       unique_filename: false,
     };
 
-    let altText = '';
     let imageUrl = '';
 
     for (const img of imageNames) {
@@ -44,9 +43,9 @@ export default async function persistImages(imageInfo, ImageStorage) {
         ImageStorage.upload(img, options)
       );
 
-      altText = (imageProps.mediaUrls.length === altTextIndex)
-        ? altText
-        : '';
+      if (imageProps.mediaUrls.length !== altTextIndex) {
+        altText = '';
+      }
 
       imageProps.mediaUrls.push({
         altText,

@@ -4,7 +4,6 @@ const Card = {
   find(target) {
     let filteredDocs = this.docs;
     for (const prop in target) {
-      console.log('PROP:', prop);
       filteredDocs = filteredDocs.filter(
         doc => doc[prop] === target[prop]
       );
