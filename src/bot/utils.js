@@ -15,11 +15,11 @@ export const Colors = {
 };
 
 export const DECKS = {
-  '504554082984525854': 'TwitterBot',
+  '504554082984525854': 'Gamegogakuen JP',
   '505262797572276254': 'DBJG',
   '448017333907095562': 'DIJG',
   '507815046886457344': 'iKnow Core 2000',
-  [TEST_ROOM]: 'DBJG',
+  [TEST_ROOM]: 'Gamegogakuen JP',
 };
 
 export async function askNextQuestion(client, channel) {
