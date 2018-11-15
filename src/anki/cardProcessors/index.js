@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 import fs from 'fs';
 import path from 'path';
 import unzip from 'unzip-stream';
@@ -32,7 +30,9 @@ export async function processAnkiJson(filePath, storage = ImageStorage) {
 
   let cards;
   if (contents.name === 'Gamegogakuen JP') {
-    cards = processVideoGames(contents, storage);
+    cards = await tryCatch(
+      processVideoGames(contents, storage)
+    );
   } else if (contents.notes.length > 0) {
     cards = processDJG(contents);
   } else {
