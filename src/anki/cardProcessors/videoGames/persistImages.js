@@ -2,15 +2,16 @@ import { tryCatch } from 'Utils';
 import {
   formatHint,
   getImageNames,
-  minMaxChars,
 } from 'Anki/utils';
 
 export default async function persistImages(imageInfo, ImageStorage) {
   let {
+    prevLineAltText,
     prevLineImages,
     questionImages,
     answerImages,
     expression,
+    game,
   } = imageInfo;
 
   prevLineImages = getImageNames(prevLineImages);
@@ -26,12 +27,12 @@ export default async function persistImages(imageInfo, ImageStorage) {
     mediaUrls: [],
   };
 
-  questionAltText = formatQuestionAltText(expression);
-  answerAltText = formatAnswerAltText(expression);
+  const questionAltText = formatQuestionAltText(expression);
+  const answerAltText = formatAnswerAltText(expression);
 
   const addMediaUrls = async (imageNames, altText, altTextIndex) => {
     const options = {
-      folder: deck,
+      folder: game,
       use_filename: true,
       unique_filename: false,
     };
@@ -72,14 +73,12 @@ export default async function persistImages(imageInfo, ImageStorage) {
 // private 
 
 function formatAnswerAltText(expression) {
-  return expression.replace(/\{\{.*?::(.+?)::.*?\}\}/g, '$1');
+  const altText = expression.replace(/\{\{.*?::(.+?)::.*?\}\}/g, '[$1]');
+  return '```ini\n' + altText + '```';
 }
 
 function formatQuestionAltText(expression) {
   const hint = formatHint(expression);
-  const [min, max] = minMaxChars(hint);
-  const minMax = min === max ? min : `${min} to ${max}`;
-  const s = max > 1 ? 's' : '';
-  const screenReaderHint = `(${minMax} character${s})`;
-  return expression.replace(/\{\{.+?\}\}/g, screenReaderHint);
+  const altText = expression.replace(/\{\{.+?\}\}/g, hint);
+  return '```ini\n' + altText + '```';
 }

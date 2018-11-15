@@ -31,7 +31,9 @@ export async function processAnkiJson(filePath, storage = ImageStorage) {
   const contents = JSON.parse(fs.readFileSync(filePath, 'utf8'));
 
   let cards;
-  if (contents.notes.length > 0) {
+  if (contents.name === 'Gamegogakuen JP') {
+    cards = processVideoGames(contents, storage);
+  } else if (contents.notes.length > 0) {
     cards = processDJG(contents);
   } else {
     cards = await tryCatch(

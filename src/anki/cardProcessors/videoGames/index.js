@@ -1,7 +1,7 @@
 /* eslint-disable */
 
 import urlencode from 'urlencode';
-import Card from 'Models/Card';
+import { Card } from 'Models';
 import { tryCatch } from 'Utils';
 import {
   formatHint,
@@ -16,7 +16,7 @@ async function processVideoGames(contents, ImageStorage) {
   const newCards = [];
 
   for (const subdeck of contents.children) {
-    const game = subdeck.name.replace(/::.+/, '');
+    const game = subdeck.name;
 
     for (const card of subdeck.notes) {
       let [
@@ -31,7 +31,7 @@ async function processVideoGames(contents, ImageStorage) {
         , // audio
         prevLineImages,
         prevLineAltText,
-        otherVisibleContext,
+        , // otherVisibleContext,
         altAnswers,
         webLookup, // pronunciation lookup https://ejje.weblio.jp/content/[webLookup (e.g. 切り換える)]
         notes
@@ -41,14 +41,14 @@ async function processVideoGames(contents, ImageStorage) {
         engMeaning,
         expression,
         prevLineAltText,
-        otherVisibleContext,
+        // otherVisibleContext,
         notes
       ] = [
         altAnswers,
         engMeaning,
         expression,
         prevLineAltText,
-        otherVisibleContext,
+        // otherVisibleContext,
         notes
       ].map(stripHtml);
 
@@ -67,10 +67,12 @@ async function processVideoGames(contents, ImageStorage) {
         imageProps.mediaUrls = oldCard.mediaUrls;
       } else {
         const imageInfo = {
+          prevLineAltText,
           prevLineImages,
           questionImages,
           answerImages,
-          expression
+          expression,
+          game,
         };
         imageProps = await tryCatch(
           persistImages(imageInfo, ImageStorage)
@@ -97,8 +99,8 @@ export default processVideoGames;
 // private
 
 function formatAnswerText(answers, engMeaning, webLookup) {
-  let answerText = `答え: ${answers.join(', ')}`;
-  answerText += `\n英語: "${engMeaning}"`;
+  let answerText = '```\n答え: ' + answers.join(', ') + '```';
+  answerText += '\n```\n英語: "' + engMeaning + '"```';
 
   if (webLookup) {
     answerText += `\n辞典: https://ejje.weblio.jp/content/${urlencode(webLookup)}`;
@@ -115,10 +117,8 @@ function formatQuestionText(
 ) {
   const hint = formatHint(expression);
   const [min, max] = minMaxChars(hint);
-  const minMax = min === max ? min : `${min}-${max}`;
+  const minMax = min === max ? min : `${min} or ${max}`;
   let tweetText = `What ${minMax} character answer means "${engMeaning}"?`;
-
-  if (needsHint(hint)) tweetText += `\nHint: ${hint}`;
 
   if (notes) tweetText += `\nNotes: ${notes}`;
 

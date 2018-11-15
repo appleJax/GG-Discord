@@ -9,7 +9,7 @@ describe('it should produce the correct cards for the DB*G decks', () => {
     const cards = await processAnkiJson(file);
     const firstCard = cards[0];
 
-    let questionText = 'Fill in the missing 5 characters to make the sentence roughly mean:';
+    let questionText = 'What 5 characters make the sentence roughly mean:';
     questionText += '\n```\nenglish```';
     questionText += '\n```ini\nsome[][][][≠X,Y][]text```';
 
@@ -35,7 +35,7 @@ describe('it should produce the correct cards for the DB*G decks', () => {
     const cards = await processAnkiJson(file);
     const firstCard = cards[0];
 
-    let questionText1 = 'Fill in the missing character to make the sentence roughly mean:';
+    let questionText1 = 'What character makes the sentence roughly mean:';
     questionText1 += '\n```\nenglish```';
     questionText1 += '\n```ini\nOne[≠A]TwoC2TwoC2ThreeC3Four```';
 
@@ -54,7 +54,7 @@ describe('it should produce the correct cards for the DB*G decks', () => {
 
     const secondCard = cards[1];
 
-    let questionText2 = 'Fill in the missing 1 or 2 characters to make the sentence roughly mean:';
+    let questionText2 = 'What 1 or 2 characters make the sentence roughly mean:';
     questionText2 += '\n```\nenglish```';
     questionText2 += '\n```ini\nOneCTwo[][?]Two[][?]ThreeC3Four```';
 
@@ -73,9 +73,9 @@ describe('it should produce the correct cards for the DB*G decks', () => {
 
     const thirdCard = cards[2];
 
-    let questionText3 = 'Fill in the missing 2 characters to make the sentence roughly mean:';
+    let questionText3 = 'What 2 characters make the sentence roughly mean:';
     questionText3 += '\n```\nenglish```';
-    questionText3 += '\n```ini\nOneCTwoC2TwoC2Three[][3]Four```';
+    questionText3 += '\n```ini\nOneCTwoC2TwoC2Three[]3Four```';
 
     let answerText3 = 'Answers: C3, c3Alt1, c3Alt2';
     answerText3 += '\n```\nenglish```';

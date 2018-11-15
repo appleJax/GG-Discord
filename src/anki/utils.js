@@ -13,22 +13,61 @@ export function formatAnswerText(engMeaning, expression, answers, ref) {
   return answerText;
 }
 
+export function formatHint(expression) {
+  const legend = expression.match(/::.+?::(.+?)}}/)[1];
+  const normalized = groupMultiXs(groupXs(groupQuestionMarks(legend)));
+
+  const hint = flatten(split(normalized)).map((group) => {
+    if (group === '.') {
+      return '[]';
+    }
+
+    if (group === '-') {
+      return '[][][][][]';
+    }
+
+    if (/\?/.test(group)) {
+      const result = [];
+      const numChars = Number(group.match(/\d+/)[0]);
+      for (let i = 0; i < numChars; i++) {
+        result.push('[?]');
+      }
+
+      if (result.length === 1) {
+        return '[?]';
+      }
+
+      return `(${result.join('')})`;
+    }
+
+    if (/[≠x]/.test(group)) {
+      const negatedChars = group.replace(/[≠x]/g, '');
+      return `[≠${negatedChars}]`;
+    }
+    // else (character gimme)
+    return group;
+  });
+
+  return hint.join('');
+}
+
 export function formatQuestionText(engMeaning, expression) {
   const hint = formatHint(expression);
   const japaneseWithHint = expression.replace(/{{.+?}}/g, hint);
 
   const [min, max] = minMaxChars(hint);
   let minMax = min === max ? min : `${min} or ${max}`;
-  let s = 's';
+  let s1 = 's';
+  let s2 = '';
 
   if (minMax === 1) {
     minMax = '';
-    s = '';
+    [s1, s2] = [s2, s1];
   } else {
     minMax += ' ';
   }
 
-  let questionText = `Fill in the missing ${minMax}character${s} to make the sentence roughly mean:`;
+  let questionText = `What ${minMax}character${s1} make${s2} the sentence roughly mean:`;
   questionText += `\n${'```'}\n${engMeaning}${'```'}`;
   questionText += `\n${'```ini'}\n${japaneseWithHint}${'```'}`;
 
@@ -88,6 +127,10 @@ export function getClozes(expression) {
   });
 }
 
+export function minMaxChars(hint) {
+  return [minChars(hint), maxChars(hint)];
+}
+
 export function splitSpeakers(phrase) {
   return phrase.replace(/(.)([AB]:)/g, '$1\n$2');
 }
@@ -111,44 +154,6 @@ function flatten(deep, flat = []) {
     : flatten(tail, flat.concat(flatten(head)));
 }
 
-function formatHint(expression) {
-  const legend = expression.match(/::.+?::(.+?)}}/)[1];
-  const normalized = groupMultiXs(groupXs(groupQuestionMarks(legend)));
-
-  const hint = flatten(split(normalized)).map((group) => {
-    if (group === '.') {
-      return '[]';
-    }
-
-    if (group === '-') {
-      return '[][][][][]';
-    }
-
-    if (/\?/.test(group)) {
-      const result = [];
-      const numChars = Number(group.match(/\d+/)[0]);
-      for (let i = 0; i < numChars; i++) {
-        result.push('[?]');
-      }
-
-      if (result.length === 1) {
-        return '[?]';
-      }
-
-      return `(${result.join('')})`;
-    }
-
-    if (/[≠x]/.test(group)) {
-      const negatedChars = group.replace(/[≠x]/g, '');
-      return `[≠${negatedChars}]`;
-    }
-    // else (character gimme)
-    return `[${group}]`;
-  });
-
-  return hint.join('');
-}
-
 function groupMultiXs(string) {
   return string.replace(/[≠x]\((.*?)\)/g, '(≠$1)');
 }
@@ -162,16 +167,12 @@ function groupXs(string) {
 }
 
 function maxChars(hint) {
-  return hint.match(/\[.*?\]/g).length;
+  return hint.replace(/\[.*?\]/g, 'C').length;
 }
 
 function minChars(hint) {
   const optionalChars = (hint.match(/\?/g) || []).length;
   return maxChars(hint) - optionalChars;
-}
-
-function minMaxChars(hint) {
-  return [minChars(hint), maxChars(hint)];
 }
 
 function split(str) {

@@ -20,9 +20,9 @@ describe('iKnowCore2000 decks', () => {
     const cards = await processAnkiJson(file, mockStorage);
     const firstCard = cards[0];
 
-    let questionText1 = 'Fill in the missing 4 or 5 characters to make the sentence roughly mean:';
+    let questionText1 = 'What 4 or 5 characters make the sentence roughly mean:';
     questionText1 += '\n```\nenglish```';
-    questionText1 += '\n```ini\nsome[][L][][≠X,Y][?]text```';
+    questionText1 += '\n```ini\nsome[]L[][≠X,Y][?]text```';
 
     let answerText1 = 'Answers: CLOZE, altanswer';
     answerText1 += '\n```\nenglish```';
@@ -45,7 +45,7 @@ describe('iKnowCore2000 decks', () => {
 
     const secondCard = cards[1];
 
-    let questionText2 = 'Fill in the missing character to make the sentence roughly mean:';
+    let questionText2 = 'What character makes the sentence roughly mean:';
     questionText2 += '\n```\nenglish```';
     questionText2 += '\n```ini\nanother[]expression```';
 
