@@ -6,7 +6,7 @@ passport.use(
   new LocalStrategy(
     (username, password, done) => {
       if (isCorrect(username, password)) {
-        return done(null, { permissions: 'admin' });
+        return done(null, { permissions: ['admin'] });
       }
       return done(null, false, { message: 'Not Authorized' });
     },
@@ -18,7 +18,7 @@ passport.serializeUser(
 );
 
 passport.deserializeUser(
-  (userId, done) => done(null, { permissions: 'admin' }),
+  (userId, done) => done(null, { permissions: ['admin'] }),
 );
 
 export default passport;

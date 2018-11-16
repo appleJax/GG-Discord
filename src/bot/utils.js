@@ -1,10 +1,10 @@
 import Discord from 'discord.js';
 import { Card, Room } from 'Models';
 import { tryCatch } from 'Utils';
+import DECKS from 'Config/decks';
 
 export const PACE_DELAY = 12000;
 export const PREFIX = 'gg!';
-export const TEST_ROOM = '441091794654986244';
 
 export const Colors = {
   BLUE: '#1DA1F2',
@@ -12,14 +12,6 @@ export const Colors = {
   GREEN: '#008140',
   PURPLE: '#633193',
   RED: '#CA0401',
-};
-
-export const DECKS = {
-  '504554082984525854': 'Gamegogakuen JP',
-  '505262797572276254': 'DBJG',
-  '448017333907095562': 'DIJG',
-  '507815046886457344': 'iKnow Core 2000',
-  [TEST_ROOM]: 'Gamegogakuen JP',
 };
 
 export async function askNextQuestion(client, channel) {

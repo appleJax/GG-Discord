@@ -1,5 +1,6 @@
+import DECKS from 'Config/decks';
 import {
-  DECKS, PREFIX, TEST_ROOM, commandNotFound, parseInput, shouldIgnore,
+  PREFIX, commandNotFound, parseInput, shouldIgnore,
 } from './utils';
 
 const quizRooms = Object.keys(DECKS);
@@ -8,11 +9,7 @@ export default (client) => {
   client.handleMsg = (msg) => {
     const roomId = msg.channel.id;
 
-    if (process.env.NODE_ENV === 'production') {
-      if (!quizRooms.includes(roomId)) {
-        return;
-      }
-    } else if (roomId !== TEST_ROOM) {
+    if (!quizRooms.includes(roomId)) {
       return;
     }
 

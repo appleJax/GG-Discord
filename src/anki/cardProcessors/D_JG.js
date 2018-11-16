@@ -5,6 +5,7 @@ import {
   formatAnswerText,
   getAnswers,
   getClozes,
+  splitBrackets,
   splitSpeakers,
   stripHtml,
 } from 'Anki/utils';
@@ -38,6 +39,8 @@ function processDJG(contents) {
       engMeaning,
       expression,
     ].map(stripHtml);
+
+    engMeaning = splitBrackets(engMeaning);
 
     if (expression.includes('B:')) {
       expression = splitSpeakers(expression);

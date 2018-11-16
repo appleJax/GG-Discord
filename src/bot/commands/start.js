@@ -1,7 +1,8 @@
 import Discord from 'discord.js';
 import { tryCatch } from 'Utils';
+import DECKS from 'Config/decks';
 import {
-  Colors, DECKS, fetchCards, sendImage,
+  Colors, fetchCards, sendImage,
 } from '../utils';
 
 // exported for testing

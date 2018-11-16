@@ -131,6 +131,10 @@ export function minMaxChars(hint) {
   return [minChars(hint), maxChars(hint)];
 }
 
+export function splitBrackets(phrase) {
+  return phrase.replace(/\]/g, ']\n');
+}
+
 export function splitSpeakers(phrase) {
   return phrase.replace(/(.)([AB]:)/g, '$1\n$2');
 }
@@ -167,7 +171,10 @@ function groupXs(string) {
 }
 
 function maxChars(hint) {
-  return hint.replace(/\[.*?\]/g, 'C').length;
+  return hint
+    .replace(/\[.*?\]/g, 'C')
+    .replace(/[)(]/g, '')
+    .length;
 }
 
 function minChars(hint) {

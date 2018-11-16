@@ -1,7 +1,8 @@
 import Discord from 'discord.js';
 import { tryCatch } from 'Utils';
+import DECKS from 'Config/decks';
 import {
-  Colors, DECKS, fetchCards, fetchHighScore, sendImage,
+  Colors, fetchCards, fetchHighScore, sendImage,
 } from '../utils';
 
 const TIME_PER_QUESTION = 60;

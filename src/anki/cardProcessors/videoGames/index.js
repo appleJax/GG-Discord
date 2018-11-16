@@ -99,8 +99,8 @@ export default processVideoGames;
 // private
 
 function formatAnswerText(answers, engMeaning, webLookup) {
-  let answerText = '```\n答え: ' + answers.join(', ') + '```';
-  answerText += '\n```\n英語: "' + engMeaning + '"```';
+  let answerText = `答え: ${answers.join(', ')}`;
+  answerText += `\n英語: "${engMeaning}"`;
 
   if (webLookup) {
     answerText += `\n辞典: https://ejje.weblio.jp/content/${urlencode(webLookup)}`;
