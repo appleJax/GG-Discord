@@ -5,6 +5,7 @@ const { Schema } = Mongoose;
 
 const schema = new Schema({
   userId: String,
+  username: String,
   score: {
     _id: false,
     total: t(Number, 0),

@@ -7,6 +7,7 @@ const schema = new Schema({
   roomId: String,
   deck: String,
   highScore: t(Number, 0),
+  survivalRecord: t(Number, 0),
   users: t(
     [{
       _id: false,
