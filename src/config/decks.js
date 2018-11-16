@@ -1,3 +1,4 @@
+/* eslint-disable */
 let DECKS = {
   '504554082984525854': 'Gamegogakuen JP',
   '505262797572276254': 'DBJG',
