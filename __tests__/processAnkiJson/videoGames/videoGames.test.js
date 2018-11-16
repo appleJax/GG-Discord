@@ -1,7 +1,7 @@
-jest.mock('Models/Card');
-
 import path from 'path';
 import { processAnkiJson } from 'Anki/cardProcessors';
+
+jest.mock('Models/Card');
 
 const mockStorage = {
   calls: 0,
@@ -9,8 +9,8 @@ const mockStorage = {
     this.calls++;
     const baseName = path.basename(imageName);
     return Promise.resolve(`url/${baseName}`);
-  }
-}
+  },
+};
 
 beforeEach(() => {
   mockStorage.calls = 0;
@@ -39,22 +39,22 @@ describe('videoGame decks', () => {
       answerText,
       mainImageSlice: [1, 2],
       mediaUrls: [
-        { 
+        {
           altText: 'prevLineAltText',
-          image: 'url/prevLineImage.png'
+          image: 'url/prevLineImage.png',
         },
         {
           altText: '```ini\nsome[?][]O[][≠A,I]other[?][]O[][≠A,I]text```',
-          image: 'url/questionImage.png'
+          image: 'url/questionImage.png',
         },
         {
           altText: '```ini\nsome[CLOZE]other[CLOZE]text```',
-          image: 'url/answerImage.png'
-        }
-      ]
+          image: 'url/answerImage.png',
+        },
+      ],
     };
 
-    expect(mockStorage.calls).toEqual(3); 
+    expect(mockStorage.calls).toEqual(3);
     expect(card).toEqual(expectedCard);
   });
 });

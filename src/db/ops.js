@@ -16,7 +16,7 @@ export default ({
     const newCards = await tryCatch(processUpload(filePath));
 
     const ops = [];
-    for (const newCard of newCards) {
+    newCards.forEach((newCard) => {
       const { cardId } = newCard;
       ops.push({
         replaceOne: {
@@ -25,7 +25,7 @@ export default ({
           upsert: true,
         },
       });
-    }
+    });
 
     if (ops.length === 0) {
       return;
@@ -37,7 +37,7 @@ export default ({
   },
 
   queueStatus(req, res) {
-    const taskId = req.params.taskId;
+    const { taskId } = req.params;
     let status = QUEUE[taskId];
     let message = '';
 

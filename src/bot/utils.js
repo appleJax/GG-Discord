@@ -125,7 +125,7 @@ export function fetchHighScore(roomId) {
 }
 
 export function parseInput(msg) {
-  const args = msg.content.substr(PREFIX.length).split(/\s+/);
+  const args = msg.content.substr(PREFIX.length).trim().split(/\s+/);
   const command = args.shift().toLowerCase();
   return [command, args];
 }
