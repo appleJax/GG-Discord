@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack --config webpack.prod.js",
-    "devstart": "webpack && node ./dist/main.js",
+    "serve:dev": "webpack && node ./dist/main.js",
+    "serve:staging": "webpack --config webpack.staging.js && node ./dist/main.js",
+    "serve:prod": "webpack --config webpack.prod.js && node ./dist/main.js",
     "shipit": "git checkout -b deploy && npm run build && rm .gitignore && echo 'node_modules\n.env.js' > .gitignore && rm -rf uploads && git add . && git commit -m 'build' && git push -f heroku deploy:master && git checkout master && git branch -D deploy",
     "start": "node ./dist/main.js",
     "test": "jest --runInBand"

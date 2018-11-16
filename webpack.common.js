@@ -37,14 +37,9 @@ module.exports = {
       { from: `${__dirname}/src/bot/commands`, to: 'commands'  },
     ]),
     new webpack.DefinePlugin({
-      'process.env.ADMIN_PW': JSON.stringify(envVars.ADMIN_PW),
-      'process.env.ADMIN_USERNAME': JSON.stringify(envVars.ADMIN_USERNAME),
-      'process.env.BOT_TOKEN': JSON.stringify(envVars.BOT_TOKEN),
-      'process.env.CLOUDINARY_NAME': JSON.stringify(envVars.CLOUDINARY_NAME),
-      'process.env.CLOUDINARY_API_KEY': JSON.stringify(envVars.CLOUDINARY_API_KEY),
-      'process.env.CLOUDINARY_API_SECRET': JSON.stringify(envVars.CLOUDINARY_API_SECRET),
-      'process.env.MONGODB_URI': JSON.stringify(envVars.MONGODB_URI),
-      'process.env.SESSION_SECRET': JSON.stringify(envVars.SESSION_SECRET),
+      'process.env.ADMIN_PW': JSON.stringify(envVars.common.ADMIN_PW),
+      'process.env.ADMIN_USERNAME': JSON.stringify(envVars.common.ADMIN_USERNAME),
+      'process.env.SESSION_SECRET': JSON.stringify(envVars.common.SESSION_SECRET),
     }),
   ],
   resolve: {
