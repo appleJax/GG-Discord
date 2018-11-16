@@ -23,7 +23,7 @@ const options = {
   cookie: {},
 };
 
-if (process.env.NODE_ENV === 'production') {
+if (!process.env.ADMIN && process.env.NODE_ENV === 'production') {
   app.set('trust proxy', 1); // trust first proxy
   options.cookie.secure = true; // serve secure cookies
 }

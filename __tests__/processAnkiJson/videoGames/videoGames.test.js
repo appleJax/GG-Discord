@@ -26,8 +26,8 @@ describe('videoGame decks', () => {
     questionText += '\nNotes: notes';
     questionText += '\nGame: Game #1';
 
-    let answerText = '```\n答え: CLOZE, altAnswer1, altAnswer2```';
-    answerText += '\n```\n英語: "english"```';
+    let answerText = '答え: CLOZE, altAnswer1, altAnswer2';
+    answerText += '\n英語: "english"';
     answerText += '\n辞典: https://ejje.weblio.jp/content/webLookup';
 
     const expectedCard = {

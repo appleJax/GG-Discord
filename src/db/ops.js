@@ -38,7 +38,7 @@ export default ({
 
   queueStatus(req, res) {
     const taskId = req.params.taskId;
-    const status = QUEUE[taskId];
+    let status = QUEUE[taskId];
     let message = '';
 
     switch (status) {
