@@ -14,8 +14,8 @@ const schema = new Schema({
     [{
       _id: false,
       altText: String,
-      image: String
-    }], []
+      image: String,
+    }], [],
   ),
   questionText: String,
 });
