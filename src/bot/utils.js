@@ -72,7 +72,11 @@ export async function askNextQuestion(client, channel) {
 }
 
 export function commandNotFound(command) {
-  let notFound = `sorry, I don't understand that command: \`${command}\`\n`;
+  let userCommand = '.';
+  if (command) {
+    userCommand = `: \`${command}\``;
+  }
+  let notFound = `sorry, I don't understand that command${userCommand}\n`;
   notFound += `Use \`${PREFIX}help\` to see a list of all my commands.`;
   return notFound;
 }
