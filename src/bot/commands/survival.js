@@ -41,9 +41,10 @@ export default {
 
     const activeQuiz = {
       currentQuestion,
+      points: [],
       questions,
-      secondsPerQuestion: SECONDS_PER_QUESTION,
       questionPosition: [1, '??'],
+      secondsPerQuestion: SECONDS_PER_QUESTION,
       survivalRecord,
       survivalMode: true,
     };

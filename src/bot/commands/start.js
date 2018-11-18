@@ -85,10 +85,10 @@ export default {
 
     const activeQuiz = {
       currentQuestion,
-      questions,
-      secondsPerQuestion: argsResult.secondsPerQuestion,
-      questionPosition: [1, argsResult.quizSize],
       points: [],
+      questions,
+      questionPosition: [1, argsResult.quizSize],
+      secondsPerQuestion: argsResult.secondsPerQuestion,
     };
 
     const startMsg = new Discord.RichEmbed()
