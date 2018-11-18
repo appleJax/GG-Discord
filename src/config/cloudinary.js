@@ -17,7 +17,7 @@ const ImageStorage = {
         resolve(result.secure_url);
       });
     });
-  }
+  },
 };
 
 export default ImageStorage;

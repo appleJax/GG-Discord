@@ -53,7 +53,7 @@ export async function askNextQuestion(client, channel) {
 
     activeQuiz.questionTimeout = setTimeout(
       () => client.nextQuestion(channel),
-      activeQuiz.secondsPerQuestion,
+      activeQuiz.secondsPerQuestion * 1000,
     );
   }, PACE_DELAY);
 

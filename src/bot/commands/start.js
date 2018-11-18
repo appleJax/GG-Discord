@@ -13,17 +13,17 @@ export const QUIZ_SIZE = {
 };
 
 // exported for testing
-export const TIME_PER_QUESTION = {
+export const SECONDS_PER_QUESTION = {
   default: 60,
   min: 10,
   max: 180,
 };
 
 const usage = `[quizSize] - number of questions (defaults to ${QUIZ_SIZE.default}, max is ${QUIZ_SIZE.max})`
-  + `\n[secondsPerQuestion] timeout for each question (in seconds - defaults to ${TIME_PER_QUESTION.default}, max is ${TIME_PER_QUESTION.max})`;
+  + `\n[secondsPerQuestion] timeout for each question (in seconds - defaults to ${SECONDS_PER_QUESTION.default}, max is ${SECONDS_PER_QUESTION.max})`;
 
 // exported for testing
-export function validateArgs([size, time]) {
+export function validateArgs([size, seconds]) {
   const argsResult = {};
 
   const validate = (param, name, values) => {
@@ -40,10 +40,8 @@ export function validateArgs([size, time]) {
     }
   };
 
-  validate(time, 'secondsPerQuestion', TIME_PER_QUESTION);
+  validate(seconds, 'secondsPerQuestion', SECONDS_PER_QUESTION);
   validate(size, 'quizSize', QUIZ_SIZE);
-
-  argsResult.secondsPerQuestion *= 1000;
 
   return argsResult;
 }
@@ -108,7 +106,7 @@ export default {
 
     activeQuiz.questionTimeout = setTimeout(
       () => self.nextQuestion(msg.channel),
-      activeQuiz.secondsPerQuestion,
+      activeQuiz.secondsPerQuestion * 1000,
     );
     this.quizzes.set(roomId, activeQuiz);
   },

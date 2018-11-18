@@ -5,11 +5,11 @@ import {
   Colors, fetchCards, fetchSurvivalRecord, sendImage,
 } from '../utils';
 
-const TIME_PER_QUESTION = 60;
+const SECONDS_PER_QUESTION = 60;
 
 export default {
   name: 'survival',
-  description: `This quiz serves questions continuously until one expires without being answered correctly. You have ${TIME_PER_QUESTION} seconds to answer each question.`,
+  description: `This quiz serves questions continuously until one expires without being answered correctly. You have ${SECONDS_PER_QUESTION} seconds to answer each question.`,
   usage: '(Survival Mode)',
   async execute(msg) {
     const self = this;
@@ -42,7 +42,7 @@ export default {
     const activeQuiz = {
       currentQuestion,
       questions,
-      secondsPerQuestion: TIME_PER_QUESTION * 1000,
+      secondsPerQuestion: SECONDS_PER_QUESTION,
       questionPosition: [1, '??'],
       survivalRecord,
       survivalMode: true,
@@ -64,7 +64,7 @@ export default {
 
     activeQuiz.questionTimeout = setTimeout(
       () => self.nextQuestion(msg.channel),
-      activeQuiz.secondsPerQuestion,
+      activeQuiz.secondsPerQuestion * 1000,
     );
     this.quizzes.set(roomId, activeQuiz);
   },

@@ -1,12 +1,12 @@
 import { validateArgs } from 'Bot/commands/start';
-import { QUIZ_SIZE, TIME_PER_QUESTION } from '../src/bot/commands/start';
+import { QUIZ_SIZE, SECONDS_PER_QUESTION } from '../src/bot/commands/start';
 
 describe('validating arguments for start command', () => {
   it('should return the default values if no args are present', () => {
     const argResult = validateArgs([]);
     const expectedArgs = {
       quizSize: QUIZ_SIZE.default,
-      secondsPerQuestion: TIME_PER_QUESTION.default * 1000,
+      secondsPerQuestion: SECONDS_PER_QUESTION.default,
     };
 
     expect(argResult).toEqual(expectedArgs);
@@ -19,7 +19,7 @@ describe('validating arguments for start command', () => {
     const argResult = validateArgs([quizSize, secondsPerQuestion]);
     const expectedArgs = {
       quizSize: 12,
-      secondsPerQuestion: 70000,
+      secondsPerQuestion: 70,
     };
 
     expect(argResult).toEqual(expectedArgs);
