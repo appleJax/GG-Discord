@@ -12,12 +12,12 @@ const schema = new Schema({
     [{
       _id: false,
       userId: String,
-      totalScore: t(Number, 0),
       correctAnswers: t(Number, 0),
+      cardsAnsweredCorrectly: t([String], []),
       survivalRecord: t(Number, 0),
       avgAnswerTime: t(Number, 0),
-    }], []
-  )
+    }], [],
+  ),
 });
 
 const Room = Mongoose.model('Room', schema);

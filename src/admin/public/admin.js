@@ -1,8 +1,8 @@
-let flash;
+let flashMessage;
 let fileInput;
 
 window.onload = () => {
-  flash = initFlash();
+  flashMessage = initFlash();
   fileInput = initFileInput();
   wireUp('new-deck-form');
 };
@@ -27,21 +27,21 @@ function initFlash() {
       flash.classList.remove('banner--error');
       flash.classList.remove('banner--success');
       flash.classList.remove('banner--warning');
-    }
-  }
+    },
+  };
 }
 
 function initFileInput() {
-  const fileInput = document.getElementById('file-input');
+  const fileInputElement = document.getElementById('file-input');
   const newDeckForm = document.getElementById('new-deck-form');
 
   return {
     clear() {
-      fileInput.value = null;
+      fileInputElement.value = null;
     },
 
     info() {
-      const data = new FormData(newDeckForm)
+      const data = new FormData(newDeckForm);
       const config = {
         headers: {
           'content-type': 'multipart/form-data',
@@ -49,7 +49,7 @@ function initFileInput() {
       };
 
       return { data, config };
-    }
+    },
   };
 }
 
@@ -74,7 +74,7 @@ function NewSpinner(event) {
 
     remove() {
       form.removeChild(shroud);
-    }
+    },
   };
 }
 
@@ -86,7 +86,7 @@ function pollStatus(taskStatus, spinner) {
         if (data.status !== 'processing') {
           clearInterval(poll);
           spinner.remove();
-          flash.show(data.status, data.message)
+          flashMessage.show(data.status, data.message);
           fileInput.clear();
         }
       });
@@ -106,7 +106,7 @@ function submitForm() {
   if (!data) return;
 
   axios.post('/deck/new', data, config)
-    .then(({ data })=> {
+    .then(({ data }) => {
       pollStatus(data.taskStatus, spinner);
     });
 }
