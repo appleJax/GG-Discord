@@ -86,14 +86,19 @@ export function endQuiz(channel, activeQuiz = {}) {
   const currentScore = activeQuiz.questionPosition[0] - 1;
   const endMsg = new Discord.RichEmbed();
 
-  const userPoints = points
-    .sort((a, b) => b.correctAnswers - a.correctAnswers)
-    .map(user => `${user.username}: ${user.correctAnswers}`)
-    .join('\n');
+  let pointsMsg = '';
 
-  const pointsMsg = `Correct Answers:\n${userPoints}`;
+  if (points.length > 0) {
+    const userPoints = points
+      .sort((a, b) => b.correctAnswers - a.correctAnswers)
+      .map(user => `${user.username}: ${user.correctAnswers}`)
+      .join('\n');
+
+    pointsMsg = `\n\nCorrect Answers:\n${userPoints}`;
+  }
+
   const playAgain = command => `\n\nType \`${PREFIX}${command}\` to play again.`;
-  const summary = command => `\n\n${pointsMsg}${playAgain(command)}`;
+  const summary = command => `${pointsMsg}${playAgain(command)}`;
   const s = currentScore === 1 ? '' : 's';
 
   if (survivalMode && currentScore > survivalRecord) {
