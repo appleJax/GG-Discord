@@ -10,6 +10,7 @@ describe('validating arguments for start command', () => {
     };
 
     expect(argResult).toEqual(expectedArgs);
+    expect(argResult.error).toBeUndefined();
   });
 
   it('should return the correct values if given valid arguments', () => {
@@ -23,6 +24,7 @@ describe('validating arguments for start command', () => {
     };
 
     expect(argResult).toEqual(expectedArgs);
+    expect(argResult.error).toBeUndefined();
   });
 
   it('should return an error for quizSize if given an invalid quizSize', () => {
