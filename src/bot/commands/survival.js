@@ -2,7 +2,7 @@ import Discord from 'discord.js';
 import { tryCatch } from 'Utils';
 import DECKS from 'Config/decks';
 import {
-  Colors, fetchCards, fetchHighScore, sendImage,
+  Colors, fetchCards, fetchSurvivalRecord, sendImage,
 } from '../utils';
 
 const TIME_PER_QUESTION = 60;
@@ -19,8 +19,8 @@ export default {
       deck: DECKS[roomId],
     };
 
-    const highScore = await tryCatch(
-      fetchHighScore(roomId),
+    const survivalRecord = await tryCatch(
+      fetchSurvivalRecord(roomId),
     );
 
     /* eslint-disable-next-line */
@@ -44,13 +44,13 @@ export default {
       questions,
       secondsPerQuestion: TIME_PER_QUESTION * 1000,
       questionPosition: [1, '??'],
-      highScore,
+      survivalRecord,
       survivalMode: true,
     };
 
     const startMsg = new Discord.RichEmbed()
       .setColor(Colors.BLUE)
-      .addField(`Starting quiz, see how long you can survive! Current record: ${highScore} correct answers`, currentQuestion.questionText);
+      .addField(`Starting quiz, see how long you can survive! Current record: ${survivalRecord} correct answers`, currentQuestion.questionText);
 
     msg.channel.send(startMsg);
 

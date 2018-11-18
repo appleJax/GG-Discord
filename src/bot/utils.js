@@ -16,15 +16,15 @@ export const Colors = {
 
 export async function askNextQuestion(client, channel) {
   const activeQuiz = client.quizzes.get(channel.id);
-  const { questionPosition, highScore } = activeQuiz;
+  const { questionPosition, survivalRecord } = activeQuiz;
 
-  if (highScore && questionPosition[0] === highScore) {
-    const s = highScore === 1 ? '' : 's';
-    const tiedHighScore = new Discord.RichEmbed()
+  if (survivalRecord && questionPosition[0] === survivalRecord) {
+    const s = survivalRecord === 1 ? '' : 's';
+    const tiedSurvivalRecord = new Discord.RichEmbed()
       .setColor(Colors.GREEN)
-      .setDescription(`👔 You are now TIED with the previous record of ${highScore} correct answer${s} in a row!`);
+      .setDescription(`👔 You are now TIED with the previous record of ${survivalRecord} correct answer${s} in a row!`);
 
-    channel.send(tiedHighScore);
+    channel.send(tiedSurvivalRecord);
   }
 
   activeQuiz.currentQuestion = activeQuiz.questions.pop();
@@ -82,27 +82,27 @@ export function commandNotFound(command) {
 }
 
 export function endQuiz(channel, activeQuiz = {}) {
-  const { highScore, survivalMode } = activeQuiz;
+  const { survivalRecord, survivalMode } = activeQuiz;
   const currentScore = activeQuiz.questionPosition[0] - 1;
   const endMsg = new Discord.RichEmbed();
 
   const playAgain = command => `\n\nType \`${PREFIX}${command}\` to play again.`;
   const s = currentScore === 1 ? '' : 's';
 
-  if (survivalMode && currentScore > highScore) {
+  if (survivalMode && currentScore > survivalRecord) {
     endMsg
       .setColor(Colors.PURPLE)
-      .setDescription(`🏆 Congratulations, you set a new record for this quiz with ${currentScore} correct answer${s} in a row, beating the previous record of ${highScore}!${playAgain('survival')}`);
+      .setDescription(`🏆 Congratulations, you set a new record for this quiz with ${currentScore} correct answer${s} in a row, beating the previous record of ${survivalRecord}!${playAgain('survival')}`);
 
-    setHighScore(channel.id, currentScore);
-  } else if (survivalMode && currentScore === highScore) {
+    setSurvivalRecord(channel.id, currentScore);
+  } else if (survivalMode && currentScore === survivalRecord) {
     endMsg
       .setColor(Colors.GREEN)
       .setDescription(`Congratulations, you tied the current record of ${currentScore} correct answer${s} in a row!${playAgain('survival')}`);
   } else if (survivalMode) {
     endMsg
       .setColor(Colors.BLUE)
-      .setDescription(`Thanks for playing, you correctly answered ${currentScore} question${s} in a row! Current record: ${highScore}${playAgain('survival')}`);
+      .setDescription(`Thanks for playing, you correctly answered ${currentScore} question${s} in a row! Current record: ${survivalRecord}${playAgain('survival')}`);
   } else {
     endMsg
       .setColor(Colors.BLUE)
@@ -122,10 +122,10 @@ export function fetchCards(deckQuery, quizSize) {
   ]);
 }
 
-export function fetchHighScore(roomId) {
+export function fetchSurvivalRecord(roomId) {
   return Room
     .findOne({ roomId })
-    .then(room => (room && room.highScore) || 0);
+    .then(room => (room && room.survivalRecord) || 0);
 }
 
 export function parseInput(msg) {
@@ -149,9 +149,9 @@ export function shouldIgnore(msg) {
 
 // private
 
-function setHighScore(roomId, highScore) {
+function setSurvivalRecord(roomId, survivalRecord) {
   Room.updateOne(
     { roomId },
-    { $set: { highScore } },
+    { $set: { survivalRecord } },
   ).catch(console.error);
 }
