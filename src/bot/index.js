@@ -5,7 +5,7 @@ const { BOT_TOKEN } = process.env;
 
 client.on('ready', () => console.log('Discord Bot: LIVE'));
 
-client.on('error', err => console.error(err));
+client.on('error', console.error);
 
 client.on('message', client.handleMsg);
 

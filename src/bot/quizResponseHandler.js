@@ -1,4 +1,6 @@
 import Discord from 'discord.js';
+import { tryCatch } from 'Utils';
+import saveQuizProgress from './saveQuizProgress';
 import {
   PREFIX, Colors, endQuiz, sendImage, askNextQuestion,
 } from './utils';
@@ -39,7 +41,7 @@ export default (client) => {
     askNextQuestion(client, channel);
   };
 
-  client.handleQuizResponse = (msg) => {
+  client.handleQuizResponse = async function handleQuizResponse(msg) {
     const roomId = msg.channel.id;
     const response = msg.content.toLowerCase();
     const activeQuiz = client.quizzes.get(roomId);
@@ -65,7 +67,7 @@ export default (client) => {
 
     const congrats = new Discord.RichEmbed()
       .setColor(Colors.GREEN)
-      .addField(`@${msg.author.username} answered correctly!`, currentQuestion.answerText);
+      .addField(`${msg.author.username} answered correctly!`, currentQuestion.answerText);
 
     msg.channel.send(congrats);
 
@@ -76,6 +78,10 @@ export default (client) => {
         sendImage(msg.channel, image);
       });
     }
+
+    await tryCatch(
+      saveQuizProgress(msg, activeQuiz),
+    );
 
     if (questions.length === 0) {
       client.quizzes.set(roomId, null);

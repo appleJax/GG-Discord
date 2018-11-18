@@ -14,7 +14,6 @@ const schema = new Schema({
       correctAnswers: t(Number, 0),
       cardsAnsweredCorrectly: t([String], []),
       survivalRecord: t(Number, 0),
-      avgAnswerTime: t(Number, 0),
     }], [],
   ),
 });

@@ -88,6 +88,7 @@ export default {
       questions,
       secondsPerQuestion: argsResult.secondsPerQuestion,
       questionPosition: [1, argsResult.quizSize],
+      points: [],
     };
 
     const startMsg = new Discord.RichEmbed()

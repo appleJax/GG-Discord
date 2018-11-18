@@ -82,31 +82,38 @@ export function commandNotFound(command) {
 }
 
 export function endQuiz(channel, activeQuiz = {}) {
-  const { survivalRecord, survivalMode } = activeQuiz;
+  const { survivalRecord, survivalMode, points } = activeQuiz;
   const currentScore = activeQuiz.questionPosition[0] - 1;
   const endMsg = new Discord.RichEmbed();
 
+  const userPoints = points
+    .sort((a, b) => b.correctAnswers - a.correctAnswers)
+    .map(user => `${user.username}: ${user.correctAnswers}`)
+    .join('\n');
+
+  const pointsMsg = `Correct Answers:\n${userPoints}`;
   const playAgain = command => `\n\nType \`${PREFIX}${command}\` to play again.`;
+  const summary = command => `\n\n${pointsMsg}${playAgain(command)}`;
   const s = currentScore === 1 ? '' : 's';
 
   if (survivalMode && currentScore > survivalRecord) {
     endMsg
       .setColor(Colors.PURPLE)
-      .setDescription(`🏆 Congratulations, you set a new record for this quiz with ${currentScore} correct answer${s} in a row, beating the previous record of ${survivalRecord}!${playAgain('survival')}`);
+      .setDescription(`🏆 Congratulations, you set a new record for this quiz with ${currentScore} correct answer${s} in a row, beating the previous record of ${survivalRecord}!${summary('survival')}`);
 
     setSurvivalRecord(channel.id, currentScore);
   } else if (survivalMode && currentScore === survivalRecord) {
     endMsg
       .setColor(Colors.GREEN)
-      .setDescription(`Congratulations, you tied the current record of ${currentScore} correct answer${s} in a row!${playAgain('survival')}`);
+      .setDescription(`Congratulations, you tied the current record of ${currentScore} correct answer${s} in a row!${summary('survival')}`);
   } else if (survivalMode) {
     endMsg
       .setColor(Colors.BLUE)
-      .setDescription(`Thanks for playing, you correctly answered ${currentScore} question${s} in a row! Current record: ${survivalRecord}${playAgain('survival')}`);
+      .setDescription(`Thanks for playing, you correctly answered ${currentScore} question${s} in a row!\nCurrent record: ${survivalRecord}${summary('survival')}`);
   } else {
     endMsg
       .setColor(Colors.BLUE)
-      .setDescription(`That's it, thanks for playing!${playAgain('start')}`);
+      .setDescription(`That's it, thanks for playing!${summary('start')}`);
   }
 
   setTimeout(

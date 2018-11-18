@@ -1,4 +1,5 @@
 import DECKS from 'Config/decks';
+import { tryCatch } from 'Utils';
 import {
   PREFIX, commandNotFound, parseInput, shouldIgnore,
 } from './utils';
@@ -6,7 +7,7 @@ import {
 const quizRooms = Object.keys(DECKS);
 
 export default (client) => {
-  client.handleMsg = (msg) => {
+  client.handleMsg = async function handleMsg(msg) {
     const roomId = msg.channel.id;
 
     if (!quizRooms.includes(roomId)) {
@@ -14,7 +15,9 @@ export default (client) => {
     }
 
     if (client.quizzes.get(roomId)) {
-      client.handleQuizResponse(msg);
+      await tryCatch(
+        client.handleQuizResponse(msg),
+      );
       return;
     }
 
