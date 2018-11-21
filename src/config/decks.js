@@ -4,6 +4,7 @@ let DECKS = {
   '505262797572276254': 'DBJG',
   '448017333907095562': 'DIJG',
   '507815046886457344': 'iKnow Core 2000',
+  '': 'iKnow Core 6000',
 };
 
 if (process.env.NODE_ENV !== 'production') {
@@ -12,6 +13,7 @@ if (process.env.NODE_ENV !== 'production') {
     '512832466575294484': 'DBJG',
     '512832494173945857': 'DIJG',
     '512832558300397589': 'iKnow Core 2000',
+    '514602093391380480': 'iKnow Core 6000',
   };
 }
 
