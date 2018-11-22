@@ -4,8 +4,8 @@ import { tryCatch } from 'Utils';
 const PATREON_LINK = 'https://www.patreon.com/gamegogakuen';
 
 export default {
-  name: 'myStats',
-  aliases: ['me'],
+  name: 'me',
+  aliases: [],
   description: 'Check your current stats',
   usage: '(only works when quiz is NOT in progress)',
   async execute(msg) {
@@ -49,5 +49,5 @@ function deckPercentageCorrect(subScore, totalCards) {
   const cardPercentage = Math.round(
     (subScore.cardsAnsweredCorrectly.length / totalCards) * 100,
   );
-  return `\n  Cards answered correctly:  ${cardCounts} (${cardPercentage}%)`;
+  return `\n  Unique cards correct:  ${cardCounts} (${cardPercentage}%)`;
 }
