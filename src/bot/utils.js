@@ -26,26 +26,27 @@ export async function askNextQuestion(client, channel) {
 
     channel.send(tiedSurvivalRecord);
   }
-
-  activeQuiz.currentQuestion = activeQuiz.questions.pop();
+  const onDeckQuestion = activeQuiz.questions.pop();
+  activeQuiz.currentQuestion = { answers: [] };
   /* eslint-disable-next-line */
   activeQuiz.questionPosition[0]++;
 
-  const { currentQuestion } = activeQuiz;
   const [currentPosition, totalQuestions] = activeQuiz.questionPosition;
   const position = `${currentPosition}/${totalQuestions}`;
 
   const nextMessage = new Discord.RichEmbed()
     .setColor(Colors.BLUE)
-    .addField(`Next Question (${position}):`, activeQuiz.currentQuestion.questionText);
+    .addField(`Next Question (${position}):`, onDeckQuestion.questionText);
 
   let questionImages = [];
-  if (currentQuestion.mediaUrls) {
-    questionImages = currentQuestion.mediaUrls.slice(0, currentQuestion.mainImageSlice[1]);
+  if (onDeckQuestion.mediaUrls) {
+    questionImages = onDeckQuestion.mediaUrls.slice(0, onDeckQuestion.mainImageSlice[1]);
   }
 
   activeQuiz.nextQuestion = setTimeout(() => {
     channel.send(nextMessage);
+
+    activeQuiz.currentQuestion = onDeckQuestion;
 
     questionImages.forEach((image) => {
       sendImage(channel, image);
