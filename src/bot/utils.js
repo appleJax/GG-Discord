@@ -44,7 +44,7 @@ export async function askNextQuestion(client, channel) {
     questionImages = currentQuestion.mediaUrls.slice(0, currentQuestion.mainImageSlice[1]);
   }
 
-  setTimeout(() => {
+  activeQuiz.nextQuestion = setTimeout(() => {
     channel.send(nextMessage);
 
     questionImages.forEach((image) => {

@@ -49,6 +49,7 @@ export default (client) => {
 
     if (!activeQuiz.survivalMode && response.startsWith(STOP_COMMAND)) {
       clearTimeout(activeQuiz.questionTimeout);
+      clearTimeout(activeQuiz.nextQuestion);
       client.quizzes.set(roomId, null);
 
       const stopMsg = new Discord.RichEmbed()
