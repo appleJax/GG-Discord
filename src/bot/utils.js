@@ -16,13 +16,13 @@ export const Colors = {
 
 export async function askNextQuestion(client, channel) {
   const activeQuiz = client.quizzes.get(channel.id);
-  const { questionPosition, survivalRecord } = activeQuiz;
+  const { questionPosition, solo, survivalRecord } = activeQuiz;
 
   if (survivalRecord && questionPosition[0] === survivalRecord) {
     const s = survivalRecord === 1 ? '' : 's';
     const tiedSurvivalRecord = new Discord.RichEmbed()
       .setColor(Colors.GREEN)
-      .setDescription(`👔 You are now TIED with the previous record of ${survivalRecord} correct answer${s} in a row!`);
+      .setDescription(`👔 You are now tied with ${solo ? 'your' : 'the'} previous record of ${survivalRecord} correct answer${s} in a row!`);
 
     channel.send(tiedSurvivalRecord);
   }
@@ -82,20 +82,45 @@ export function commandNotFound(command) {
   return notFound;
 }
 
-export function endQuiz(channel, activeQuiz = {}) {
-  const { survivalRecord, survivalMode, points } = activeQuiz;
+export async function endQuiz(channel, activeQuiz = {}) {
+  const { solo, survivalMode, points } = activeQuiz;
   const currentScore = activeQuiz.questionPosition[0] - 1;
   const endMsg = new Discord.RichEmbed();
+  let { survivalRecord } = activeQuiz;
 
   let pointsMsg = '';
 
-  if (points.length > 0) {
+  if (!solo && points.length > 0) {
     const userPoints = points
       .sort((a, b) => b.correctAnswers - a.correctAnswers)
       .map(user => `${user.username}: ${user.correctAnswers}`)
       .join('\n');
 
     pointsMsg = `\n\nCorrect Answers:\n${userPoints}`;
+  }
+
+  if (survivalMode && solo) {
+    const room = await tryCatch(
+      Room
+        .findOne({ roomId: channel.id })
+        .exec(),
+    );
+
+    const currentUser = room && room.users.find(user => user.userId === activeQuiz.solo.id);
+    if (currentUser) {
+      /* eslint-disable-next-line */
+      survivalRecord = currentUser.survivalRecord;
+
+      if (currentScore > survivalRecord) {
+        currentUser.survivalRecord = currentScore;
+        await tryCatch(
+          Room.updateOne(
+            { roomId: channel.id },
+            { $set: { users: room.users } },
+          ),
+        );
+      }
+    }
   }
 
   const playAgain = command => `\n\nType \`${PREFIX}${command}\` to play again.`;
@@ -105,13 +130,13 @@ export function endQuiz(channel, activeQuiz = {}) {
   if (survivalMode && currentScore > survivalRecord) {
     endMsg
       .setColor(Colors.PURPLE)
-      .setDescription(`🏆 Congratulations, you set a new record for this quiz with ${currentScore} correct answer${s} in a row, beating the previous record of ${survivalRecord}!${summary('survival')}`);
+      .setDescription(`🏆 Congratulations, you set a new ${solo ? 'personal ' : ''}record for this quiz with ${currentScore} correct answer${s} in a row, beating ${solo ? 'your' : 'the'} previous record of ${survivalRecord}!${summary('survival')}`);
 
     setSurvivalRecord(channel.id, currentScore);
   } else if (survivalMode && currentScore === survivalRecord) {
     endMsg
       .setColor(Colors.GREEN)
-      .setDescription(`Congratulations, you tied the current record of ${currentScore} correct answer${s} in a row!${summary('survival')}`);
+      .setDescription(`Congratulations, you tied ${solo ? 'your' : 'the'} current record of ${currentScore} correct answer${s} in a row!${summary('survival')}`);
   } else if (survivalMode) {
     endMsg
       .setColor(Colors.BLUE)

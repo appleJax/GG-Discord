@@ -34,9 +34,9 @@ export default {
       subScore = room.users.find(record => record.userId === user.userId);
       if (subScore) {
         stats += `\n${room.deck}:`;
-        stats += `\n  Correct answers: ${subScore.correctAnswers}`;
+        stats += `\n    Correct answers: ${subScore.correctAnswers}`;
         stats += deckPercentageCorrect(subScore, totalCards);
-        stats += `\n  Survival record: ${subScore.survivalRecord}`;
+        stats += `\n    Survival record: ${subScore.survivalRecord}`;
       }
     }
     return msg.reply(stats);
@@ -49,5 +49,5 @@ function deckPercentageCorrect(subScore, totalCards) {
   const cardPercentage = Math.round(
     (subScore.cardsAnsweredCorrectly.length / totalCards) * 100,
   );
-  return `\n  Unique cards correct:  ${cardCounts} (${cardPercentage}%)`;
+  return `\n    Unique cards correct:  ${cardCounts} (${cardPercentage}%)`;
 }

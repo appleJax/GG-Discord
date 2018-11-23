@@ -39,12 +39,22 @@ export default {
 
     const currentQuestion = questions.pop();
 
+    let solo = null;
+    if (DECKS.soloSurvival.includes(msg.channel.id)) {
+      solo = {
+        id: msg.author.id,
+        username: msg.author.username,
+      };
+    }
+
     const activeQuiz = {
       currentQuestion,
       points: [],
       questions,
       questionPosition: [1, '??'],
+      rebukes: {},
       secondsPerQuestion: SECONDS_PER_QUESTION,
+      solo,
       survivalRecord,
       survivalMode: true,
     };

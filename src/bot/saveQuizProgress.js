@@ -1,5 +1,6 @@
 import { tryCatch } from 'Utils';
 import { Room, User } from 'Models';
+import DECKS from 'Config/decks';
 
 async function saveQuizProgress(msg, activeQuiz) {
   const { id: userId, username } = msg.author;
@@ -56,9 +57,22 @@ async function saveQuizProgress(msg, activeQuiz) {
 
   const { cardId } = activeQuiz.currentQuestion;
 
-  const room = await tryCatch(
+  let room = await tryCatch(
     Room.findOne({ roomId }).lean().exec(),
   );
+
+  if (!room) {
+    room = {
+      roomId,
+      deck: DECKS[roomId],
+      survivalRecord: 0,
+      users: [],
+    };
+
+    await tryCatch(
+      Room.create(room),
+    );
+  }
 
   const roomUser = room.users.find(obj => obj.userId === userId);
   if (roomUser) {

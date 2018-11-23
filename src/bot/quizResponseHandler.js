@@ -60,6 +60,14 @@ export default (client) => {
       return;
     }
 
+    if (activeQuiz.solo && !msg.author.bot && activeQuiz.solo.id !== msg.author.id) {
+      if (activeQuiz.rebukes[msg.author.id] == null) {
+        msg.reply(`the quiz is in Solo Mode. Only ${activeQuiz.solo.username} can answer.`);
+        activeQuiz.rebukes[msg.author.id] = true;
+      }
+      return;
+    }
+
     if (!currentQuestion.answers.includes(response)) {
       return;
     }
