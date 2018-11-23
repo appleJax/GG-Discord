@@ -18,7 +18,7 @@ export default {
       return msg.reply(becomeAPatron);
     }
 
-    let stats = 'Your Stats:';
+    let stats = 'your stats:';
     stats += `\nTotal correct answers: ${user.correctAnswers}`;
 
     let totalCards;
