@@ -94,8 +94,9 @@ export async function endQuiz(msg, activeQuiz = {}) {
   let pointsMsg = '';
 
   if (!solo && points.length > 0) {
+    const DESC = (a, b) => b.correctAnswers - a.correctAnswers;
     const userPoints = points
-      .sort((a, b) => b.correctAnswers - a.correctAnswers)
+      .sort(DESC)
       .map(user => `${user.username}: ${user.correctAnswers}`)
       .join('\n');
 
