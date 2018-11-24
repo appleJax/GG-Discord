@@ -2,6 +2,7 @@ import Discord from 'discord.js';
 import { Card, Room } from 'Models';
 import { tryCatch } from 'Utils';
 import DECKS from 'Config/decks';
+import updateLeaderboard from './updateLeaderboard';
 
 export const PACE_DELAY = 12000;
 export const PREFIX = 'gg!';
@@ -14,7 +15,8 @@ export const Colors = {
   RED: '#CA0401',
 };
 
-export async function askNextQuestion(client, channel) {
+export async function askNextQuestion(client, msg) {
+  const { channel } = msg;
   const activeQuiz = client.quizzes.get(channel.id);
   const { questionPosition, solo, survivalRecord } = activeQuiz;
 
@@ -53,7 +55,7 @@ export async function askNextQuestion(client, channel) {
     });
 
     activeQuiz.questionTimeout = setTimeout(
-      () => client.nextQuestion(channel),
+      () => client.nextQuestion(msg),
       activeQuiz.secondsPerQuestion * 1000,
     );
   }, PACE_DELAY);
@@ -82,7 +84,8 @@ export function commandNotFound(command) {
   return notFound;
 }
 
-export async function endQuiz(channel, activeQuiz = {}) {
+export async function endQuiz(msg, activeQuiz = {}) {
+  const { channel } = msg;
   const { solo, survivalMode, points } = activeQuiz;
   const currentScore = activeQuiz.questionPosition[0] - 1;
   const endMsg = new Discord.RichEmbed();
@@ -147,6 +150,8 @@ export async function endQuiz(channel, activeQuiz = {}) {
       .setDescription(`That's it, thanks for playing!${summary('start')}`);
   }
 
+  updateLeaderboard(msg);
+
   setTimeout(
     () => channel.send(endMsg),
     2000,
@@ -164,6 +169,12 @@ export function fetchSurvivalRecord(roomId) {
   return Room
     .findOne({ roomId })
     .then(room => (room && room.survivalRecord) || 0);
+}
+
+export function isPatron(member) {
+  return !!member.roles.find(
+    role => ['Quiz Patron', 'admin'].includes(role.name),
+  );
 }
 
 export function parseInput(msg) {

@@ -8,7 +8,8 @@ import {
 const STOP_COMMAND = `${PREFIX}stop`;
 
 export default (client) => {
-  client.nextQuestion = (channel) => {
+  client.nextQuestion = (msg) => {
+    const { channel } = msg;
     const roomId = channel.id;
     const activeQuiz = client.quizzes.get(roomId);
     if (activeQuiz == null) {
@@ -34,11 +35,11 @@ export default (client) => {
 
     if (activeQuiz.survivalMode || questions.length === 0) {
       client.quizzes.set(roomId, null);
-      endQuiz(channel, activeQuiz);
+      endQuiz(msg, activeQuiz);
       return;
     }
 
-    askNextQuestion(client, channel);
+    askNextQuestion(client, msg);
   };
 
   client.handleQuizResponse = async function handleQuizResponse(msg) {
@@ -94,10 +95,10 @@ export default (client) => {
 
     if (questions.length === 0) {
       client.quizzes.set(roomId, null);
-      endQuiz(msg.channel, activeQuiz);
+      endQuiz(msg, activeQuiz);
       return;
     }
 
-    askNextQuestion(client, msg.channel);
+    askNextQuestion(client, msg);
   };
 };

@@ -106,7 +106,7 @@ export default {
     }
 
     activeQuiz.questionTimeout = setTimeout(
-      () => self.nextQuestion(msg.channel),
+      () => self.nextQuestion(msg),
       activeQuiz.secondsPerQuestion * 1000,
     );
     this.quizzes.set(roomId, activeQuiz);

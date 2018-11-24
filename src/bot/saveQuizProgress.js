@@ -1,4 +1,5 @@
 import { tryCatch } from 'Utils';
+import { isPatron } from 'Bot/utils';
 import { Room, User } from 'Models';
 import DECKS from 'Config/decks';
 
@@ -15,11 +16,7 @@ async function saveQuizProgress(msg, activeQuiz) {
     });
   }
 
-  const save = msg.member.roles.find(
-    role => ['Quiz Patron', 'admin'].includes(role.name),
-  );
-
-  if (!save) {
+  if (!isPatron(msg.member)) {
     return;
   }
 
