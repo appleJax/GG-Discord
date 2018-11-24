@@ -24,7 +24,7 @@ export default {
 
     const topUsersMsg = new Discord.RichEmbed()
       .setColor(Colors.BLUE)
-      .addField('Top Scores (<User>: <Correct Answers>):', topUsersList);
+      .addField('Top Scores (Total Correct Answers):', topUsersList);
 
     msg.channel.send(topUsersMsg);
   },
