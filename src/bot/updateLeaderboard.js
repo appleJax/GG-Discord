@@ -37,13 +37,8 @@ export default async function updateLeaderboard(msg) {
   messageChunks.push(stats);
 
   const leaderboard = msg.guild.channels.get(DECKS.leaderboard);
-  const notNull = x => Boolean(x);
-  const options = {
-    time: 30000,
-    errors: ['time'],
-  };
   const oldMessages = await tryCatch(
-    leaderboard.awaitMessages(notNull, options),
+    leaderboard.fetchMessages(),
   );
 
   if (oldMessages.size) {
