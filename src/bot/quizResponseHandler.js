@@ -1,15 +1,22 @@
 import Discord from 'discord.js';
 import { tryCatch } from 'Utils';
+import { Quiz } from 'Models';
 import saveQuizProgress from './saveQuizProgress';
 import {
-  PREFIX, Colors, endQuiz, sendImage, askNextQuestion,
+  PACE_DELAY,
+  PREFIX,
+  Colors,
+  askNextQuestion,
+  endQuiz,
+  prepareNextQuestion,
+  sendImage,
 } from './utils';
 
+const END_DELAY = 2000;
 const STOP_COMMAND = `${PREFIX}stop`;
 
 export default (client) => {
-  client.nextQuestion = (msg) => {
-    const { channel } = msg;
+  client.nextQuestion = (channel) => {
     const roomId = channel.id;
     const activeQuiz = client.quizzes.get(roomId);
     if (activeQuiz == null) {
@@ -34,16 +41,55 @@ export default (client) => {
     }
 
     if (activeQuiz.survivalMode || questions.length === 0) {
-      client.quizzes.set(roomId, null);
-      endQuiz(msg, activeQuiz);
+      setTimeout(
+        () => endQuiz(channel, activeQuiz),
+        END_DELAY,
+      );
+
+      const endQuizTime = Date.now() + END_DELAY;
+      Quiz.updateOne(
+        { roomId },
+        {
+          $set: {
+            timer: {
+              name: 'endQuiz',
+              time: endQuizTime,
+            },
+          },
+        },
+      ).exec().catch(console.error);
       return;
     }
 
-    askNextQuestion(client, msg);
+    prepareNextQuestion(channel, activeQuiz);
+
+    activeQuiz.nextQuestion = setTimeout(
+      () => askNextQuestion(channel),
+      PACE_DELAY,
+    );
+
+    const askNextQuestionTime = Date.now() + PACE_DELAY;
+    const updatedQuiz = {
+      ...activeQuiz,
+      roomId,
+      currentQuestion: activeQuiz.currentQuestion._id,
+      onDeckQuestion: activeQuiz.onDeckQuestion._id,
+      questions: activeQuiz.questions.map(obj => obj._id),
+      timer: {
+        name: 'askNextQuestion',
+        time: askNextQuestionTime,
+      },
+
+    };
+    Quiz.updateOne(
+      { roomId },
+      updatedQuiz,
+    ).exec().catch(console.error);
   };
 
   client.handleQuizResponse = async function handleQuizResponse(msg) {
-    const roomId = msg.channel.id;
+    const { channel } = msg;
+    const roomId = channel.id;
     const response = msg.content.toLowerCase();
     const activeQuiz = client.quizzes.get(roomId);
     const { currentQuestion, questions } = activeQuiz;
@@ -57,14 +103,14 @@ export default (client) => {
         .setColor(Colors.RED)
         .setDescription('Stopping quiz... 😢');
 
-      msg.channel.send(stopMsg);
+      channel.send(stopMsg);
       return;
     }
 
     if (activeQuiz.solo && !msg.author.bot && activeQuiz.solo.id !== msg.author.id) {
-      if (activeQuiz.rebukes[msg.author.id] == null) {
+      if (!activeQuiz.rebukes.includes(msg.author.id)) {
         msg.reply(`the quiz is in Solo Mode. Only ${activeQuiz.solo.username} can answer.`);
-        activeQuiz.rebukes[msg.author.id] = true;
+        activeQuiz.rebukes.push(msg.author.id);
       }
       return;
     }
@@ -79,13 +125,13 @@ export default (client) => {
       .setColor(Colors.GREEN)
       .addField(`${msg.author.username} answered correctly!`, currentQuestion.answerText);
 
-    msg.channel.send(congrats);
+    channel.send(congrats);
 
     if (currentQuestion.mediaUrls) {
       const answerImages = currentQuestion.mediaUrls.slice(currentQuestion.mainImageSlice[1]);
 
       answerImages.forEach((image) => {
-        sendImage(msg.channel, image);
+        sendImage(channel, image);
       });
     }
 
@@ -94,11 +140,49 @@ export default (client) => {
     );
 
     if (questions.length === 0) {
-      client.quizzes.set(roomId, null);
-      endQuiz(msg, activeQuiz);
+      setTimeout(
+        () => endQuiz(channel, activeQuiz),
+        END_DELAY,
+      );
+
+      const endQuizTime = Date.now() + END_DELAY;
+      Quiz.updateOne(
+        { roomId },
+        {
+          $set: {
+            timer: {
+              name: 'endQuiz',
+              time: endQuizTime,
+            },
+          },
+        },
+      ).exec().catch(console.error);
       return;
     }
 
-    askNextQuestion(client, msg);
+    prepareNextQuestion(channel, activeQuiz);
+
+    activeQuiz.nextQuestion = setTimeout(
+      () => askNextQuestion(channel),
+      PACE_DELAY,
+    );
+
+    const askNextQuestionTime = Date.now() + PACE_DELAY;
+    const updatedQuiz = {
+      ...activeQuiz,
+      roomId,
+      currentQuestion: activeQuiz.currentQuestion._id,
+      onDeckQuestion: activeQuiz.onDeckQuestion._id,
+      questions: activeQuiz.questions.map(obj => obj._id),
+      timer: {
+        name: 'askNextQuestion',
+        time: askNextQuestionTime,
+      },
+
+    };
+    Quiz.updateOne(
+      { roomId },
+      updatedQuiz,
+    ).exec().catch(console.error);
   };
 };

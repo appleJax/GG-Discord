@@ -1,9 +1,10 @@
 import { tryCatch } from 'Utils';
 import { isPatron } from 'Bot/utils';
-import { Deck, User } from 'Models';
+import { Deck, Quiz, User } from 'Models';
 import DECKS from 'Config/decks';
 
 async function saveQuizProgress(msg, activeQuiz) {
+  const roomId = msg.channel.id;
   const { id: userId, username } = msg.author;
   const userIndex = activeQuiz.points.findIndex(stat => stat.userId === userId);
   if (userIndex >= 0) {
@@ -16,11 +17,18 @@ async function saveQuizProgress(msg, activeQuiz) {
     });
   }
 
+  await tryCatch(
+    Quiz.updateOne(
+      { roomId },
+      { $set: { points: activeQuiz.points } },
+    ).exec(),
+  );
+
   if (!isPatron(msg.member)) {
     return;
   }
 
-  const deckName = DECKS[msg.channel.id];
+  const deckName = DECKS[roomId];
 
   const user = await tryCatch(
     User.findOne({ userId }).lean().exec(),

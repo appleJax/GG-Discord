@@ -1,6 +1,7 @@
 import Discord from 'discord.js';
 import { tryCatch } from 'Utils';
 import DECKS from 'Config/decks';
+import { Quiz } from 'Models';
 import {
   Colors, fetchCards, sendImage,
 } from '../utils';
@@ -53,13 +54,15 @@ export default {
   usageShort: '[quizSize] [secondsPerQuestion]',
   usage,
   async execute(msg, args) {
+    const self = this;
+    const { channel } = msg;
+    const roomId = channel.id;
     const soloRooms = DECKS.soloSurvival;
-    if (soloRooms.includes(msg.channel.id)) {
+
+    if (soloRooms.includes(roomId)) {
       msg.reply('this is a solo survival room. You can use `gg!start` in any of the Public Quiz Arcade channels.');
       return;
     }
-    const self = this;
-    const roomId = msg.channel.id;
 
     const argsResult = validateArgs(args);
 
@@ -82,7 +85,7 @@ export default {
         .setColor(Colors.RED)
         .setDescription('Sorry, something went wrong');
 
-      msg.channel.send(errorMsg);
+      channel.send(errorMsg);
       return;
     }
 
@@ -100,20 +103,29 @@ export default {
       .setColor(Colors.BLUE)
       .addField(`Starting quiz, first question (1/${argsResult.quizSize}):`, currentQuestion.questionText);
 
-    msg.channel.send(startMsg);
+    channel.send(startMsg);
 
     if (currentQuestion.mediaUrls) {
       const questionImages = currentQuestion.mediaUrls.slice(0, currentQuestion.mainImageSlice[1]);
 
       questionImages.forEach((image) => {
-        sendImage(msg.channel, image);
+        sendImage(channel, image);
       });
     }
 
     activeQuiz.questionTimeout = setTimeout(
-      () => self.nextQuestion(msg),
+      () => self.nextQuestion(channel),
       activeQuiz.secondsPerQuestion * 1000,
     );
     this.quizzes.set(roomId, activeQuiz);
+
+    await tryCatch(
+      Quiz.create({
+        ...activeQuiz,
+        roomId,
+        currentQuestion: activeQuiz.currentQuestion._id,
+        questions: activeQuiz.questions.map(obj => obj._id),
+      }),
+    );
   },
 };

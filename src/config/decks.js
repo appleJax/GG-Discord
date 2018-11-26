@@ -11,7 +11,6 @@ let DECKS = {
   '': 'DIJG',
   '': 'iKnow Core 2000',
   '': 'iKnow Core 6000',
-  leaderboard: '',
   soloSurvival: [
     '',
     '',
@@ -19,6 +18,8 @@ let DECKS = {
     '',
     '',
   ],
+  leaderboard: '',
+  // guild: '441091794654986241',
 };
 
 if (process.env.NODE_ENV !== 'production') {
@@ -34,7 +35,6 @@ if (process.env.NODE_ENV !== 'production') {
     '515423426962522152': 'DIJG',
     '515423477281325067': 'iKnow Core 2000',
     '515423516217311234': 'iKnow Core 6000',
-    leaderboard: '515642646522232832',
     soloSurvival: [
       '515423394926428160',
       '515423356720250881',
@@ -42,6 +42,8 @@ if (process.env.NODE_ENV !== 'production') {
       '515423477281325067',
       '515423516217311234',
     ],
+    leaderboard: '515642646522232832',
+    // guild: '512730749657415680',
   };
 }
 

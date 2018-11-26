@@ -3,7 +3,7 @@ import { User } from 'Models';
 import { tryCatch } from 'Utils';
 import formatUserStats from 'Bot/formatUserStats';
 
-export default async function updateLeaderboard(msg) {
+export default async function updateLeaderboard(channel) {
   const users = await tryCatch(
     User
       .find()
@@ -45,7 +45,7 @@ export default async function updateLeaderboard(msg) {
 
   messageChunks.push(stats);
 
-  const leaderboard = msg.guild.channels.get(DECKS.leaderboard);
+  const leaderboard = channel.client.channels.get(DECKS.leaderboard);
   const oldMessages = await tryCatch(
     leaderboard.fetchMessages(),
   );

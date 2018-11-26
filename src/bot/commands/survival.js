@@ -13,7 +13,8 @@ export default {
   usage: '(Survival Mode)',
   async execute(msg) {
     const self = this;
-    const roomId = msg.channel.id;
+    const { channel } = msg;
+    const roomId = channel.id;
     const deckName = DECKS[roomId];
 
     const deckQuery = {
@@ -34,14 +35,14 @@ export default {
         .setColor(Colors.RED)
         .setDescription('Sorry, something went wrong');
 
-      msg.channel.send(errorMsg);
+      channel.send(errorMsg);
       return;
     }
 
     const currentQuestion = questions.pop();
 
     let solo = null;
-    if (DECKS.soloSurvival.includes(msg.channel.id)) {
+    if (DECKS.soloSurvival.includes(roomId)) {
       solo = {
         id: msg.author.id,
         username: msg.author.username,
@@ -53,7 +54,7 @@ export default {
       points: [],
       questions,
       questionPosition: [1, '??'],
-      rebukes: {},
+      rebukes: [],
       secondsPerQuestion: SECONDS_PER_QUESTION,
       solo,
       survivalRecord,
@@ -70,12 +71,12 @@ export default {
       const questionImages = currentQuestion.mediaUrls.slice(0, currentQuestion.mainImageSlice[1]);
 
       questionImages.forEach((image) => {
-        sendImage(msg.channel, image);
+        sendImage(channel, image);
       });
     }
 
     activeQuiz.questionTimeout = setTimeout(
-      () => self.nextQuestion(msg),
+      () => self.nextQuestion(channel),
       activeQuiz.secondsPerQuestion * 1000,
     );
     this.quizzes.set(roomId, activeQuiz);

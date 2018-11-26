@@ -1,5 +1,5 @@
 import Discord from 'discord.js';
-import { Card, Deck } from 'Models';
+import { Card, Deck, Quiz } from 'Models';
 import { tryCatch } from 'Utils';
 import DECKS from 'Config/decks';
 import updateLeaderboard from './updateLeaderboard';
@@ -15,9 +15,7 @@ export const Colors = {
   RED: '#CA0401',
 };
 
-export async function askNextQuestion(client, msg) {
-  const { channel } = msg;
-  const activeQuiz = client.quizzes.get(channel.id);
+export function prepareNextQuestion(channel, activeQuiz) {
   const { questionPosition, solo, survivalRecord } = activeQuiz;
 
   if (survivalRecord && questionPosition[0] === survivalRecord) {
@@ -28,37 +26,41 @@ export async function askNextQuestion(client, msg) {
 
     channel.send(tiedSurvivalRecord);
   }
-  const onDeckQuestion = activeQuiz.questions.pop();
+
+  activeQuiz.onDeckQuestion = activeQuiz.questions.pop();
   activeQuiz.currentQuestion = { answers: [] };
   /* eslint-disable-next-line */
   activeQuiz.questionPosition[0]++;
+}
+
+export async function askNextQuestion(channel) {
+  const activeQuiz = channel.client.quizzes.get(channel.id);
+
+  activeQuiz.currentQuestion = activeQuiz.onDeckQuestion;
+  const { currentQuestion } = activeQuiz;
 
   const [currentPosition, totalQuestions] = activeQuiz.questionPosition;
   const position = `${currentPosition}/${totalQuestions}`;
 
   const nextMessage = new Discord.RichEmbed()
     .setColor(Colors.BLUE)
-    .addField(`Next Question (${position}):`, onDeckQuestion.questionText);
+    .addField(`Next Question (${position}):`, currentQuestion.questionText);
 
   let questionImages = [];
-  if (onDeckQuestion.mediaUrls) {
-    questionImages = onDeckQuestion.mediaUrls.slice(0, onDeckQuestion.mainImageSlice[1]);
+  if (currentQuestion.mediaUrls) {
+    questionImages = currentQuestion.mediaUrls.slice(0, currentQuestion.mainImageSlice[1]);
   }
 
-  activeQuiz.nextQuestion = setTimeout(() => {
-    channel.send(nextMessage);
+  channel.send(nextMessage);
 
-    activeQuiz.currentQuestion = onDeckQuestion;
+  questionImages.forEach((image) => {
+    sendImage(channel, image);
+  });
 
-    questionImages.forEach((image) => {
-      sendImage(channel, image);
-    });
-
-    activeQuiz.questionTimeout = setTimeout(
-      () => client.nextQuestion(msg),
-      activeQuiz.secondsPerQuestion * 1000,
-    );
-  }, PACE_DELAY);
+  activeQuiz.questionTimeout = setTimeout(
+    () => channel.client.nextQuestion(channel),
+    activeQuiz.secondsPerQuestion * 1000,
+  );
 
   if (activeQuiz.survivalMode) {
     if (activeQuiz.questions.length < 5) {
@@ -67,7 +69,7 @@ export async function askNextQuestion(client, msg) {
       };
 
       const newCards = await tryCatch(
-        fetchCards(deckQuery, 200),
+        fetchCards(deckQuery, 10),
       );
       activeQuiz.questions = activeQuiz.questions.concat(newCards);
     }
@@ -84,8 +86,7 @@ export function commandNotFound(command) {
   return notFound;
 }
 
-export async function endQuiz(msg, activeQuiz = {}) {
-  const { channel } = msg;
+export async function endQuiz(channel, activeQuiz = {}) {
   const { solo, survivalMode, points } = activeQuiz;
   const currentScore = activeQuiz.questionPosition[0] - 1;
   const endMsg = new Discord.RichEmbed();
@@ -153,13 +154,14 @@ export async function endQuiz(msg, activeQuiz = {}) {
       .setDescription(`That's it, thanks for playing!${summary('start')}`);
   }
 
-  setTimeout(
-    () => channel.send(endMsg),
-    2000,
-  );
+  channel.send(endMsg);
+
+  const roomId = channel.id;
+  channel.client.quizzes.set(roomId, null);
+  Quiz.deleteOne({ roomId }).exec().catch(console.error);
 
   await tryCatch(
-    updateLeaderboard(msg),
+    updateLeaderboard(channel),
   );
 }
 
