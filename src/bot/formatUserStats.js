@@ -1,6 +1,5 @@
 import { Card, Deck } from 'Models';
 import { tryCatch } from 'Utils';
-import DECKS from 'Config/decks';
 
 const cache = new Map();
 
@@ -8,12 +7,12 @@ async function formatUserStats(user, deckCache = cache) {
   let stats = `\n    Total correct answers: ${user.correctAnswers}`;
 
   let deck;
-  let deckName;
   let subScore;
   let totalCards;
 
-  for (const roomId of user.subScores) {
-    deckName = DECKS[roomId];
+  user.subScores.sort();
+
+  for (const deckName of user.subScores) {
     if (deckCache.has(deckName)) {
       deck = deckCache.get(deckName);
     } else {
@@ -27,7 +26,7 @@ async function formatUserStats(user, deckCache = cache) {
       }
 
       totalCards = await tryCatch(
-        Card.count({ deck: deck.name }).exec(),
+        Card.count({ deck: deckName }).exec(),
       );
 
       deck.totalCards = totalCards;
