@@ -4,8 +4,7 @@ import { t } from 'DB/utils';
 const { Schema } = Mongoose;
 
 const schema = new Schema({
-  roomId: String,
-  deck: String,
+  name: String,
   survivalRecord: t(Number, 0),
   users: t(
     [{
@@ -18,6 +17,6 @@ const schema = new Schema({
   ),
 });
 
-const Room = Mongoose.model('Room', schema);
+const Deck = Mongoose.model('Deck', schema);
 
-export { Room };
+export { Deck };

@@ -1,5 +1,5 @@
 import Discord from 'discord.js';
-import { Card, Room } from 'Models';
+import { Card, Deck } from 'Models';
 import { tryCatch } from 'Utils';
 import DECKS from 'Config/decks';
 import updateLeaderboard from './updateLeaderboard';
@@ -103,14 +103,16 @@ export async function endQuiz(msg, activeQuiz = {}) {
     pointsMsg = `\n\nCorrect Answers:\n${userPoints}`;
   }
 
+  const deckName = DECKS[channel.id];
+
   if (survivalMode && solo) {
-    const room = await tryCatch(
-      Room
-        .findOne({ roomId: channel.id })
+    const deck = await tryCatch(
+      Deck
+        .findOne({ name: deckName })
         .exec(),
     );
 
-    const currentUser = room && room.users.find(user => user.userId === activeQuiz.solo.id);
+    const currentUser = deck && deck.users.find(user => user.userId === activeQuiz.solo.id);
     if (currentUser) {
       /* eslint-disable-next-line */
       survivalRecord = currentUser.survivalRecord;
@@ -118,9 +120,9 @@ export async function endQuiz(msg, activeQuiz = {}) {
       if (currentScore > survivalRecord) {
         currentUser.survivalRecord = currentScore;
         await tryCatch(
-          Room.updateOne(
-            { roomId: channel.id },
-            { $set: { users: room.users } },
+          Deck.updateOne(
+            { name: deckName },
+            { $set: { users: deck.users } },
           ),
         );
       }
@@ -136,7 +138,7 @@ export async function endQuiz(msg, activeQuiz = {}) {
       .setColor(Colors.PURPLE)
       .setDescription(`🏆 Congratulations, you set a new ${solo ? 'personal ' : ''}record for this quiz with ${currentScore} correct answer${s} in a row, beating ${solo ? 'your' : 'the'} previous record of ${survivalRecord}!${summary('survival')}`);
 
-    setSurvivalRecord(channel.id, currentScore);
+    setSurvivalRecord(deckName, currentScore);
   } else if (survivalMode && currentScore === survivalRecord) {
     endMsg
       .setColor(Colors.GREEN)
@@ -168,10 +170,10 @@ export function fetchCards(deckQuery, quizSize) {
   ]);
 }
 
-export function fetchSurvivalRecord(roomId) {
-  return Room
-    .findOne({ roomId })
-    .then(room => (room && room.survivalRecord) || 0);
+export function fetchSurvivalRecord(deckName) {
+  return Deck
+    .findOne({ name: deckName })
+    .then(deck => (deck && deck.survivalRecord) || 0);
 }
 
 export function isPatron(member) {
@@ -201,9 +203,9 @@ export function shouldIgnore(msg) {
 
 // private
 
-function setSurvivalRecord(roomId, survivalRecord) {
-  Room.updateOne(
-    { roomId },
+function setSurvivalRecord(deckName, survivalRecord) {
+  Deck.updateOne(
+    { name: deckName },
     { $set: { survivalRecord } },
   ).catch(console.error);
 }

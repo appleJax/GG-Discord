@@ -1,6 +1,6 @@
 import { tryCatch } from 'Utils';
 import { isPatron } from 'Bot/utils';
-import { Room, User } from 'Models';
+import { Deck, User } from 'Models';
 import DECKS from 'Config/decks';
 
 async function saveQuizProgress(msg, activeQuiz) {
@@ -20,7 +20,7 @@ async function saveQuizProgress(msg, activeQuiz) {
     return;
   }
 
-  const roomId = msg.channel.id;
+  const deckName = DECKS[msg.channel.id];
 
   const user = await tryCatch(
     User.findOne({ userId }).lean().exec(),
@@ -28,8 +28,8 @@ async function saveQuizProgress(msg, activeQuiz) {
 
   if (user) {
     const { subScores } = user;
-    if (!subScores.includes(roomId)) {
-      subScores.push(roomId);
+    if (!subScores.includes(deckName)) {
+      subScores.push(deckName);
     }
 
     await tryCatch(
@@ -48,48 +48,47 @@ async function saveQuizProgress(msg, activeQuiz) {
         username: msg.author.username,
         tag: msg.member.user.tag,
         correctAnswers: 1,
-        subScores: [roomId],
+        subScores: [deckName],
       }),
     );
   }
 
   const { cardId } = activeQuiz.currentQuestion;
 
-  let room = await tryCatch(
-    Room.findOne({ roomId }).lean().exec(),
+  let deck = await tryCatch(
+    Deck.findOne({ name: deckName }).lean().exec(),
   );
 
-  if (!room) {
-    room = {
-      roomId,
-      deck: DECKS[roomId],
+  if (!deck) {
+    deck = {
+      name: deckName,
       survivalRecord: 0,
       users: [],
     };
 
     await tryCatch(
-      Room.create(room),
+      Deck.create(deck),
     );
   }
 
-  const roomUser = room.users.find(obj => obj.userId === userId);
-  if (roomUser) {
-    roomUser.correctAnswers += 1;
-    const { cardsAnsweredCorrectly } = roomUser;
+  const deckUser = deck.users.find(obj => obj.userId === userId);
+  if (deckUser) {
+    deckUser.correctAnswers += 1;
+    const { cardsAnsweredCorrectly } = deckUser;
     if (!cardsAnsweredCorrectly.includes(cardId)) {
       cardsAnsweredCorrectly.push(cardId);
     }
 
     await tryCatch(
-      Room.updateOne(
-        { roomId },
-        { $set: { users: room.users } },
+      Deck.updateOne(
+        { name: deckName },
+        { $set: { users: deck.users } },
       ).exec(),
     );
   } else {
     await tryCatch(
-      Room.updateOne(
-        { roomId },
+      Deck.updateOne(
+        { name: deckName },
         {
           $push: {
             users: {

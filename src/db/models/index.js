@@ -1,4 +1,4 @@
 export * from './Card';
-export * from './Room';
+export * from './Deck';
 export * from './Quiz';
 export * from './User';

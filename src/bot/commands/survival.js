@@ -14,13 +14,14 @@ export default {
   async execute(msg) {
     const self = this;
     const roomId = msg.channel.id;
+    const deckName = DECKS[roomId];
 
     const deckQuery = {
-      deck: DECKS[roomId],
+      deck: deckName,
     };
 
     const survivalRecord = await tryCatch(
-      fetchSurvivalRecord(roomId),
+      fetchSurvivalRecord(deckName),
     );
 
     /* eslint-disable-next-line */

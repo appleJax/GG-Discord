@@ -1,46 +1,44 @@
-import { Card, Room } from 'Models';
+import { Card, Deck } from 'Models';
 import { tryCatch } from 'Utils';
 import DECKS from 'Config/decks';
 
 const cache = new Map();
 
-async function formatUserStats(user, roomCache = cache) {
+async function formatUserStats(user, deckCache = cache) {
   let stats = `\n    Total correct answers: ${user.correctAnswers}`;
 
-  let room;
+  let deck;
+  let deckName;
   let subScore;
   let totalCards;
 
   for (const roomId of user.subScores) {
-    if (roomCache.has(roomId)) {
-      room = roomCache.get(roomId);
+    deckName = DECKS[roomId];
+    if (deckCache.has(deckName)) {
+      deck = deckCache.get(deckName);
     } else {
-      room = await tryCatch(
-        Room.findOne({ roomId }).lean().exec(),
+      deck = await tryCatch(
+        Deck.findOne({ name: deckName }).lean().exec(),
       );
 
-      if (!room) {
+      if (!deck) {
         /* eslint-disable-next-line */
         continue;
       }
 
       totalCards = await tryCatch(
-        Card.count({ deck: room.deck }).exec(),
+        Card.count({ deck: deck.name }).exec(),
       );
 
-      room.totalCards = totalCards;
-      roomCache.set(roomId, room);
+      deck.totalCards = totalCards;
+      deckCache.set(deckName, deck);
     }
 
-    subScore = room.users.find(record => record.userId === user.userId);
+    subScore = deck.users.find(record => record.userId === user.userId);
     if (subScore) {
-      const solo = (DECKS.soloSurvival.includes(roomId))
-        ? '(Solo Survival) '
-        : '';
-
-      stats += `\n    ${solo}${room.deck}:`;
+      stats += `\n    ${deck.name}:`;
       stats += `\n        Correct answers: ${subScore.correctAnswers}`;
-      stats += deckPercentageCorrect(subScore, room.totalCards);
+      stats += deckPercentageCorrect(subScore, deck.totalCards);
       stats += `\n        Survival record: ${subScore.survivalRecord}`;
     }
   }
