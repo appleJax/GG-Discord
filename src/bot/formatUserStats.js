@@ -1,8 +1,11 @@
 import { Card, Room } from 'Models';
 import { tryCatch } from 'Utils';
+import DECKS from 'Config/decks';
 
-export default async function formatUserStats(user, roomCache = new Map()) {
-  let stats = `\n  Total correct answers: ${user.correctAnswers}`;
+const cache = new Map();
+
+async function formatUserStats(user, roomCache = cache) {
+  let stats = `\n    Total correct answers: ${user.correctAnswers}`;
 
   let room;
   let subScore;
@@ -13,8 +16,13 @@ export default async function formatUserStats(user, roomCache = new Map()) {
       room = roomCache.get(roomId);
     } else {
       room = await tryCatch(
-        Room.findOne({ roomId }).exec(),
+        Room.findOne({ roomId }).lean().exec(),
       );
+
+      if (!room) {
+        /* eslint-disable-next-line */
+        continue;
+      }
 
       totalCards = await tryCatch(
         Card.count({ deck: room.deck }).exec(),
@@ -26,15 +34,21 @@ export default async function formatUserStats(user, roomCache = new Map()) {
 
     subScore = room.users.find(record => record.userId === user.userId);
     if (subScore) {
-      stats += `\n  ${room.deck}:`;
-      stats += `\n    Correct answers: ${subScore.correctAnswers}`;
+      const solo = (DECKS.soloSurvival.includes(roomId))
+        ? '(Solo Survival) '
+        : '';
+
+      stats += `\n    ${solo}${room.deck}:`;
+      stats += `\n        Correct answers: ${subScore.correctAnswers}`;
       stats += deckPercentageCorrect(subScore, room.totalCards);
-      stats += `\n    Survival record: ${subScore.survivalRecord}`;
+      stats += `\n        Survival record: ${subScore.survivalRecord}`;
     }
   }
 
   return stats;
 }
+
+export default formatUserStats;
 
 // private
 function deckPercentageCorrect(subScore, totalCards) {
@@ -42,5 +56,5 @@ function deckPercentageCorrect(subScore, totalCards) {
   const cardPercentage = Math.round(
     (subScore.cardsAnsweredCorrectly.length / totalCards) * 100,
   );
-  return `\n    Unique cards correct:  ${cardCounts} (${cardPercentage}%)`;
+  return `\n        Unique cards correct:  ${cardCounts} (${cardPercentage}%)`;
 }

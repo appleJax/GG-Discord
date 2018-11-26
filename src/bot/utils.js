@@ -151,11 +151,13 @@ export async function endQuiz(msg, activeQuiz = {}) {
       .setDescription(`That's it, thanks for playing!${summary('start')}`);
   }
 
-  updateLeaderboard(msg);
-
   setTimeout(
     () => channel.send(endMsg),
     2000,
+  );
+
+  await tryCatch(
+    updateLeaderboard(msg),
   );
 }
 

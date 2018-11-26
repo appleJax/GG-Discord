@@ -14,15 +14,16 @@ export default async function updateLeaderboard(msg) {
   const roomCache = new Map();
   const messageChunks = [];
 
-  let stats = '*Top Scores:*\n';
+  let stats = '**Top Scores:**\n';
   let nextUser = '';
   let rank = 1;
 
   for (const user of users) {
-    nextUser += `\n${rank++}. @${user.username}`;
+    nextUser += `\n${rank++}. ${user.username}`;
     nextUser += await tryCatch(
       formatUserStats(user, roomCache),
     );
+    nextUser += '\n';
 
     if (stats.length + nextUser.length > 1950) {
       messageChunks.push(stats);
@@ -35,17 +36,23 @@ export default async function updateLeaderboard(msg) {
 
   messageChunks.push(stats);
 
-  const leaderBoard = msg.guild.channels.get(DECKS.leaderBoard);
-
+  const leaderboard = msg.guild.channels.get(DECKS.leaderboard);
+  const notNull = x => Boolean(x);
+  const options = {
+    time: 30000,
+    errors: ['time'],
+  };
   const oldMessages = await tryCatch(
-    leaderBoard.awaitMessages(x => x),
+    leaderboard.awaitMessages(notNull, options),
   );
 
-  await tryCatch(
-    leaderBoard.bulkDelete(oldMessages.size),
-  );
+  if (oldMessages.size) {
+    await tryCatch(
+      leaderboard.bulkDelete(oldMessages.size),
+    );
+  }
 
   messageChunks.forEach(
-    chunk => leaderBoard.send(chunk),
+    chunk => leaderboard.send(chunk),
   );
 }

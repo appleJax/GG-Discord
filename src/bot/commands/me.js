@@ -1,7 +1,7 @@
 import { User } from 'Models';
 import { tryCatch } from 'Utils';
 import { isPatron } from 'Bot/utils';
-import { formatUserStats } from 'Bot/formatUserStats';
+import formatUserStats from 'Bot/formatUserStats';
 
 const PATREON_LINK = 'https://www.patreon.com/gamegogakuen';
 
@@ -18,7 +18,7 @@ export default {
     }
 
     const user = await tryCatch(
-      User.findOne({ userId: msg.author.id }).exec(),
+      User.findOne({ userId: msg.author.id }).lean().exec(),
     );
 
     if (!user) {
@@ -29,6 +29,6 @@ export default {
       formatUserStats(user),
     );
 
-    return msg.reply(`your stats:\n\n${userStats}`);
+    return msg.reply(`your stats:\n${userStats}`);
   },
 };

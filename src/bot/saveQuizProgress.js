@@ -46,6 +46,7 @@ async function saveQuizProgress(msg, activeQuiz) {
       User.create({
         userId,
         username: msg.author.username,
+        tag: msg.member.user.tag,
         correctAnswers: 1,
         subScores: [roomId],
       }),

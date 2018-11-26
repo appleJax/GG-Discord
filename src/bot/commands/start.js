@@ -53,6 +53,11 @@ export default {
   usageShort: '[quizSize] [secondsPerQuestion]',
   usage,
   async execute(msg, args) {
+    const soloRooms = DECKS.soloSurvival;
+    if (soloRooms.includes(msg.channel.id)) {
+      msg.reply('this is a solo survival room. You can use `gg!start` in any of the Public Quiz Arcade channels.');
+      return;
+    }
     const self = this;
     const roomId = msg.channel.id;
 
