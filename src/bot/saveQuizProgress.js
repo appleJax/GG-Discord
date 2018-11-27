@@ -7,6 +7,7 @@ async function saveQuizProgress(msg, activeQuiz) {
   const roomId = msg.channel.id;
   const { id: userId, username } = msg.author;
   const userIndex = activeQuiz.points.findIndex(stat => stat.userId === userId);
+
   if (userIndex >= 0) {
     activeQuiz.points[userIndex].correctAnswers += 1;
   } else {
@@ -80,6 +81,7 @@ async function saveQuizProgress(msg, activeQuiz) {
   }
 
   const deckUser = deck.users.find(obj => obj.userId === userId);
+
   if (deckUser) {
     deckUser.correctAnswers += 1;
     const { cardsAnsweredCorrectly } = deckUser;

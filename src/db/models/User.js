@@ -6,6 +6,7 @@ const { Schema } = Mongoose;
 const schema = new Schema({
   userId: String,
   username: String,
+  tag: String,
   correctAnswers: t(Number, 0),
   subScores: t([String], []), // roomIds
 });

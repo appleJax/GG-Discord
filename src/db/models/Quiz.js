@@ -21,13 +21,13 @@ const schema = new Schema({
       correctAnswers: t(Number, 0),
     }], [],
   ),
-  timer: {
-    name: String,
-    time: Number,
-  },
   solo: {
     id: String,
     username: String,
+  },
+  timer: {
+    name: String,
+    time: Number,
   },
 });
 
