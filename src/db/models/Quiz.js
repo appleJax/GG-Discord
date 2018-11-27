@@ -16,7 +16,8 @@ const schema = new Schema({
   points: t(
     [{
       _id: false,
-      userId: Number,
+      userId: String,
+      username: String,
       correctAnswers: t(Number, 0),
     }], [],
   ),
