@@ -1,5 +1,6 @@
 import Discord from 'discord.js';
 import { tryCatch } from 'Utils';
+import { Quiz } from 'Models';
 import DECKS from 'Config/decks';
 import {
   Colors, fetchCards, fetchSurvivalRecord, sendImage,
@@ -27,7 +28,7 @@ export default {
 
     /* eslint-disable-next-line */
     const questions = await tryCatch(
-      fetchCards(deckQuery, 200),
+      fetchCards(deckQuery, 10),
     );
 
     if (!questions || questions.length === 0) {
@@ -80,5 +81,20 @@ export default {
       activeQuiz.secondsPerQuestion * 1000,
     );
     this.quizzes.set(roomId, activeQuiz);
+
+    const questionTimeout = Date.now() + (activeQuiz.secondsPerQuestion * 1000);
+
+    await tryCatch(
+      Quiz.create({
+        ...activeQuiz,
+        roomId,
+        currentQuestion: activeQuiz.currentQuestion._id,
+        questions: activeQuiz.questions.map(obj => obj._id),
+        timer: {
+          name: 'questionTimeout',
+          time: questionTimeout,
+        },
+      }),
+    );
   },
 };

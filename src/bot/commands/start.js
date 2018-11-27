@@ -119,12 +119,18 @@ export default {
     );
     this.quizzes.set(roomId, activeQuiz);
 
+    const questionTimeout = Date.now() + (activeQuiz.secondsPerQuestion * 1000);
+
     await tryCatch(
       Quiz.create({
         ...activeQuiz,
         roomId,
         currentQuestion: activeQuiz.currentQuestion._id,
         questions: activeQuiz.questions.map(obj => obj._id),
+        timer: {
+          name: 'questionTimeout',
+          time: questionTimeout,
+        },
       }),
     );
   },

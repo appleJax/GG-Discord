@@ -1,9 +1,16 @@
+import { tryCatch } from 'Utils';
 /* eslint-disable-next-line */
 import client from './config';
+import rehydrateActiveQuizzes from './rehydrateActiveQuizzes';
 
 const { BOT_TOKEN } = process.env;
 
-client.on('ready', () => console.log('Discord Bot: LIVE'));
+client.on('ready', async () => {
+  await tryCatch(
+    rehydrateActiveQuizzes(client),
+  );
+  console.log('Discord Bot: LIVE');
+});
 
 client.on('error', console.error);
 

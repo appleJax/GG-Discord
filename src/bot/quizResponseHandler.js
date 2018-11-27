@@ -51,13 +51,12 @@ export default (client) => {
         { roomId },
         {
           $set: {
-            timer: {
-              name: 'endQuiz',
-              time: endQuizTime,
-            },
+            'timer.name': 'endQuiz',
+            'timer.time': endQuizTime,
           },
         },
       ).exec().catch(console.error);
+
       return;
     }
 
@@ -75,13 +74,16 @@ export default (client) => {
       currentQuestion: activeQuiz.currentQuestion._id,
       onDeckQuestion: activeQuiz.onDeckQuestion._id,
       questions: activeQuiz.questions.map(obj => obj._id),
+      questionTimeout: null,
+      nextQuestion: null,
       timer: {
         name: 'askNextQuestion',
         time: askNextQuestionTime,
       },
 
     };
-    Quiz.updateOne(
+
+    Quiz.replaceOne(
       { roomId },
       updatedQuiz,
     ).exec().catch(console.error);
@@ -174,13 +176,15 @@ export default (client) => {
       currentQuestion: activeQuiz.currentQuestion._id,
       onDeckQuestion: activeQuiz.onDeckQuestion._id,
       questions: activeQuiz.questions.map(obj => obj._id),
+      questionTimeout: null,
+      nextQuestion: null,
       timer: {
         name: 'askNextQuestion',
         time: askNextQuestionTime,
       },
 
     };
-    Quiz.updateOne(
+    Quiz.replaceOne(
       { roomId },
       updatedQuiz,
     ).exec().catch(console.error);
