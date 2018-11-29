@@ -1,6 +1,7 @@
 import Discord from 'discord.js';
 import { tryCatch } from 'Utils';
 import { Quiz } from 'Models';
+import { sendWithRetry } from 'Bot/utils';
 import DECKS from 'Config/decks';
 import {
   Colors, fetchCards, fetchSurvivalRecord, sendImage,
@@ -36,7 +37,7 @@ export default {
         .setColor(Colors.RED)
         .setDescription('Sorry, something went wrong');
 
-      channel.send(errorMsg);
+      sendWithRetry(channel, errorMsg);
       return;
     }
 
@@ -66,7 +67,7 @@ export default {
       .setColor(Colors.BLUE)
       .addField(`Starting quiz, see how long you can survive! Current record: ${survivalRecord} correct answers`, currentQuestion.questionText);
 
-    msg.channel.send(startMsg);
+    sendWithRetry(channel, startMsg);
 
     if (currentQuestion.mediaUrls) {
       const questionImages = currentQuestion.mediaUrls.slice(0, currentQuestion.mainImageSlice[1]);

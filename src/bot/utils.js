@@ -24,7 +24,7 @@ export function prepareNextQuestion(channel, activeQuiz) {
       .setColor(Colors.GREEN)
       .setDescription(`👔 You are now tied with ${solo ? 'your' : 'the'} previous record of ${survivalRecord} correct answer${s} in a row!`);
 
-    channel.send(tiedSurvivalRecord);
+    sendWithRetry(channel, tiedSurvivalRecord);
   }
 
   activeQuiz.onDeckQuestion = activeQuiz.questions.pop();
@@ -51,7 +51,7 @@ export async function askNextQuestion(channel) {
     questionImages = currentQuestion.mediaUrls.slice(0, currentQuestion.mainImageSlice[1]);
   }
 
-  channel.send(nextMessage);
+  sendWithRetry(channel, nextMessage);
 
   questionImages.forEach((image) => {
     sendImage(channel, image);
@@ -154,15 +154,17 @@ export async function endQuiz(channel, activeQuiz = {}) {
       .setDescription(`That's it, thanks for playing!${summary('start')}`);
   }
 
-  channel.send(endMsg);
+  sendWithRetry(channel, endMsg);
 
   const roomId = channel.id;
   channel.client.quizzes.set(roomId, null);
   Quiz.deleteOne({ roomId }).exec().catch(console.error);
 
-  await tryCatch(
-    updateLeaderboard(channel),
-  );
+  if (points.length > 0) {
+    await tryCatch(
+      updateLeaderboard(channel),
+    );
+  }
 }
 
 export function fetchCards(deckQuery, quizSize) {
@@ -196,8 +198,28 @@ export function sendImage(channel, image) {
     .setImage(image.image)
     .setDescription(image.altText || '');
 
-  channel.send(message);
+  sendWithRetry(channel, message);
 }
+
+export function sendWithRetry(channel, msg) {
+  return channel.send(msg).catch((err) => {
+    setTimeout(() => {
+      channel.send(msg).catch(() => {
+        setTimeout(() => {
+          channel.send(msg).catch(() => {
+            setTimeout(() => {
+              channel.send(msg).catch(() => {
+                channel.send('Sorry, discord is having connection issues. Some messages may have been lost.')
+                  .catch(console.error);
+              });
+            }, 5000);
+          });
+        }, 3000);
+      });
+    }, 1000);
+  });
+}
+
 
 export function shouldIgnore(msg) {
   return !msg.content.toLowerCase().startsWith(PREFIX) || msg.author.bot;

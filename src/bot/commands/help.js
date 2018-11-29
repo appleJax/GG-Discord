@@ -1,4 +1,5 @@
 import Discord from 'discord.js';
+import { sendWithRetry } from 'Bot/utils';
 import { PREFIX, Colors, commandNotFound } from '../utils';
 
 export default {
@@ -40,6 +41,6 @@ export default {
       helpMessage.setDescription(description);
     }
 
-    return msg.channel.send(helpMessage);
+    return sendWithRetry(msg.channel, helpMessage);
   },
 };

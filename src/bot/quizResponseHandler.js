@@ -10,6 +10,7 @@ import {
   endQuiz,
   prepareNextQuestion,
   sendImage,
+  sendWithRetry,
 } from './utils';
 
 const END_DELAY = 2000;
@@ -30,7 +31,7 @@ export default (client) => {
       .setColor(Colors.GOLD)
       .addField("Time's up!", currentQuestion.answerText);
 
-    channel.send(revealAnswer);
+    sendWithRetry(channel, revealAnswer);
 
     if (currentQuestion.mediaUrls) {
       const answerImages = currentQuestion.mediaUrls.slice(currentQuestion.mainImageSlice[1]);
@@ -100,12 +101,13 @@ export default (client) => {
       clearTimeout(activeQuiz.questionTimeout);
       clearTimeout(activeQuiz.nextQuestion);
       client.quizzes.set(roomId, null);
+      Quiz.deleteOne({ roomId }).exec().catch(console.error);
 
       const stopMsg = new Discord.RichEmbed()
         .setColor(Colors.RED)
         .setDescription('Stopping quiz... 😢');
 
-      channel.send(stopMsg);
+      sendWithRetry(channel, stopMsg);
       return;
     }
 
@@ -127,7 +129,7 @@ export default (client) => {
       .setColor(Colors.GREEN)
       .addField(`${msg.author.username} answered correctly!`, currentQuestion.answerText);
 
-    channel.send(congrats);
+    sendWithRetry(channel, congrats);
 
     if (currentQuestion.mediaUrls) {
       const answerImages = currentQuestion.mediaUrls.slice(currentQuestion.mainImageSlice[1]);

@@ -1,6 +1,7 @@
 import Discord from 'discord.js';
 import { tryCatch } from 'Utils';
 import DECKS from 'Config/decks';
+import { sendWithRetry } from 'Bot/utils';
 import { Quiz } from 'Models';
 import {
   Colors, fetchCards, sendImage,
@@ -85,7 +86,7 @@ export default {
         .setColor(Colors.RED)
         .setDescription('Sorry, something went wrong');
 
-      channel.send(errorMsg);
+      sendWithRetry(channel, errorMsg);
       return;
     }
 
@@ -103,7 +104,7 @@ export default {
       .setColor(Colors.BLUE)
       .addField(`Starting quiz, first question (1/${argsResult.quizSize}):`, currentQuestion.questionText);
 
-    channel.send(startMsg);
+    sendWithRetry(channel, startMsg);
 
     if (currentQuestion.mediaUrls) {
       const questionImages = currentQuestion.mediaUrls.slice(0, currentQuestion.mainImageSlice[1]);

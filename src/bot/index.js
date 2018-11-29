@@ -12,7 +12,10 @@ client.on('ready', async () => {
   console.log('Discord Bot: LIVE');
 });
 
-client.on('error', console.error);
+client.on('error', (err) => {
+  console.error(err);
+  console.error(err.stack);
+});
 
 client.on('message', client.handleMsg);
 
