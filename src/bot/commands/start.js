@@ -104,13 +104,15 @@ export default {
       .setColor(Colors.BLUE)
       .addField(`Starting quiz, first question (1/${argsResult.quizSize}):`, currentQuestion.questionText);
 
-    sendWithRetry(channel, startMsg);
+    await tryCatch(
+      sendWithRetry(channel, startMsg),
+    );
 
     if (currentQuestion.mediaUrls) {
       const questionImages = currentQuestion.mediaUrls.slice(0, currentQuestion.mainImageSlice[1]);
 
       questionImages.forEach((image) => {
-        sendImage(channel, image);
+        sendImage(channel, image, activeQuiz);
       });
     }
 

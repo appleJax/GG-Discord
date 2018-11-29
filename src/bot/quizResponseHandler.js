@@ -17,7 +17,7 @@ const END_DELAY = 2000;
 const STOP_COMMAND = `${PREFIX}stop`;
 
 export default (client) => {
-  client.nextQuestion = (channel) => {
+  client.nextQuestion = async (channel) => {
     const roomId = channel.id;
     const activeQuiz = client.quizzes.get(roomId);
     if (activeQuiz == null) {

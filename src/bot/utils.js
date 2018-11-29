@@ -34,6 +34,7 @@ export function prepareNextQuestion(channel, activeQuiz) {
 }
 
 export async function askNextQuestion(channel) {
+  const { id: roomId } = channel;
   const activeQuiz = channel.client.quizzes.get(channel.id);
 
   activeQuiz.currentQuestion = activeQuiz.onDeckQuestion;
@@ -51,7 +52,9 @@ export async function askNextQuestion(channel) {
     questionImages = currentQuestion.mediaUrls.slice(0, currentQuestion.mainImageSlice[1]);
   }
 
-  sendWithRetry(channel, nextMessage);
+  await tryCatch(
+    sendWithRetry(channel, nextMessage),
+  );
 
   questionImages.forEach((image) => {
     sendImage(channel, image);
@@ -74,6 +77,26 @@ export async function askNextQuestion(channel) {
       activeQuiz.questions = activeQuiz.questions.concat(newCards);
     }
   }
+
+  const questionTimeout = Date.now() + (activeQuiz.secondsPerQuestion * 1000);
+  const updatedQuiz = {
+    ...activeQuiz,
+    roomId,
+    currentQuestion: activeQuiz.currentQuestion._id,
+    onDeckQuestion: null,
+    questions: activeQuiz.questions.map(obj => obj._id),
+    questionTimeout: null,
+    nextQuestion: null,
+    timer: {
+      name: 'questionTimeout',
+      time: questionTimeout,
+    },
+
+  };
+  Quiz.replaceOne(
+    { roomId },
+    updatedQuiz,
+  ).exec().catch(console.error);
 }
 
 export function commandNotFound(command) {
@@ -202,22 +225,26 @@ export function sendImage(channel, image) {
 }
 
 export function sendWithRetry(channel, msg) {
-  return channel.send(msg).catch((err) => {
-    setTimeout(() => {
-      channel.send(msg).catch(() => {
-        setTimeout(() => {
-          channel.send(msg).catch(() => {
+  return channel.send(msg)
+    .catch(() => {
+      setTimeout(() => {
+        channel.send(msg)
+          .catch(() => {
             setTimeout(() => {
-              channel.send(msg).catch(() => {
-                channel.send('Sorry, discord is having connection issues. Some messages may have been lost.')
-                  .catch(console.error);
-              });
-            }, 5000);
+              channel.send(msg)
+                .catch(() => {
+                  setTimeout(() => {
+                    channel.send(msg)
+                      .catch(() => {
+                        channel.send('Sorry, discord is having connection issues. Some messages may have been lost.')
+                          .catch(console.error);
+                      });
+                  }, 5000);
+                });
+            }, 3000);
           });
-        }, 3000);
-      });
-    }, 1000);
-  });
+      }, 1000);
+    });
 }
 
 

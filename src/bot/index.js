@@ -2,6 +2,7 @@ import { tryCatch } from 'Utils';
 /* eslint-disable-next-line */
 import client from './config';
 import rehydrateActiveQuizzes from './rehydrateActiveQuizzes';
+import notifyError from './notifyError';
 
 const { BOT_TOKEN } = process.env;
 
@@ -13,6 +14,7 @@ client.on('ready', async () => {
 });
 
 client.on('error', (err) => {
+  notifyError(client);
   console.error(err);
   console.error(err.stack);
 });

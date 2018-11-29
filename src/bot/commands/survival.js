@@ -73,7 +73,7 @@ export default {
       const questionImages = currentQuestion.mediaUrls.slice(0, currentQuestion.mainImageSlice[1]);
 
       questionImages.forEach((image) => {
-        sendImage(channel, image);
+        sendImage(channel, image, activeQuiz);
       });
     }
 

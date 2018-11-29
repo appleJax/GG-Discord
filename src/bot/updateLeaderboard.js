@@ -34,7 +34,7 @@ export default async function updateLeaderboard(channel) {
     );
     nextUser += '\n';
 
-    if (stats.length + nextUser.length > 1950) {
+    if (stats.length + nextUser.length > 1900) {
       messageChunks.push(stats);
       stats = nextUser;
     } else {
