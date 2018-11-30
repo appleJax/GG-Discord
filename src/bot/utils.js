@@ -109,6 +109,14 @@ export function commandNotFound(command) {
   return notFound;
 }
 
+export function deckPercentageCorrect(uniqueCardsCorrect, totalCards) {
+  const cardCounts = `${uniqueCardsCorrect}/${totalCards}`;
+  const cardPercentage = Math.round(
+    (uniqueCardsCorrect / totalCards) * 100,
+  );
+  return `${cardCounts} (${cardPercentage}%)`;
+}
+
 export async function endQuiz(channel, activeQuiz = {}) {
   const { solo, survivalMode, points } = activeQuiz;
   const currentScore = activeQuiz.questionPosition[0] - 1;

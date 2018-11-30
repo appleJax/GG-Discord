@@ -1,5 +1,6 @@
 import { Card, Deck } from 'Models';
 import { tryCatch } from 'Utils';
+import { deckPercentageCorrect } from 'Bot/utils';
 
 const cache = new Map();
 
@@ -21,7 +22,6 @@ async function formatUserStats(user, deckCache = cache) {
       );
 
       if (!deck) {
-        /* eslint-disable-next-line */
         continue;
       }
 
@@ -37,7 +37,7 @@ async function formatUserStats(user, deckCache = cache) {
     if (subScore) {
       stats += `\n    ${deck.name}:`;
       stats += `\n        Correct answers: ${subScore.correctAnswers}`;
-      stats += deckPercentageCorrect(subScore, deck.totalCards);
+      stats += `\n        Unique cards correct: ${deckPercentageCorrect(subScore.uniqueCardsCorrect.length, deck.totalCards)}`;
       stats += `\n        Survival record: ${subScore.survivalRecord}`;
     }
   }
@@ -46,12 +46,3 @@ async function formatUserStats(user, deckCache = cache) {
 }
 
 export default formatUserStats;
-
-// private
-function deckPercentageCorrect(subScore, totalCards) {
-  const cardCounts = `${subScore.cardsAnsweredCorrectly.length}/${totalCards}`;
-  const cardPercentage = Math.round(
-    (subScore.cardsAnsweredCorrectly.length / totalCards) * 100,
-  );
-  return `\n        Unique cards correct:  ${cardCounts} (${cardPercentage}%)`;
-}

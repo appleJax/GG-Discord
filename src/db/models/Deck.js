@@ -10,8 +10,9 @@ const schema = new Schema({
     [{
       _id: false,
       userId: String,
+      username: String,
       correctAnswers: t(Number, 0),
-      cardsAnsweredCorrectly: t([String], []),
+      uniqueCardsCorrect: t([String], []),
       survivalRecord: t(Number, 0),
     }], [],
   ),

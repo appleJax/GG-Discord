@@ -84,9 +84,9 @@ async function saveQuizProgress(msg, activeQuiz) {
 
   if (deckUser) {
     deckUser.correctAnswers += 1;
-    const { cardsAnsweredCorrectly } = deckUser;
-    if (!cardsAnsweredCorrectly.includes(cardId)) {
-      cardsAnsweredCorrectly.push(cardId);
+    const { uniqueCardsCorrect } = deckUser;
+    if (!uniqueCardsCorrect.includes(cardId)) {
+      uniqueCardsCorrect.push(cardId);
     }
 
     await tryCatch(
@@ -103,8 +103,9 @@ async function saveQuizProgress(msg, activeQuiz) {
           $push: {
             users: {
               userId,
+              username,
               correctAnswers: 1,
-              cardsAnsweredCorrectly: [cardId],
+              uniqueCardsCorrect: [cardId],
               survivalRecord: 0,
             },
           },
