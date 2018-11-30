@@ -4,7 +4,7 @@ import { tryCatch } from 'Utils';
 import { deckPercentageCorrect } from './utils';
 
 export default async function updateLeaderboard(channel) {
-  const users = await tryCatch(
+  let users = await tryCatch(
     User
       .find()
       .sort({ correctAnswers: 'desc' })
@@ -12,38 +12,16 @@ export default async function updateLeaderboard(channel) {
       .exec(),
   );
 
-  const messageChunks = [];
-
-  let stats = '```asciidoc\n= Overall =\n\nCorrect Answers:';
-  let nextUser = '';
-  let currentScore = Infinity;
-  let skip = 1;
-  let rank = 0;
-
   if (!users || users.length === 0) {
     return;
   }
 
-  for (const user of users) {
-    if (user.correctAnswers < currentScore) {
-      rank += skip;
-      skip = 1;
-      currentScore = user.correctAnswers;
-    } else {
-      skip++;
-    }
-    nextUser += `\n${rank}. ${user.username}: ${user.correctAnswers}`;
+  const everyone = users.find(user => user.username === 'everyone');
+  users = users.filter(user => user.username !== 'everyone');
 
-    if (stats.length + nextUser.length > 1900) {
-      messageChunks.push(stats);
-      stats = nextUser;
-    } else {
-      stats += nextUser;
-    }
-    nextUser = '';
-  }
-
+  const messageChunks = [];
   const userAggregate = [];
+
   const totalCards = await tryCatch(
     Card.count().exec(),
   );
@@ -80,12 +58,13 @@ export default async function updateLeaderboard(channel) {
 
   userAggregate.sort((a, b) => b.uniqueCardsCorrect - a.uniqueCardsCorrect);
 
-  nextUser = '';
-  currentScore = Infinity;
-  skip = 1;
-  rank = 0;
-
+  let stats = '```asciidoc\n= Overall =';
   stats += '\n\nUnique Cards Correct:';
+
+  let nextUser = '';
+  let currentScore = Infinity;
+  let skip = 1;
+  let rank = 0;
 
   for (const user of userAggregate) {
     if (user.uniqueCardsCorrect < currentScore) {
@@ -96,6 +75,33 @@ export default async function updateLeaderboard(channel) {
       skip++;
     }
     nextUser += `\n${rank}. ${user.username}: ${deckPercentageCorrect(user.uniqueCardsCorrect, totalCards)}`;
+
+    if (stats.length + nextUser.length > 1900) {
+      messageChunks.push(stats);
+      stats = nextUser;
+    } else {
+      stats += nextUser;
+    }
+    nextUser = '';
+  }
+
+  nextUser = '';
+  currentScore = Infinity;
+  skip = 1;
+  rank = 0;
+
+  stats += '\n\nTotal Cards Correct:';
+  stats += `\neveryone: ${everyone.correctAnswers}`;
+
+  for (const user of users) {
+    if (user.correctAnswers < currentScore) {
+      rank += skip;
+      skip = 1;
+      currentScore = user.correctAnswers;
+    } else {
+      skip++;
+    }
+    nextUser += `\n${rank}. ${user.username}: ${user.correctAnswers}`;
 
     if (stats.length + nextUser.length > 1900) {
       messageChunks.push(stats);
@@ -157,43 +163,15 @@ export default async function updateLeaderboard(channel) {
       nextUser = '';
     }
 
-    deckUsers = deck.users.sort((a, b) => b.correctAnswers - a.correctAnswers).slice(0, 10);
-
-    nextUser = '';
-    currentScore = Infinity;
-    skip = 1;
-    rank = 0;
-
-    stats += '\n\nCorrect Answers:';
-
-    for (const user of deckUsers) {
-      if (user.correctAnswers < currentScore) {
-        rank += skip;
-        skip = 1;
-        currentScore = user.correctAnswers;
-      } else {
-        skip++;
-      }
-      nextUser += `\n${rank}. ${user.username}: ${user.correctAnswers}`;
-
-      if (stats.length + nextUser.length > 1900) {
-        messageChunks.push(stats);
-        stats = nextUser;
-      } else {
-        stats += nextUser;
-      }
-      nextUser = '';
-    }
-
     if (deck.survivalRecord > 0) {
       stats += '\n\nSurvival Record:';
-      deck.users.push({
-        username: 'Community',
+      deckUsers = deck.users.concat({
+        username: 'everyone',
         survivalRecord: deck.survivalRecord,
       });
     }
 
-    deckUsers = deck.users
+    deckUsers = deckUsers
       .filter(u => u.survivalRecord > 0)
       .sort((a, b) => b.survivalRecord - a.survivalRecord)
       .slice(0, 10);
@@ -212,6 +190,35 @@ export default async function updateLeaderboard(channel) {
         skip++;
       }
       nextUser += `\n${rank}. ${user.username}: ${user.survivalRecord}`;
+
+      if (stats.length + nextUser.length > 1900) {
+        messageChunks.push(stats);
+        stats = nextUser;
+      } else {
+        stats += nextUser;
+      }
+      nextUser = '';
+    }
+
+    deckUsers = deck.users.sort((a, b) => b.correctAnswers - a.correctAnswers).slice(0, 10);
+
+    nextUser = '';
+    currentScore = Infinity;
+    skip = 1;
+    rank = 0;
+
+    stats += '\n\nTotal Cards Correct:';
+    stats += `\neveryone: ${deck.correctAnswers}`;
+
+    for (const user of deckUsers) {
+      if (user.correctAnswers < currentScore) {
+        rank += skip;
+        skip = 1;
+        currentScore = user.correctAnswers;
+      } else {
+        skip++;
+      }
+      nextUser += `\n${rank}. ${user.username}: ${user.correctAnswers}`;
 
       if (stats.length + nextUser.length > 1900) {
         messageChunks.push(stats);

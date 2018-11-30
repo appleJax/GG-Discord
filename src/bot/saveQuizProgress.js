@@ -5,6 +5,7 @@ import DECKS from 'Config/decks';
 
 async function saveQuizProgress(msg, activeQuiz) {
   const roomId = msg.channel.id;
+  const deckName = DECKS[roomId];
   const { id: userId, username } = msg.author;
   const userIndex = activeQuiz.points.findIndex(stat => stat.userId === userId);
 
@@ -25,11 +26,23 @@ async function saveQuizProgress(msg, activeQuiz) {
     ).exec(),
   );
 
+  await tryCatch(
+    User.updateOne(
+      { username: 'everyone' },
+      { $inc: { correctAnswers: 1 } },
+    ),
+  );
+
+  await tryCatch(
+    Deck.updateOne(
+      { name: deckName },
+      { $inc: { correctAnswers: 1 } },
+    ),
+  );
+
   if (!isPatron(msg.member)) {
     return;
   }
-
-  const deckName = DECKS[roomId];
 
   const user = await tryCatch(
     User.findOne({ userId }).lean().exec(),
