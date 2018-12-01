@@ -192,9 +192,13 @@ export async function endQuiz(channel, activeQuiz = {}) {
   Quiz.deleteOne({ roomId }).exec().catch(console.error);
 
   if (points.length > 0) {
-    await tryCatch(
-      updateLeaderboard(channel),
-    );
+    const { members } = channel.client.guilds.get(DECKS.guild);
+    const patronPoints = points.find(point => isPatron(members.get(point.userId)));
+    if (patronPoints) {
+      await tryCatch(
+        updateLeaderboard(channel),
+      );
+    }
   }
 }
 

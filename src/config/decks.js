@@ -19,7 +19,7 @@ let DECKS = {
     '',
   ],
   leaderboard: '',
-  // guild: '441091794654986241',
+  guild: '441091794654986241',
 };
 
 if (process.env.NODE_ENV !== 'production') {
@@ -43,7 +43,7 @@ if (process.env.NODE_ENV !== 'production') {
       '515423516217311234',
     ],
     leaderboard: '515642646522232832',
-    // guild: '512730749657415680',
+    guild: '512730749657415680',
   };
 }
 
