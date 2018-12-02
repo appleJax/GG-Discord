@@ -166,6 +166,34 @@ export default async function updateLeaderboard(channel) {
       nextUser = '';
     }
 
+    deckUsers = deck.users.sort((a, b) => b.correctAnswers - a.correctAnswers).slice(0, 10);
+
+    nextUser = '';
+    currentScore = Infinity;
+    skip = 1;
+    rank = 0;
+
+    stats += `\n\nUnique Cards Correct (out of ${formatNumber(deckCards)}):`;
+
+    for (const user of deckUsers) {
+      if (user.uniqueCardsCorrect.length < currentScore) {
+        rank += skip;
+        skip = 1;
+        currentScore = user.uniqueCardsCorrect.length;
+      } else {
+        skip++;
+      }
+      nextUser += `\n${rank}. ${user.username}: ${formatNumber(user.uniqueCardsCorrect.length)} ${percentage(user.uniqueCardsCorrect.length, deckCards)}`;
+
+      if (stats.length + nextUser.length > 1900) {
+        messageChunks.push(stats);
+        stats = nextUser;
+      } else {
+        stats += nextUser;
+      }
+      nextUser = '';
+    }
+
     if (deck.survivalRecord > 0) {
       stats += '\n\nSurvival Record:';
       deckUsers = deck.users.concat({
@@ -193,34 +221,6 @@ export default async function updateLeaderboard(channel) {
         skip++;
       }
       nextUser += `\n${rank}. ${user.username}: ${formatNumber(user.survivalRecord)}`;
-
-      if (stats.length + nextUser.length > 1900) {
-        messageChunks.push(stats);
-        stats = nextUser;
-      } else {
-        stats += nextUser;
-      }
-      nextUser = '';
-    }
-
-    deckUsers = deck.users.sort((a, b) => b.correctAnswers - a.correctAnswers).slice(0, 10);
-
-    nextUser = '';
-    currentScore = Infinity;
-    skip = 1;
-    rank = 0;
-
-    stats += `\n\nUnique Cards Correct (out of ${formatNumber(deckCards)}):`;
-
-    for (const user of deckUsers) {
-      if (user.uniqueCardsCorrect.length < currentScore) {
-        rank += skip;
-        skip = 1;
-        currentScore = user.uniqueCardsCorrect.length;
-      } else {
-        skip++;
-      }
-      nextUser += `\n${rank}. ${user.username}: ${formatNumber(user.uniqueCardsCorrect.length)} ${percentage(user.uniqueCardsCorrect.length, deckCards)}`;
 
       if (stats.length + nextUser.length > 1900) {
         messageChunks.push(stats);
