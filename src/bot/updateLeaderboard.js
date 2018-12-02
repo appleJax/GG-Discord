@@ -1,7 +1,7 @@
 import DECKS from 'Config/decks';
 import { Card, Deck, User } from 'Models';
 import { tryCatch } from 'Utils';
-import { deckPercentageCorrect } from './utils';
+import { percentage } from './utils';
 
 export default async function updateLeaderboard(channel) {
   let users = await tryCatch(
@@ -59,7 +59,7 @@ export default async function updateLeaderboard(channel) {
   userAggregate.sort((a, b) => b.uniqueCardsCorrect - a.uniqueCardsCorrect);
 
   let stats = '```asciidoc\n= Overall =';
-  stats += '\n\nUnique Cards Correct:';
+  stats += `\n\nUnique Cards Correct (out of ${totalCards}):`;
 
   let nextUser = '';
   let currentScore = Infinity;
@@ -74,7 +74,7 @@ export default async function updateLeaderboard(channel) {
     } else {
       skip++;
     }
-    nextUser += `\n${rank}. ${user.username}: ${deckPercentageCorrect(user.uniqueCardsCorrect, totalCards)}`;
+    nextUser += `\n${rank}. ${user.username}: ${user.uniqueCardsCorrect} ${percentage(user.uniqueCardsCorrect, totalCards)}`;
 
     if (stats.length + nextUser.length > 1900) {
       messageChunks.push(stats);
@@ -91,7 +91,7 @@ export default async function updateLeaderboard(channel) {
   rank = 0;
 
   stats += '\n\nTotal Cards Correct:';
-  stats += `\neveryone: ${everyone.correctAnswers}`;
+  stats += `\n(everyone: ${everyone.correctAnswers})`;
 
   for (const user of users) {
     if (user.correctAnswers < currentScore) {
@@ -142,7 +142,7 @@ export default async function updateLeaderboard(channel) {
     rank = 0;
 
     stats += `\n${'```asciidoc'}\n= ${deck.name} =\n`;
-    stats += '\nUnique Cards Correct:';
+    stats += `\nUnique Cards Correct (out of ${deckCards}):`;
 
     for (const user of deckUsers) {
       if (user.uniqueCardsCorrect.length < currentScore) {
@@ -152,7 +152,7 @@ export default async function updateLeaderboard(channel) {
       } else {
         skip++;
       }
-      nextUser += `\n${rank}. ${user.username}: ${deckPercentageCorrect(user.uniqueCardsCorrect.length, deckCards)}`;
+      nextUser += `\n${rank}. ${user.username}: ${user.uniqueCardsCorrect.length} ${percentage(user.uniqueCardsCorrect.length, deckCards)}`;
 
       if (stats.length + nextUser.length > 1900) {
         messageChunks.push(stats);
@@ -208,7 +208,7 @@ export default async function updateLeaderboard(channel) {
     rank = 0;
 
     stats += '\n\nTotal Cards Correct:';
-    stats += `\neveryone: ${deck.correctAnswers}`;
+    stats += `\n(everyone: ${deck.correctAnswers})`;
 
     for (const user of deckUsers) {
       if (user.correctAnswers < currentScore) {

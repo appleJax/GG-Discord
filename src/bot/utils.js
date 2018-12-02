@@ -109,12 +109,16 @@ export function commandNotFound(command) {
   return notFound;
 }
 
+export function percentage(uniqueCardsCorrect, totalCards) {
+  const cardPercentage = Math.round(
+    (uniqueCardsCorrect / totalCards) * 10000,
+  ) / 100;
+  return `(${cardPercentage}%)`;
+}
+
 export function deckPercentageCorrect(uniqueCardsCorrect, totalCards) {
   const cardCounts = `${uniqueCardsCorrect}/${totalCards}`;
-  const cardPercentage = Math.round(
-    (uniqueCardsCorrect / totalCards) * 100,
-  );
-  return `${cardCounts} (${cardPercentage}%)`;
+  return `${cardCounts} ${percentage(uniqueCardsCorrect, totalCards)}`;
 }
 
 export async function endQuiz(channel, activeQuiz = {}) {
@@ -191,14 +195,10 @@ export async function endQuiz(channel, activeQuiz = {}) {
   channel.client.quizzes.set(roomId, null);
   Quiz.deleteOne({ roomId }).exec().catch(console.error);
 
-  if (points.length > 0) {
-    const { members } = channel.client.guilds.get(DECKS.guild);
-    const patronPoints = points.find(point => isPatron(members.get(point.userId)));
-    if (patronPoints) {
-      await tryCatch(
-        updateLeaderboard(channel),
-      );
-    }
+  if (hasPatronPoints(channel, points)) {
+    await tryCatch(
+      updateLeaderboard(channel),
+    );
   }
 }
 
@@ -265,6 +265,10 @@ export function shouldIgnore(msg) {
 }
 
 // private
+function hasPatronPoints(channel, points) {
+  const { members } = channel.client.guilds.get(DECKS.guild);
+  return points.find(point => isPatron(members.get(point.userId)));
+}
 
 function setSurvivalRecord(deckName, survivalRecord) {
   Deck.updateOne(
