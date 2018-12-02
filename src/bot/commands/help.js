@@ -34,7 +34,7 @@ export default {
       }
 
       let description = `**Command:** \`${targetCommand}\`\n`;
-      if (command.aliases) description += `**Aliases:** \`${command.aliases.join('`, `')}\`\n`;
+      if (command.aliases && command.aliases.length) description += `**Aliases:** \`${command.aliases.join('`, `')}\`\n`;
       if (command.description) description += `**Description:** ${command.description}\n`;
       if (command.usage) description += `**Usage:** \`${PREFIX}${targetCommand} ${command.usageShort ? `${command.usageShort}\n` : ''}${command.usage}\``;
 
