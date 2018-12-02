@@ -142,7 +142,7 @@ export default async function updateLeaderboard(channel) {
     skip = 1;
     rank = 0;
 
-    stats += `\n${'```asciidoc'}\n= ${deck.name} =\n`;
+    stats += `\n${'```asciidoc'}\n= ${deck.name} =`;
 
     stats += '\n\nTotal Cards Correct:';
     stats += `\n(everyone: ${formatNumber(deck.correctAnswers)})`;
@@ -210,7 +210,7 @@ export default async function updateLeaderboard(channel) {
     skip = 1;
     rank = 0;
 
-    stats += `\nUnique Cards Correct (out of ${formatNumber(deckCards)}):`;
+    stats += `\n\nUnique Cards Correct (out of ${formatNumber(deckCards)}):`;
 
     for (const user of deckUsers) {
       if (user.uniqueCardsCorrect.length < currentScore) {
