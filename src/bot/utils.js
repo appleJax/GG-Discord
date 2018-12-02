@@ -188,7 +188,7 @@ export async function endQuiz(channel, activeQuiz = {}) {
   channel.client.quizzes.set(roomId, null);
   Quiz.deleteOne({ roomId }).exec().catch(console.error);
 
-  if (hasPatronPoints(channel, points)) {
+  if (points.length > 0) {
     await tryCatch(
       updateLeaderboard(channel),
     );
@@ -265,11 +265,6 @@ export function shouldIgnore(msg) {
 }
 
 // private
-function hasPatronPoints(channel, points) {
-  const { members } = channel.client.guilds.get(DECKS.guild);
-  return points.find(point => isPatron(members.get(point.userId)));
-}
-
 function setSurvivalRecord(deckName, survivalRecord) {
   Deck.updateOne(
     { name: deckName },
