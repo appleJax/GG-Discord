@@ -4,7 +4,10 @@ import { Quiz } from 'Models';
 import { sendWithRetry } from 'Bot/utils';
 import DECKS from 'Config/decks';
 import {
-  Colors, fetchCards, fetchSurvivalRecord, sendImage,
+  Colors,
+  fetchCards,
+  fetchSurvivalRecord,
+  sendImage,
 } from '../utils';
 
 const SECONDS_PER_QUESTION = 60;
@@ -22,6 +25,14 @@ export default {
     const deckQuery = {
       deck: deckName,
     };
+
+    let solo = null;
+    if (DECKS.soloSurvival.includes(roomId)) {
+      solo = {
+        id: msg.author.id,
+        username: msg.author.username,
+      };
+    }
 
     const survivalRecord = await tryCatch(
       fetchSurvivalRecord(deckName),
@@ -42,14 +53,6 @@ export default {
     }
 
     const currentQuestion = questions.pop();
-
-    let solo = null;
-    if (DECKS.soloSurvival.includes(roomId)) {
-      solo = {
-        id: msg.author.id,
-        username: msg.author.username,
-      };
-    }
 
     const activeQuiz = {
       currentQuestion,
