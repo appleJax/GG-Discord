@@ -22,7 +22,7 @@ export default {
     );
 
     if (!user) {
-      return msg.reply('you have not answered any questions correctly. Try `gg!start` in one of the Quiz Arcade channels!');
+      return msg.reply('you have not yet answered any questions correctly.');
     }
 
     const userStats = await tryCatch(
