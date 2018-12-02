@@ -5,7 +5,7 @@ import { deckPercentageCorrect } from 'Bot/utils';
 const cache = new Map();
 
 async function formatUserStats(user, deckCache = cache) {
-  let stats = `\n    Total correct answers: ${user.correctAnswers}`;
+  let stats = `\n    Overall Cards Correct: ${user.correctAnswers}`;
 
   let deck;
   let subScore;
@@ -36,9 +36,9 @@ async function formatUserStats(user, deckCache = cache) {
     subScore = deck.users.find(record => record.userId === user.userId);
     if (subScore) {
       stats += `\n    ${deck.name}:`;
-      stats += `\n        Correct answers: ${subScore.correctAnswers}`;
-      stats += `\n        Unique cards correct: ${deckPercentageCorrect(subScore.uniqueCardsCorrect.length, deck.totalCards)}`;
-      stats += `\n        Survival record: ${subScore.survivalRecord}`;
+      stats += `\n        Total Cards Correct: ${subScore.correctAnswers}`;
+      stats += `\n        Unique Cards Correct: ${deckPercentageCorrect(subScore.uniqueCardsCorrect.length, deck.totalCards)}`;
+      stats += `\n        Survival Record: ${subScore.survivalRecord}`;
     }
   }
 
