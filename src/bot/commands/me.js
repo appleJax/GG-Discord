@@ -9,7 +9,7 @@ export default {
   name: 'me',
   aliases: [],
   description: 'Check your current stats',
-  usage: '(only works when quiz is NOT in progress)',
+  usage: '(only works for Patrons)',
   async execute(msg) {
     const becomeAPatron = `you must be a Patron to use this feature. ${PATREON_LINK}`;
 
@@ -22,7 +22,7 @@ export default {
     );
 
     if (!user) {
-      return msg.reply('you have not answered any questions correctly. Try `gg!start` in one of the Public Quiz Arcade channels!');
+      return msg.reply('you have not answered any questions correctly. Try `gg!start` in one of the Quiz Arcade channels!');
     }
 
     const userStats = await tryCatch(
