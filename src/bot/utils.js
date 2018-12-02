@@ -1,6 +1,6 @@
 import Discord from 'discord.js';
 import { Card, Deck, Quiz } from 'Models';
-import { tryCatch } from 'Utils';
+import { formatNumber, tryCatch } from 'Utils';
 import DECKS from 'Config/decks';
 import updateLeaderboard from './updateLeaderboard';
 
@@ -109,15 +109,8 @@ export function commandNotFound(command) {
   return notFound;
 }
 
-export function percentage(uniqueCardsCorrect, totalCards) {
-  const cardPercentage = Math.round(
-    (uniqueCardsCorrect / totalCards) * 10000,
-  ) / 100;
-  return `(${cardPercentage}%)`;
-}
-
 export function deckPercentageCorrect(uniqueCardsCorrect, totalCards) {
-  const cardCounts = `${uniqueCardsCorrect}/${totalCards}`;
+  const cardCounts = `${formatNumber(uniqueCardsCorrect)}/${formatNumber(totalCards)}`;
   return `${cardCounts} ${percentage(uniqueCardsCorrect, totalCards)}`;
 }
 
@@ -225,6 +218,13 @@ export function parseInput(msg) {
   const args = msg.content.substr(PREFIX.length).trim().split(/\s+/);
   const command = args.shift().toLowerCase();
   return [command, args];
+}
+
+export function percentage(uniqueCardsCorrect, totalCards) {
+  const cardPercentage = Math.round(
+    (uniqueCardsCorrect / totalCards) * 10000,
+  ) / 100;
+  return `(${cardPercentage}%)`;
 }
 
 export function sendImage(channel, image) {

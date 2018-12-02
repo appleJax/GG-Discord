@@ -1,6 +1,6 @@
 import DECKS from 'Config/decks';
 import { Card, Deck, User } from 'Models';
-import { tryCatch } from 'Utils';
+import { formatNumber, tryCatch } from 'Utils';
 import { percentage } from './utils';
 
 export default async function updateLeaderboard(channel) {
@@ -59,7 +59,7 @@ export default async function updateLeaderboard(channel) {
   userAggregate.sort((a, b) => b.uniqueCardsCorrect - a.uniqueCardsCorrect);
 
   let stats = '```asciidoc\n= Overall =';
-  stats += `\n\nUnique Cards Correct (out of ${totalCards}):`;
+  stats += `\n\nUnique Cards Correct (out of ${formatNumber(totalCards)}):`;
 
   let nextUser = '';
   let currentScore = Infinity;
@@ -74,7 +74,7 @@ export default async function updateLeaderboard(channel) {
     } else {
       skip++;
     }
-    nextUser += `\n${rank}. ${user.username}: ${user.uniqueCardsCorrect} ${percentage(user.uniqueCardsCorrect, totalCards)}`;
+    nextUser += `\n${rank}. ${user.username}: ${formatNumber(user.uniqueCardsCorrect)} ${percentage(user.uniqueCardsCorrect, totalCards)}`;
 
     if (stats.length + nextUser.length > 1900) {
       messageChunks.push(stats);
@@ -91,7 +91,7 @@ export default async function updateLeaderboard(channel) {
   rank = 0;
 
   stats += '\n\nTotal Cards Correct:';
-  stats += `\n(everyone: ${everyone.correctAnswers})`;
+  stats += `\n(everyone: ${formatNumber(everyone.correctAnswers)})`;
 
   for (const user of users) {
     if (user.correctAnswers < currentScore) {
@@ -101,7 +101,7 @@ export default async function updateLeaderboard(channel) {
     } else {
       skip++;
     }
-    nextUser += `\n${rank}. ${user.username}: ${user.correctAnswers}`;
+    nextUser += `\n${rank}. ${user.username}: ${formatNumber(user.correctAnswers)}`;
 
     if (stats.length + nextUser.length > 1900) {
       messageChunks.push(stats);
@@ -142,7 +142,7 @@ export default async function updateLeaderboard(channel) {
     rank = 0;
 
     stats += `\n${'```asciidoc'}\n= ${deck.name} =\n`;
-    stats += `\nUnique Cards Correct (out of ${deckCards}):`;
+    stats += `\nUnique Cards Correct (out of ${formatNumber(deckCards)}):`;
 
     for (const user of deckUsers) {
       if (user.uniqueCardsCorrect.length < currentScore) {
@@ -152,7 +152,7 @@ export default async function updateLeaderboard(channel) {
       } else {
         skip++;
       }
-      nextUser += `\n${rank}. ${user.username}: ${user.uniqueCardsCorrect.length} ${percentage(user.uniqueCardsCorrect.length, deckCards)}`;
+      nextUser += `\n${rank}. ${user.username}: ${formatNumber(user.uniqueCardsCorrect.length)} ${percentage(user.uniqueCardsCorrect.length, deckCards)}`;
 
       if (stats.length + nextUser.length > 1900) {
         messageChunks.push(stats);
@@ -189,7 +189,7 @@ export default async function updateLeaderboard(channel) {
       } else {
         skip++;
       }
-      nextUser += `\n${rank}. ${user.username}: ${user.survivalRecord}`;
+      nextUser += `\n${rank}. ${user.username}: ${formatNumber(user.survivalRecord)}`;
 
       if (stats.length + nextUser.length > 1900) {
         messageChunks.push(stats);
@@ -208,7 +208,7 @@ export default async function updateLeaderboard(channel) {
     rank = 0;
 
     stats += '\n\nTotal Cards Correct:';
-    stats += `\n(everyone: ${deck.correctAnswers})`;
+    stats += `\n(everyone: ${formatNumber(deck.correctAnswers)})`;
 
     for (const user of deckUsers) {
       if (user.correctAnswers < currentScore) {
@@ -218,7 +218,7 @@ export default async function updateLeaderboard(channel) {
       } else {
         skip++;
       }
-      nextUser += `\n${rank}. ${user.username}: ${user.correctAnswers}`;
+      nextUser += `\n${rank}. ${user.username}: ${formatNumber(user.correctAnswers)}`;
 
       if (stats.length + nextUser.length > 1900) {
         messageChunks.push(stats);
