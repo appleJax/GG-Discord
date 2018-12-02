@@ -92,7 +92,9 @@ export default async function updateLeaderboard(channel) {
   skip = 1;
   rank = 0;
 
-  stats += `\n\nUnique Cards Correct (out of ${formatNumber(totalCards)}):`;
+  if (userAggregate.length > 0) {
+    stats += `\n\nUnique Cards Correct (out of ${formatNumber(totalCards)}):`;
+  }
 
   for (const user of userAggregate) {
     if (user.uniqueCardsCorrect < currentScore) {
@@ -126,9 +128,6 @@ export default async function updateLeaderboard(channel) {
   let deckCards;
 
   for (const deck of decks) {
-    if (deck.users.length === 0) {
-      continue;
-    }
     deckUsers = deck.users.sort(
       (a, b) => b.uniqueCardsCorrect.length - a.uniqueCardsCorrect.length,
     ).slice(0, 10);
@@ -173,7 +172,9 @@ export default async function updateLeaderboard(channel) {
     skip = 1;
     rank = 0;
 
-    stats += `\n\nUnique Cards Correct (out of ${formatNumber(deckCards)}):`;
+    if (deckUsers.length > 0) {
+      stats += `\n\nUnique Cards Correct (out of ${formatNumber(deckCards)}):`;
+    }
 
     for (const user of deckUsers) {
       if (user.uniqueCardsCorrect.length < currentScore) {
