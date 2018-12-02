@@ -58,23 +58,25 @@ export default async function updateLeaderboard(channel) {
 
   userAggregate.sort((a, b) => b.uniqueCardsCorrect - a.uniqueCardsCorrect);
 
-  let stats = '```asciidoc\n= Overall =';
-  stats += `\n\nUnique Cards Correct (out of ${formatNumber(totalCards)}):`;
-
   let nextUser = '';
   let currentScore = Infinity;
   let skip = 1;
   let rank = 0;
 
-  for (const user of userAggregate) {
-    if (user.uniqueCardsCorrect < currentScore) {
+  let stats = '```asciidoc\n= Overall =';
+
+  stats += '\n\nTotal Cards Correct:';
+  stats += `\n(everyone: ${formatNumber(everyone.correctAnswers)})`;
+
+  for (const user of users) {
+    if (user.correctAnswers < currentScore) {
       rank += skip;
       skip = 1;
-      currentScore = user.uniqueCardsCorrect;
+      currentScore = user.correctAnswers;
     } else {
       skip++;
     }
-    nextUser += `\n${rank}. ${user.username}: ${formatNumber(user.uniqueCardsCorrect)} ${percentage(user.uniqueCardsCorrect, totalCards)}`;
+    nextUser += `\n${rank}. ${user.username}: ${formatNumber(user.correctAnswers)}`;
 
     if (stats.length + nextUser.length > 1900) {
       messageChunks.push(stats);
@@ -90,18 +92,17 @@ export default async function updateLeaderboard(channel) {
   skip = 1;
   rank = 0;
 
-  stats += '\n\nTotal Cards Correct:';
-  stats += `\n(everyone: ${formatNumber(everyone.correctAnswers)})`;
+  stats += `\n\nUnique Cards Correct (out of ${formatNumber(totalCards)}):`;
 
-  for (const user of users) {
-    if (user.correctAnswers < currentScore) {
+  for (const user of userAggregate) {
+    if (user.uniqueCardsCorrect < currentScore) {
       rank += skip;
       skip = 1;
-      currentScore = user.correctAnswers;
+      currentScore = user.uniqueCardsCorrect;
     } else {
       skip++;
     }
-    nextUser += `\n${rank}. ${user.username}: ${formatNumber(user.correctAnswers)}`;
+    nextUser += `\n${rank}. ${user.username}: ${formatNumber(user.uniqueCardsCorrect)} ${percentage(user.uniqueCardsCorrect, totalCards)}`;
 
     if (stats.length + nextUser.length > 1900) {
       messageChunks.push(stats);
@@ -142,17 +143,19 @@ export default async function updateLeaderboard(channel) {
     rank = 0;
 
     stats += `\n${'```asciidoc'}\n= ${deck.name} =\n`;
-    stats += `\nUnique Cards Correct (out of ${formatNumber(deckCards)}):`;
+
+    stats += '\n\nTotal Cards Correct:';
+    stats += `\n(everyone: ${formatNumber(deck.correctAnswers)})`;
 
     for (const user of deckUsers) {
-      if (user.uniqueCardsCorrect.length < currentScore) {
+      if (user.correctAnswers < currentScore) {
         rank += skip;
         skip = 1;
-        currentScore = user.uniqueCardsCorrect.length;
+        currentScore = user.correctAnswers;
       } else {
         skip++;
       }
-      nextUser += `\n${rank}. ${user.username}: ${formatNumber(user.uniqueCardsCorrect.length)} ${percentage(user.uniqueCardsCorrect.length, deckCards)}`;
+      nextUser += `\n${rank}. ${user.username}: ${formatNumber(user.correctAnswers)}`;
 
       if (stats.length + nextUser.length > 1900) {
         messageChunks.push(stats);
@@ -207,18 +210,17 @@ export default async function updateLeaderboard(channel) {
     skip = 1;
     rank = 0;
 
-    stats += '\n\nTotal Cards Correct:';
-    stats += `\n(everyone: ${formatNumber(deck.correctAnswers)})`;
+    stats += `\nUnique Cards Correct (out of ${formatNumber(deckCards)}):`;
 
     for (const user of deckUsers) {
-      if (user.correctAnswers < currentScore) {
+      if (user.uniqueCardsCorrect.length < currentScore) {
         rank += skip;
         skip = 1;
-        currentScore = user.correctAnswers;
+        currentScore = user.uniqueCardsCorrect.length;
       } else {
         skip++;
       }
-      nextUser += `\n${rank}. ${user.username}: ${formatNumber(user.correctAnswers)}`;
+      nextUser += `\n${rank}. ${user.username}: ${formatNumber(user.uniqueCardsCorrect.length)} ${percentage(user.uniqueCardsCorrect.length, deckCards)}`;
 
       if (stats.length + nextUser.length > 1900) {
         messageChunks.push(stats);
@@ -228,6 +230,7 @@ export default async function updateLeaderboard(channel) {
       }
       nextUser = '';
     }
+
     stats += '```';
   }
 
