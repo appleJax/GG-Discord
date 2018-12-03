@@ -5,6 +5,7 @@ import DECKS from 'Config/decks';
 import updateLeaderboard from './updateLeaderboard';
 
 export const PACE_DELAY = 12000;
+export const TURBO_DELAY = 10;
 export const PREFIX = 'gg!';
 
 export const Colors = {
@@ -118,7 +119,7 @@ export async function endQuiz(channel, activeQuiz = {}) {
   const { solo, survivalMode, points } = activeQuiz;
   const currentScore = activeQuiz.questionPosition[0] - 1;
   const endMsg = new Discord.RichEmbed();
-  let { survivalRecord } = activeQuiz;
+  const { survivalRecord } = activeQuiz;
 
   let pointsMsg = '';
 
@@ -134,6 +135,7 @@ export async function endQuiz(channel, activeQuiz = {}) {
 
   const deckName = DECKS[channel.id];
 
+  let personalSurvivalRecord = Infinity;
   if (survivalMode && solo) {
     const deck = await tryCatch(
       Deck
@@ -144,9 +146,9 @@ export async function endQuiz(channel, activeQuiz = {}) {
     const currentUser = deck && deck.users.find(user => user.userId === activeQuiz.solo.id);
     if (currentUser) {
       /* eslint-disable-next-line */
-      survivalRecord = currentUser.survivalRecord;
+      personalSurvivalRecord = currentUser.survivalRecord;
 
-      if (currentScore > survivalRecord) {
+      if (currentScore > personalSurvivalRecord) {
         currentUser.survivalRecord = currentScore;
         await tryCatch(
           Deck.updateOne(
@@ -165,13 +167,21 @@ export async function endQuiz(channel, activeQuiz = {}) {
   if (survivalMode && currentScore > survivalRecord) {
     endMsg
       .setColor(Colors.PURPLE)
-      .setDescription(`🏆 Congratulations, you set a new ${solo ? 'personal ' : ''}record for this quiz with ${currentScore} correct answer${s} in a row, beating ${solo ? 'your' : 'the'} previous record of ${survivalRecord}!${summary('survival')}`);
+      .setDescription(`🏆 Congratulations, you set a new record for this quiz with ${currentScore} correct answer${s} in a row, beating the previous record of ${survivalRecord}!${summary('survival')}`);
 
     setSurvivalRecord(deckName, currentScore);
+  } else if (survivalMode && currentScore > personalSurvivalRecord) {
+    endMsg
+      .setColor(Colors.PURPLE)
+      .setDescription(`🏆 Congratulations, you set a new personal record for this quiz with ${currentScore} correct answer${s} in a row, beating your previous record of ${personalSurvivalRecord}!${summary('survival')}`);
   } else if (survivalMode && currentScore === survivalRecord) {
     endMsg
       .setColor(Colors.GREEN)
-      .setDescription(`Congratulations, you tied ${solo ? 'your' : 'the'} current record of ${currentScore} correct answer${s} in a row!${summary('survival')}`);
+      .setDescription(`Congratulations, you tied the current record of ${currentScore} correct answer${s} in a row!${summary('survival')}`);
+  } else if (survivalMode && currentScore === personalSurvivalRecord) {
+    endMsg
+      .setColor(Colors.GREEN)
+      .setDescription(`Congratulations, you tied your current record of ${currentScore} correct answer${s} in a row!${summary('survival')}`);
   } else if (survivalMode) {
     endMsg
       .setColor(Colors.BLUE)

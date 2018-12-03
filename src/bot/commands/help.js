@@ -1,12 +1,16 @@
 import Discord from 'discord.js';
-import { sendWithRetry } from 'Bot/utils';
-import { PREFIX, Colors, commandNotFound } from '../utils';
+import {
+  PREFIX,
+  Colors,
+  commandNotFound,
+  sendWithRetry,
+} from 'Bot/utils';
 
 export default {
   name: 'help',
   aliases: ['h'],
   description: 'List all of my commands or info about a specific command',
-  usage: '[commandName]',
+  usage: '[command name]',
   execute(msg, args) {
     const helpMessage = new Discord.RichEmbed()
       .setColor(Colors.BLUE)
@@ -22,7 +26,7 @@ export default {
       helpMessage.addField(`Here's a list of all my commands:`, commandList);
 
       helpMessage.addField('\u200B',
-        `ℹ️ You can use \`${PREFIX}help [command name]\` to get info on a specific command!`);
+        `ℹ️ You can use \`${PREFIX}help [command name]\` to get info on a specific command.`);
     } else {
       const targetCommand = args[0].toLowerCase();
       const { commands } = msg.client;

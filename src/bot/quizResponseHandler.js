@@ -3,7 +3,6 @@ import { tryCatch } from 'Utils';
 import { Quiz } from 'Models';
 import saveQuizProgress from './saveQuizProgress';
 import {
-  PACE_DELAY,
   PREFIX,
   Colors,
   askNextQuestion,
@@ -44,10 +43,10 @@ export default (client) => {
     if (activeQuiz.survivalMode || questions.length === 0) {
       setTimeout(
         () => endQuiz(channel, activeQuiz),
-        END_DELAY,
+        activeQuiz.endDelay,
       );
 
-      const endQuizTime = Date.now() + END_DELAY;
+      const endQuizTime = Date.now() + activeQuiz.endDelay;
       Quiz.updateOne(
         { roomId },
         {
@@ -65,10 +64,10 @@ export default (client) => {
 
     activeQuiz.nextQuestion = setTimeout(
       () => askNextQuestion(channel),
-      PACE_DELAY,
+      activeQuiz.paceDelay,
     );
 
-    const askNextQuestionTime = Date.now() + PACE_DELAY;
+    const askNextQuestionTime = Date.now() + activeQuiz.paceDelay;
     const updatedQuiz = {
       ...activeQuiz,
       roomId,
@@ -146,10 +145,10 @@ export default (client) => {
     if (questions.length === 0) {
       setTimeout(
         () => endQuiz(channel, activeQuiz),
-        END_DELAY,
+        activeQuiz.endDelay,
       );
 
-      const endQuizTime = Date.now() + END_DELAY;
+      const endQuizTime = Date.now() + activeQuiz.endDelay;
       Quiz.updateOne(
         { roomId },
         {
@@ -168,10 +167,10 @@ export default (client) => {
 
     activeQuiz.nextQuestion = setTimeout(
       () => askNextQuestion(channel),
-      PACE_DELAY,
+      activeQuiz.paceDelay,
     );
 
-    const askNextQuestionTime = Date.now() + PACE_DELAY;
+    const askNextQuestionTime = Date.now() + activeQuiz.paceDelay;
     const updatedQuiz = {
       ...activeQuiz,
       roomId,

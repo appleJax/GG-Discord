@@ -4,6 +4,9 @@ import { Quiz } from 'Models';
 import { sendWithRetry } from 'Bot/utils';
 import DECKS from 'Config/decks';
 import {
+  END_DELAY,
+  PACE_DELAY,
+  TURBO_DELAY,
   Colors,
   fetchCards,
   fetchSurvivalRecord,
@@ -15,8 +18,9 @@ const SECONDS_PER_QUESTION = 60;
 export default {
   name: 'survival',
   description: `This quiz serves questions continuously until one expires without being answered correctly. You have ${SECONDS_PER_QUESTION} seconds to answer each question.`,
-  usage: '(Survival Mode)',
-  async execute(msg) {
+  usageShort: '["turbo"]',
+  usage: '["turbo"] - removes the 10-second answer review period between questions',
+  async execute(msg, args) {
     const self = this;
     const { channel } = msg;
     const roomId = channel.id;
@@ -54,8 +58,17 @@ export default {
 
     const currentQuestion = questions.pop();
 
+    let endDelay = END_DELAY;
+    let paceDelay = PACE_DELAY;
+    if (args[0].toLowerCase() === 'turbo') {
+      endDelay = TURBO_DELAY;
+      paceDelay = TURBO_DELAY;
+    }
+
     const activeQuiz = {
       currentQuestion,
+      endDelay,
+      paceDelay,
       points: [],
       questions,
       questionPosition: [1, '??'],

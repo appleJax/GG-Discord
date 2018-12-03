@@ -1,11 +1,16 @@
 import Discord from 'discord.js';
 import { tryCatch } from 'Utils';
 import DECKS from 'Config/decks';
-import { sendWithRetry } from 'Bot/utils';
 import { Quiz } from 'Models';
 import {
-  Colors, fetchCards, sendImage,
-} from '../utils';
+  END_DELAY,
+  PACE_DELAY,
+  TURBO_DELAY,
+  Colors,
+  fetchCards,
+  sendImage,
+  sendWithRetry,
+} from 'Bot/utils';
 
 // exported for testing
 export const QUIZ_SIZE = {
@@ -22,7 +27,8 @@ export const SECONDS_PER_QUESTION = {
 };
 
 const usage = `[quizSize] - number of questions (defaults to ${QUIZ_SIZE.default}, max is ${QUIZ_SIZE.max})`
-  + `\n[secondsPerQuestion] timeout for each question (in seconds - defaults to ${SECONDS_PER_QUESTION.default}, max is ${SECONDS_PER_QUESTION.max})`;
+  + `\n[secondsPerQuestion] - timeout for each question (in seconds - defaults to ${SECONDS_PER_QUESTION.default}, max is ${SECONDS_PER_QUESTION.max})`
+  + '\n["turbo"] - removes the 10-second answer review period between questions';
 
 // exported for testing
 export function validateArgs([size, seconds]) {
@@ -52,7 +58,7 @@ export default {
   name: 'start',
   aliases: ['s'],
   description: 'Start a new quiz',
-  usageShort: '[quizSize] [secondsPerQuestion]',
+  usageShort: '[quizSize] [secondsPerQuestion] ["turbo"]',
   usage,
   async execute(msg, args) {
     const self = this;
@@ -63,6 +69,15 @@ export default {
     if (soloRooms.includes(roomId)) {
       msg.reply('this is a solo survival room. You can use `gg!start` in any of the Public Quiz Arcade channels.');
       return;
+    }
+
+    let endDelay = END_DELAY;
+    let paceDelay = PACE_DELAY;
+    const turboIndex = args.findIndex(arg => String(arg).toLowerCase() === 'turbo');
+    if (turboIndex >= 0) {
+      endDelay = TURBO_DELAY;
+      paceDelay = TURBO_DELAY;
+      args.splice(turboIndex, 1);
     }
 
     const argsResult = validateArgs(args);
@@ -94,6 +109,8 @@ export default {
 
     const activeQuiz = {
       currentQuestion,
+      endDelay,
+      paceDelay,
       points: [],
       questions,
       questionPosition: [1, argsResult.quizSize],
