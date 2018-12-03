@@ -8,7 +8,6 @@ export default async function updateLeaderboard(channel) {
     User
       .find()
       .sort({ correctAnswers: 'desc' })
-      .limit(10)
       .exec(),
   );
 
@@ -58,7 +57,6 @@ export default async function updateLeaderboard(channel) {
 
   userAggregate.sort((a, b) => b.uniqueCardsCorrect - a.uniqueCardsCorrect);
 
-  let nextUser = '';
   let currentScore = Infinity;
   let skip = 1;
   let rank = 0;
@@ -76,18 +74,9 @@ export default async function updateLeaderboard(channel) {
     } else {
       skip++;
     }
-    nextUser += `\n${rank}. ${user.username}: ${formatNumber(user.correctAnswers)}`;
-
-    if (stats.length + nextUser.length > 1900) {
-      messageChunks.push(stats);
-      stats = nextUser;
-    } else {
-      stats += nextUser;
-    }
-    nextUser = '';
+    stats += `\n${rank}. ${user.username}: ${formatNumber(user.correctAnswers)}`;
   }
 
-  nextUser = '';
   currentScore = Infinity;
   skip = 1;
   rank = 0;
@@ -104,15 +93,7 @@ export default async function updateLeaderboard(channel) {
     } else {
       skip++;
     }
-    nextUser += `\n${rank}. ${user.username}: ${formatNumber(user.uniqueCardsCorrect)} ${percentage(user.uniqueCardsCorrect, totalCards)}`;
-
-    if (stats.length + nextUser.length > 1900) {
-      messageChunks.push(stats);
-      stats = nextUser;
-    } else {
-      stats += nextUser;
-    }
-    nextUser = '';
+    stats += `\n${rank}. ${user.username}: ${formatNumber(user.uniqueCardsCorrect)} ${percentage(user.uniqueCardsCorrect, totalCards)}`;
   }
 
   stats += '```';
@@ -136,7 +117,6 @@ export default async function updateLeaderboard(channel) {
       Card.count({ deck: deck.name }).exec(),
     );
 
-    nextUser = '';
     currentScore = Infinity;
     skip = 1;
     rank = 0;
@@ -154,20 +134,11 @@ export default async function updateLeaderboard(channel) {
       } else {
         skip++;
       }
-      nextUser += `\n${rank}. ${user.username}: ${formatNumber(user.correctAnswers)}`;
-
-      if (stats.length + nextUser.length > 1900) {
-        messageChunks.push(stats);
-        stats = nextUser;
-      } else {
-        stats += nextUser;
-      }
-      nextUser = '';
+      stats += `\n${rank}. ${user.username}: ${formatNumber(user.correctAnswers)}`;
     }
 
     deckUsers = deck.users.sort((a, b) => b.correctAnswers - a.correctAnswers).slice(0, 10);
 
-    nextUser = '';
     currentScore = Infinity;
     skip = 1;
     rank = 0;
@@ -184,15 +155,7 @@ export default async function updateLeaderboard(channel) {
       } else {
         skip++;
       }
-      nextUser += `\n${rank}. ${user.username}: ${formatNumber(user.uniqueCardsCorrect.length)} ${percentage(user.uniqueCardsCorrect.length, deckCards)}`;
-
-      if (stats.length + nextUser.length > 1900) {
-        messageChunks.push(stats);
-        stats = nextUser;
-      } else {
-        stats += nextUser;
-      }
-      nextUser = '';
+      stats += `\n${rank}. ${user.username}: ${formatNumber(user.uniqueCardsCorrect.length)} ${percentage(user.uniqueCardsCorrect.length, deckCards)}`;
     }
 
     if (deck.survivalRecord > 0) {
@@ -208,7 +171,6 @@ export default async function updateLeaderboard(channel) {
       .sort((a, b) => b.survivalRecord - a.survivalRecord)
       .slice(0, 10);
 
-    nextUser = '';
     currentScore = Infinity;
     skip = 1;
     rank = 0;
@@ -221,21 +183,11 @@ export default async function updateLeaderboard(channel) {
       } else {
         skip++;
       }
-      nextUser += `\n${rank}. ${user.username}: ${formatNumber(user.survivalRecord)}`;
-
-      if (stats.length + nextUser.length > 1900) {
-        messageChunks.push(stats);
-        stats = nextUser;
-      } else {
-        stats += nextUser;
-      }
-      nextUser = '';
+      stats += `\n${rank}. ${user.username}: ${formatNumber(user.survivalRecord)}`;
     }
 
     stats += '```';
   }
-
-  messageChunks.push(stats);
 
   const leaderboard = channel.client.channels.get(DECKS.leaderboard);
   const oldMessages = await tryCatch(
@@ -248,7 +200,16 @@ export default async function updateLeaderboard(channel) {
     );
   }
 
-  messageChunks.forEach(
-    chunk => leaderboard.send(chunk),
-  );
+  while (stats.length > 1950) {
+    messageChunks.push(`${stats.slice(0, 1950)}${'```'}`);
+    stats = `${'```'}${stats.slice(1950)}`;
+  }
+
+  messageChunks.push(stats);
+
+  for (const chunk of messageChunks) {
+    await tryCatch(
+      leaderboard.send(chunk),
+    );
+  }
 }
