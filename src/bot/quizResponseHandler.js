@@ -1,7 +1,6 @@
 import Discord from 'discord.js';
 import { tryCatch } from 'Utils';
 import { Quiz } from 'Models';
-import saveQuizProgress from './saveQuizProgress';
 import {
   PREFIX,
   Colors,
@@ -10,7 +9,9 @@ import {
   prepareNextQuestion,
   sendImage,
   sendWithRetry,
-} from './utils';
+} from 'Bot/utils';
+import saveQuizProgress from './saveQuizProgress';
+import updateLeaderboard from './updateLeaderboard';
 
 const STOP_COMMAND = `${PREFIX}stop`;
 
@@ -100,14 +101,20 @@ export default (client) => {
     if (!activeQuiz.survivalMode && response.startsWith(STOP_COMMAND)) {
       clearTimeout(activeQuiz.questionTimeout);
       clearTimeout(activeQuiz.nextQuestion);
-      client.quizzes.set(roomId, null);
-      Quiz.deleteOne({ roomId }).exec().catch(console.error);
-
       const stopMsg = new Discord.RichEmbed()
         .setColor(Colors.RED)
         .setDescription('Stopping quiz... 😢');
 
       sendWithRetry(channel, stopMsg);
+
+      if (activeQuiz.points.length > 0) {
+        await tryCatch(
+          updateLeaderboard(channel),
+        );
+      }
+
+      client.quizzes.set(roomId, null);
+      Quiz.deleteOne({ roomId }).exec().catch(console.error);
       return;
     }
 
