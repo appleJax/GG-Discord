@@ -60,7 +60,7 @@ export default {
 
     let endDelay = END_DELAY;
     let paceDelay = PACE_DELAY;
-    if (args[0].toLowerCase() === 'turbo') {
+    if (String(args[0]).toLowerCase() === 'turbo') {
       endDelay = TURBO_DELAY;
       paceDelay = TURBO_DELAY;
     }

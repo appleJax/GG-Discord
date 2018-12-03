@@ -16,14 +16,44 @@ export const Colors = {
   RED: '#CA0401',
 };
 
-export function prepareNextQuestion(channel, activeQuiz) {
-  const { questionPosition, solo, survivalRecord } = activeQuiz;
+export async function prepareNextQuestion(channel, activeQuiz) {
+  const {
+    questionPosition,
+    solo,
+    survivalMode,
+    survivalRecord,
+  } = activeQuiz;
 
-  if (survivalRecord && questionPosition[0] === survivalRecord) {
+  const deckName = DECKS[channel.id];
+
+  let personalSurvivalRecord = Infinity;
+  if (survivalMode && solo) {
+    const deck = await tryCatch(
+      Deck
+        .findOne({ name: deckName })
+        .exec(),
+    );
+
+    const currentUser = deck && deck.users.find(user => user.userId === solo.id);
+    if (currentUser) {
+      /* eslint-disable-next-line */
+      personalSurvivalRecord = currentUser.survivalRecord;
+    }
+  }
+
+  const lastQuestion = questionPosition[0];
+  if (lastQuestion === personalSurvivalRecord) {
+    const s = personalSurvivalRecord === 1 ? '' : 's';
+    const tiedSurvivalRecord = new Discord.RichEmbed()
+      .setColor(Colors.GREEN)
+      .setDescription(`👔 You are now tied with your previous record of ${personalSurvivalRecord} correct answer${s} in a row!`);
+
+    sendWithRetry(channel, tiedSurvivalRecord);
+  } else if (survivalRecord && lastQuestion === survivalRecord) {
     const s = survivalRecord === 1 ? '' : 's';
     const tiedSurvivalRecord = new Discord.RichEmbed()
       .setColor(Colors.GREEN)
-      .setDescription(`👔 You are now tied with ${solo ? 'your' : 'the'} previous record of ${survivalRecord} correct answer${s} in a row!`);
+      .setDescription(`👔 You are now tied with the previous record of ${survivalRecord} correct answer${s} in a row!`);
 
     sendWithRetry(channel, tiedSurvivalRecord);
   }
