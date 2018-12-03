@@ -47,14 +47,14 @@ export async function prepareNextQuestion(channel, activeQuiz) {
     const s = personalSurvivalRecord === 1 ? '' : 's';
     const tiedSurvivalRecord = new Discord.RichEmbed()
       .setColor(Colors.GREEN)
-      .setDescription(`👔 You are now tied with your previous record of ${personalSurvivalRecord} correct answer${s} in a row!`);
+      .setDescription(`👔 You are now tied with your record of ${personalSurvivalRecord} correct answer${s} in a row!`);
 
     sendWithRetry(channel, tiedSurvivalRecord);
   } else if (survivalRecord && lastQuestion === survivalRecord) {
     const s = survivalRecord === 1 ? '' : 's';
     const tiedSurvivalRecord = new Discord.RichEmbed()
       .setColor(Colors.GREEN)
-      .setDescription(`👔 You are now tied with the previous record of ${survivalRecord} correct answer${s} in a row!`);
+      .setDescription(`👔 You are now tied with the deck record of ${survivalRecord} correct answer${s} in a row!`);
 
     sendWithRetry(channel, tiedSurvivalRecord);
   }
@@ -208,7 +208,7 @@ export async function endQuiz(channel, activeQuiz = {}) {
   } else if (survivalMode && currentScore === survivalRecord) {
     endMsg
       .setColor(Colors.GREEN)
-      .setDescription(`Congratulations, you tied the current record of ${currentScore} correct answer${s} in a row!${summary('survival')}`);
+      .setDescription(`Congratulations, you tied the current deck record of ${currentScore} correct answer${s} in a row!${summary('survival')}`);
   } else if (survivalMode && currentScore === personalSurvivalRecord) {
     endMsg
       .setColor(Colors.GREEN)
