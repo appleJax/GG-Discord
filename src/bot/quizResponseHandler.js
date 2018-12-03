@@ -12,7 +12,6 @@ import {
   sendWithRetry,
 } from './utils';
 
-const END_DELAY = 2000;
 const STOP_COMMAND = `${PREFIX}stop`;
 
 export default (client) => {
@@ -60,7 +59,9 @@ export default (client) => {
       return;
     }
 
-    prepareNextQuestion(channel, activeQuiz);
+    await tryCatch(
+      prepareNextQuestion(channel, activeQuiz),
+    );
 
     activeQuiz.nextQuestion = setTimeout(
       () => askNextQuestion(channel),
@@ -163,7 +164,9 @@ export default (client) => {
       return;
     }
 
-    prepareNextQuestion(channel, activeQuiz);
+    await tryCatch(
+      prepareNextQuestion(channel, activeQuiz),
+    );
 
     activeQuiz.nextQuestion = setTimeout(
       () => askNextQuestion(channel),

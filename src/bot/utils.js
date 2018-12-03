@@ -4,6 +4,7 @@ import { formatNumber, tryCatch } from 'Utils';
 import DECKS from 'Config/decks';
 import updateLeaderboard from './updateLeaderboard';
 
+export const END_DELAY = 2000;
 export const PACE_DELAY = 12000;
 export const TURBO_DELAY = 10;
 export const PREFIX = 'gg!';
