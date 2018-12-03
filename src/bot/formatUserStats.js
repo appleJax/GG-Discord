@@ -2,9 +2,7 @@ import { Card, Deck } from 'Models';
 import { tryCatch } from 'Utils';
 import { deckPercentageCorrect } from 'Bot/utils';
 
-const cache = new Map();
-
-async function formatUserStats(user, deckCache = cache) {
+async function formatUserStats(user, deckCache = new Map()) {
   let stats = `\n    Overall Cards Correct: ${user.correctAnswers}`;
 
   let deck;
