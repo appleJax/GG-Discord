@@ -300,7 +300,6 @@ export function sendWithRetry(channel, msg) {
     });
 }
 
-
 export function shouldIgnore(msg) {
   return !msg.content.toLowerCase().startsWith(PREFIX) || msg.author.bot;
 }
