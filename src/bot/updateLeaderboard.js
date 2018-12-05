@@ -155,7 +155,7 @@ export default async function updateLeaderboard(channel) {
       } else {
         skip++;
       }
-      stats += `\n${rank}. ${user.username}: ${formatNumber(user.uniqueCardsCorrect.length)} ${percentage(user.uniqueCardsCorrect.length, deckCards)}`;
+      stats += `\n${rank}. ${user.username}: ${formatNumber(user.uniqueCardsCorrect.length)} ${percentage(user.uniqueCardsCorrect.length, deckCards, user.deckLaps)}`;
     }
 
     if (deck.survivalRecord > 0) {

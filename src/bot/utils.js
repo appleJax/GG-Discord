@@ -261,11 +261,12 @@ export function parseInput(msg) {
   return [command, args];
 }
 
-export function percentage(uniqueCardsCorrect, totalCards) {
+export function percentage(uniqueCardsCorrect, totalCards, deckLaps) {
   const cardPercentage = Math.round(
     (uniqueCardsCorrect / totalCards) * 10000,
   ) / 100;
-  return `(${cardPercentage}%)`;
+  const lapPercentage = (deckLaps || 0) * 100;
+  return `(${lapPercentage + cardPercentage}%)`;
 }
 
 export function sendImage(channel, image) {
