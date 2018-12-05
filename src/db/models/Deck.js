@@ -14,6 +14,7 @@ const schema = new Schema({
       username: String,
       correctAnswers: t(Number, 0),
       uniqueCardsCorrect: t([String], []),
+      deckLaps: t(Number, 0),
       survivalRecord: t(Number, 0),
     }], [],
   ),

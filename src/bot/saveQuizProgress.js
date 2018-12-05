@@ -59,7 +59,11 @@ async function saveQuizProgress(msg, activeQuiz) {
         { userId },
         {
           $inc: { correctAnswers: 1 },
-          $set: { subScores },
+          $set: {
+            subScores,
+            username: msg.author.username,
+            tag: msg.member.user.tag,
+          },
         },
       ).exec(),
     );
