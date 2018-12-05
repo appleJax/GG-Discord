@@ -1,6 +1,11 @@
 import { tryCatch } from 'Utils';
 import { isPatron } from 'Bot/utils';
-import { Deck, Quiz, User } from 'Models';
+import {
+  Card,
+  Deck,
+  Quiz,
+  User,
+} from 'Models';
 import DECKS from 'Config/decks';
 
 async function saveQuizProgress(msg, activeQuiz) {
@@ -102,7 +107,15 @@ async function saveQuizProgress(msg, activeQuiz) {
   if (deckUser) {
     deckUser.correctAnswers += 1;
     const { uniqueCardsCorrect } = deckUser;
-    if (!uniqueCardsCorrect.includes(cardId)) {
+
+    const totalCards = await tryCatch(
+      Card.count({ deck: deckName }).exec(),
+    );
+
+    if (uniqueCardsCorrect.length === totalCards) {
+      deckUser.deckLaps = (deckUser.deckLaps || 0) + 1;
+      deckUser.uniqueCardsCorrect = [cardId];
+    } else if (!uniqueCardsCorrect.includes(cardId)) {
       uniqueCardsCorrect.push(cardId);
     }
 
@@ -123,6 +136,7 @@ async function saveQuizProgress(msg, activeQuiz) {
               username,
               correctAnswers: 1,
               uniqueCardsCorrect: [cardId],
+              deckLaps: 0,
               survivalRecord: 0,
             },
           },
