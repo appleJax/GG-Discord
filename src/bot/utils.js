@@ -26,6 +26,12 @@ export async function prepareNextQuestion(channel, activeQuiz) {
   } = activeQuiz;
 
   const deckName = DECKS[channel.id];
+  const lastQuestion = questionPosition[0];
+
+  activeQuiz.onDeckQuestion = activeQuiz.questions.pop();
+  activeQuiz.currentQuestion = { answers: [] };
+  /* eslint-disable-next-line */
+  activeQuiz.questionPosition[0]++;
 
   let personalSurvivalRecord = Infinity;
   if (survivalMode && solo) {
@@ -42,7 +48,6 @@ export async function prepareNextQuestion(channel, activeQuiz) {
     }
   }
 
-  const lastQuestion = questionPosition[0];
   if (lastQuestion === personalSurvivalRecord) {
     const s = personalSurvivalRecord === 1 ? '' : 's';
     const tiedSurvivalRecord = new Discord.RichEmbed()
@@ -58,11 +63,6 @@ export async function prepareNextQuestion(channel, activeQuiz) {
 
     sendWithRetry(channel, tiedSurvivalRecord);
   }
-
-  activeQuiz.onDeckQuestion = activeQuiz.questions.pop();
-  activeQuiz.currentQuestion = { answers: [] };
-  /* eslint-disable-next-line */
-  activeQuiz.questionPosition[0]++;
 }
 
 export async function askNextQuestion(channel) {

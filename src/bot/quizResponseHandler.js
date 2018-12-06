@@ -132,6 +132,10 @@ export default (client) => {
 
     clearTimeout(activeQuiz.questionTimeout);
 
+    await tryCatch(
+      prepareNextQuestion(channel, activeQuiz),
+    );
+
     const congrats = new Discord.RichEmbed()
       .setColor(Colors.GREEN)
       .addField(`${msg.author.username} answered correctly!`, currentQuestion.answerText);
@@ -170,10 +174,6 @@ export default (client) => {
       ).exec().catch(console.error);
       return;
     }
-
-    await tryCatch(
-      prepareNextQuestion(channel, activeQuiz),
-    );
 
     activeQuiz.nextQuestion = setTimeout(
       () => askNextQuestion(channel),
