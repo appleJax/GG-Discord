@@ -167,14 +167,14 @@ export async function endQuiz(channel, activeQuiz = {}) {
   const deckName = DECKS[channel.id];
 
   let personalSurvivalRecord = Infinity;
-  if (survivalMode && solo) {
+  if (survivalMode && points.length === 1) {
     const deck = await tryCatch(
       Deck
         .findOne({ name: deckName })
         .exec(),
     );
 
-    const currentUser = deck && deck.users.find(user => user.userId === activeQuiz.solo.id);
+    const currentUser = deck && deck.users.find(user => user.userId === points[0].userId);
     if (currentUser) {
       /* eslint-disable-next-line */
       personalSurvivalRecord = currentUser.survivalRecord;
