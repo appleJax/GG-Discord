@@ -9,6 +9,7 @@ const schema = new Schema({
   currentQuestion: { type: Schema.Types.ObjectId, ref: 'Card' },
   onDeckQuestion: { type: Schema.Types.ObjectId, ref: 'Card' },
   endDelay: t(Number, END_DELAY),
+  hardMode: t(Boolean, false),
   paceDelay: t(Number, PACE_DELAY),
   questions: [{ type: Schema.Types.ObjectId, ref: 'Card' }],
   questionPosition: t([Schema.Types.Mixed], []),

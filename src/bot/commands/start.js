@@ -6,6 +6,8 @@ import {
   END_DELAY,
   PACE_DELAY,
   TURBO_DELAY,
+  TURBO,
+  HARDMODE,
   Colors,
   fetchCards,
   sendImage,
@@ -28,7 +30,8 @@ export const SECONDS_PER_QUESTION = {
 
 const usage = `[quizSize] - number of questions (defaults to ${QUIZ_SIZE.default}, max is ${QUIZ_SIZE.max})`
   + `\n[secondsPerQuestion] - timeout for each question (in seconds - defaults to ${SECONDS_PER_QUESTION.default}, max is ${SECONDS_PER_QUESTION.max})`
-  + '\n["turbo"] - removes the 10-second answer review period between questions';
+  + `\n["${TURBO}"] - removes the 10-second answer review period between questions`
+  + `\n["${HARDMODE}"] - first wrong answer will trigger the next question`;
 
 // exported for testing
 export function validateArgs([size, seconds]) {
@@ -58,7 +61,7 @@ export default {
   name: 'start',
   aliases: ['s'],
   description: 'Start a new quiz',
-  usageShort: '[quizSize] [secondsPerQuestion] ["turbo"]',
+  usageShort: `[quizSize] [secondsPerQuestion] ["${TURBO}"] ["${HARDMODE}"]`,
   usage,
   async execute(msg, args) {
     const self = this;
@@ -73,7 +76,7 @@ export default {
 
     let endDelay = END_DELAY;
     let paceDelay = PACE_DELAY;
-    const turboIndex = args.findIndex(arg => String(arg).toLowerCase() === 'turbo');
+    const turboIndex = args.findIndex(arg => String(arg).toLowerCase() === TURBO);
     if (turboIndex >= 0) {
       endDelay = TURBO_DELAY;
       paceDelay = TURBO_DELAY;

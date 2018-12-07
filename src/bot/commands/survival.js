@@ -7,6 +7,8 @@ import {
   END_DELAY,
   PACE_DELAY,
   TURBO_DELAY,
+  TURBO,
+  HARDMODE,
   Colors,
   fetchCards,
   fetchSurvivalRecord,
@@ -14,12 +16,14 @@ import {
 } from '../utils';
 
 const SECONDS_PER_QUESTION = 60;
+const usage = `["${TURBO}"] - removes the 10-second answer review period between questions`
+  + `\n["${HARDMODE}"] - first wrong answer will trigger the next question`;
 
 export default {
   name: 'survival',
   description: `This quiz serves questions continuously until one expires without being answered correctly. You have ${SECONDS_PER_QUESTION} seconds to answer each question.`,
-  usageShort: '["turbo"]',
-  usage: '["turbo"] - removes the 10-second answer review period between questions',
+  usageShort: `["${TURBO}"]`,
+  usage,
   async execute(msg, args) {
     const self = this;
     const { channel } = msg;
@@ -60,7 +64,7 @@ export default {
 
     let endDelay = END_DELAY;
     let paceDelay = PACE_DELAY;
-    if (String(args[0]).toLowerCase() === 'turbo') {
+    if (String(args[0]).toLowerCase() === TURBO) {
       endDelay = TURBO_DELAY;
       paceDelay = TURBO_DELAY;
     }
