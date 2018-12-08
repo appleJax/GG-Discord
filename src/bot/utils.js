@@ -32,8 +32,6 @@ export async function prepareNextQuestion(channel, activeQuiz) {
 
   activeQuiz.onDeckQuestion = activeQuiz.questions.pop();
   activeQuiz.currentQuestion = { answers: [] };
-  /* eslint-disable-next-line */
-  activeQuiz.questionPosition[0]++;
 
   let personalSurvivalRecord = Infinity;
   if (survivalMode && solo) {
@@ -72,6 +70,8 @@ export async function askNextQuestion(channel) {
   const activeQuiz = channel.client.quizzes.get(channel.id);
 
   activeQuiz.currentQuestion = activeQuiz.onDeckQuestion;
+  activeQuiz.questionPosition[0]++;
+
   const { currentQuestion } = activeQuiz;
 
   const [currentPosition, totalQuestions] = activeQuiz.questionPosition;

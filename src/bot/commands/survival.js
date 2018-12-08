@@ -80,6 +80,7 @@ export default {
       currentQuestion,
       endDelay,
       hardMode,
+      incorrectAnswers: [],
       paceDelay,
       points: [],
       questions,
