@@ -69,9 +69,17 @@ export default {
       paceDelay = TURBO_DELAY;
     }
 
+    let hardMode = false;
+    const hardModeIndex = args.findIndex(arg => String(arg).toLowerCase() === HARDMODE);
+    if (hardModeIndex >= 0) {
+      hardMode = true;
+      args.splice(hardModeIndex, 1);
+    }
+
     const activeQuiz = {
       currentQuestion,
       endDelay,
+      hardMode,
       paceDelay,
       points: [],
       questions,

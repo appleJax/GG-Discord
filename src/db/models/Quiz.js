@@ -10,6 +10,7 @@ const schema = new Schema({
   onDeckQuestion: { type: Schema.Types.ObjectId, ref: 'Card' },
   endDelay: t(Number, END_DELAY),
   hardMode: t(Boolean, false),
+  incorrectAnswers: t([String], []),
   paceDelay: t(Number, PACE_DELAY),
   questions: [{ type: Schema.Types.ObjectId, ref: 'Card' }],
   questionPosition: t([Schema.Types.Mixed], []),

@@ -7,7 +7,6 @@ import {
   PACE_DELAY,
   TURBO_DELAY,
   TURBO,
-  HARDMODE,
   Colors,
   fetchCards,
   sendImage,
@@ -30,8 +29,7 @@ export const SECONDS_PER_QUESTION = {
 
 const usage = `[quizSize] - number of questions (defaults to ${QUIZ_SIZE.default}, max is ${QUIZ_SIZE.max})`
   + `\n[secondsPerQuestion] - timeout for each question (in seconds - defaults to ${SECONDS_PER_QUESTION.default}, max is ${SECONDS_PER_QUESTION.max})`
-  + `\n["${TURBO}"] - removes the 10-second answer review period between questions`
-  + `\n["${HARDMODE}"] - first wrong answer will trigger the next question`;
+  + `\n["${TURBO}"] - removes the 10-second answer review period between questions`;
 
 // exported for testing
 export function validateArgs([size, seconds]) {
@@ -61,7 +59,7 @@ export default {
   name: 'start',
   aliases: ['s'],
   description: 'Start a new quiz',
-  usageShort: `[quizSize] [secondsPerQuestion] ["${TURBO}"] ["${HARDMODE}"]`,
+  usageShort: `[quizSize] [secondsPerQuestion] ["${TURBO}"]`,
   usage,
   async execute(msg, args) {
     const self = this;
@@ -113,6 +111,7 @@ export default {
     const activeQuiz = {
       currentQuestion,
       endDelay,
+      hardMode: false,
       paceDelay,
       points: [],
       questions,

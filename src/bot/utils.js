@@ -50,14 +50,14 @@ export async function prepareNextQuestion(channel, activeQuiz) {
     }
   }
 
-  if (lastQuestion === personalSurvivalRecord) {
+  if (survivalMode && personalSurvivalRecord && lastQuestion === personalSurvivalRecord) {
     const s = personalSurvivalRecord === 1 ? '' : 's';
     const tiedSurvivalRecord = new Discord.RichEmbed()
       .setColor(Colors.GREEN)
       .setDescription(`👔 You are now tied with your record of ${personalSurvivalRecord} correct answer${s} in a row!`);
 
     sendWithRetry(channel, tiedSurvivalRecord);
-  } else if (survivalRecord && lastQuestion === survivalRecord) {
+  } else if (survivalMode && survivalRecord && lastQuestion === survivalRecord) {
     const s = survivalRecord === 1 ? '' : 's';
     const tiedSurvivalRecord = new Discord.RichEmbed()
       .setColor(Colors.GREEN)

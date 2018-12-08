@@ -40,6 +40,10 @@ export default (client) => {
       });
     }
 
+    await tryCatch(
+      prepareNextQuestion(channel, activeQuiz),
+    );
+
     if (activeQuiz.survivalMode || questions.length === 0) {
       setTimeout(
         () => endQuiz(channel, activeQuiz),
@@ -59,10 +63,6 @@ export default (client) => {
 
       return;
     }
-
-    await tryCatch(
-      prepareNextQuestion(channel, activeQuiz),
-    );
 
     activeQuiz.nextQuestion = setTimeout(
       () => askNextQuestion(channel),
@@ -92,6 +92,9 @@ export default (client) => {
   };
 
   client.handleQuizResponse = async function handleQuizResponse(msg) {
+    if (msg.author.bot) {
+      return;
+    }
     const { channel } = msg;
     const roomId = channel.id;
     const response = msg.content.toLowerCase();
@@ -118,7 +121,7 @@ export default (client) => {
       return;
     }
 
-    if (activeQuiz.solo && !msg.author.bot && activeQuiz.solo.id !== msg.author.id) {
+    if (activeQuiz.solo && activeQuiz.solo.id !== msg.author.id) {
       if (!activeQuiz.rebukes.includes(msg.author.id)) {
         msg.reply(`the quiz is in Solo Mode. Only ${activeQuiz.solo.username} can answer.`);
         activeQuiz.rebukes.push(msg.author.id);
@@ -126,7 +129,21 @@ export default (client) => {
       return;
     }
 
-    if (!currentQuestion.answers.includes(response)) {
+    const isCorrectAnswer = currentQuestion.answers.includes(response);
+    const isWrongAnswer = !isCorrectAnswer;
+
+    if (isWrongAnswer) {
+      if (activeQuiz.hardMode) {
+        const wrongAnswerMsg = new Discord.RichEmbed()
+          .setColor(Colors.RED)
+          .setDescription(`Sorry, ${response} is not correct. You get only one guess per question.`);
+
+        sendWithRetry(channel, wrongAnswerMsg);
+
+        // TODO - activeQuiz.incorrectAnswers holds users who are locked out
+        //      - check if user is locked, notify if so
+        //      - if not locked out, add userId to activeQuiz.incorrectAnswers
+      }
       return;
     }
 
@@ -136,11 +153,13 @@ export default (client) => {
       prepareNextQuestion(channel, activeQuiz),
     );
 
-    const congrats = new Discord.RichEmbed()
-      .setColor(Colors.GREEN)
-      .addField(`${msg.author.username} answered correctly!`, currentQuestion.answerText);
+    if (isCorrectAnswer) {
+      const congrats = new Discord.RichEmbed()
+        .setColor(Colors.GREEN)
+        .addField(`${msg.author.username} answered correctly!`, currentQuestion.answerText);
 
-    sendWithRetry(channel, congrats);
+      sendWithRetry(channel, congrats);
+    }
 
     if (currentQuestion.mediaUrls) {
       const answerImages = currentQuestion.mediaUrls.slice(currentQuestion.mainImageSlice[1]);
