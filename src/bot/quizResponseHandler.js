@@ -40,10 +40,6 @@ export default (client) => {
       });
     }
 
-    await tryCatch(
-      prepareNextQuestion(channel, activeQuiz),
-    );
-
     if (activeQuiz.survivalMode || questions.length === 0) {
       setTimeout(
         () => endQuiz(channel, activeQuiz),
@@ -63,6 +59,10 @@ export default (client) => {
 
       return;
     }
+
+    await tryCatch(
+      prepareNextQuestion(channel, activeQuiz),
+    );
 
     activeQuiz.nextQuestion = setTimeout(
       () => askNextQuestion(channel),
