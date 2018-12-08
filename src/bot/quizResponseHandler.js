@@ -130,11 +130,7 @@ export default (client) => {
     }
 
     if (activeQuiz.hardMode && activeQuiz.incorrectAnswers.includes(msg.author.id)) {
-      const wrongAnswerMsg = new Discord.RichEmbed()
-        .setColor(Colors.RED)
-        .setDescription('in hard mode, you get only one guess per question.');
-
-      msg.reply(wrongAnswerMsg);
+      msg.reply('in hard mode, you get only one guess per question.');
       return;
     }
 
