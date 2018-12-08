@@ -129,6 +129,15 @@ export default (client) => {
       return;
     }
 
+    if (activeQuiz.hardMode && activeQuiz.incorrectAnswers.includes(msg.author.id)) {
+      const wrongAnswerMsg = new Discord.RichEmbed()
+        .setColor(Colors.RED)
+        .setDescription('in hard mode, you get only one guess per question.');
+
+      msg.reply(wrongAnswerMsg);
+      return;
+    }
+
     const isCorrectAnswer = currentQuestion.answers.includes(response);
     const isWrongAnswer = !isCorrectAnswer;
 
@@ -140,9 +149,16 @@ export default (client) => {
 
         sendWithRetry(channel, wrongAnswerMsg);
 
-        // TODO - activeQuiz.incorrectAnswers holds users who are locked out
-        //      - check if user is locked, notify if so
-        //      - if not locked out, add userId to activeQuiz.incorrectAnswers
+        activeQuiz.incorrectAnswers.push(msg.author.id);
+
+        Quiz.updateOne(
+          { roomId },
+          {
+            $set: {
+              incorrectAnswers: activeQuiz.incorrectAnswers,
+            },
+          },
+        ).exec().catch(console.error);
       }
       return;
     }
