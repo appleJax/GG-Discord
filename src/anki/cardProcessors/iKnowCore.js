@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* eslint-disable array-bracket-spacing, prefer-const */
 
 import { Card } from 'Models';
 import { tryCatch } from 'Utils';
@@ -28,7 +28,7 @@ async function processIKnowCore(contents, ImageStorage) {
         image,
       ] = card.fields;
 
-      [ engMeaning,
+      [engMeaning,
         expression,
       ] = [
         engMeaning,
@@ -37,11 +37,11 @@ async function processIKnowCore(contents, ImageStorage) {
 
       const answers = getAnswers(expression, altAnswers);
 
-      let imageProps = {};
+      const imageProps = {};
 
       if (image) {
         const oldCard = await tryCatch(
-          Card.findOne({ cardId })
+          Card.findOne({ cardId }),
         );
         const hasImage = oldCard && oldCard.mediaUrls;
         if (hasImage) {
@@ -56,11 +56,11 @@ async function processIKnowCore(contents, ImageStorage) {
 
           const cardImg = getImageNames(image)[0];
           const imageUrl = await tryCatch(
-            ImageStorage.upload(cardImg, options)
+            ImageStorage.upload(cardImg, options),
           );
-          imageProps.mainImageSlice = [ 0, 1 ];
+          imageProps.mainImageSlice = [0, 1];
           imageProps.mediaUrls = [
-            { image: imageUrl }
+            { image: imageUrl },
           ];
         }
       }

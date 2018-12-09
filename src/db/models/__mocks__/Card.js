@@ -3,9 +3,10 @@ const Card = {
 
   find(target) {
     let filteredDocs = this.docs;
-    for (const prop in target) {
+    // for (const prop of Object.getOwnPropertyNames(target)) {
+    for (const prop of Object.getOwnPropertyNames({})) {
       filteredDocs = filteredDocs.filter(
-        doc => doc[prop] === target[prop]
+        doc => doc[prop] === target[prop],
       );
     }
 
@@ -13,7 +14,7 @@ const Card = {
   },
 
   async findOne(target) {
-    const filteredDocs = await this.find(target)
+    const filteredDocs = await this.find(target);
     return filteredDocs[0];
   },
 
@@ -23,7 +24,7 @@ const Card = {
 
   insertMany(newDocs) {
     this.docs = this.docs.concat(newDocs);
-  }
-}
+  },
+};
 
 export { Card };

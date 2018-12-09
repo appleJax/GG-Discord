@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* eslint-disable array-bracket-spacing, prefer-const */
 
 import {
   formatQuestionText,

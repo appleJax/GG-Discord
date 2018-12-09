@@ -6,7 +6,8 @@ module.exports = {
     "jest/globals": true
   },
   "rules": {
-    'import/no-unresolved': 0,
+    "comma-style": 0,
+    "import/no-unresolved": 0,
     "import/prefer-default-export": 0,
     "no-await-in-loop": 0,
     "no-param-reassign": 0,

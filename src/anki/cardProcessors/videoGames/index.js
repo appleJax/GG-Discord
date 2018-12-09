@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* eslint-disable array-bracket-spacing, prefer-const */
 
 import urlencode from 'urlencode';
 import { Card } from 'Models';
@@ -34,7 +34,7 @@ async function processVideoGames(contents, ImageStorage) {
         , // otherVisibleContext,
         altAnswers,
         webLookup, // pronunciation lookup https://ejje.weblio.jp/content/[webLookup (e.g. 切り換える)]
-        notes
+        notes,
       ] = card.fields;
 
       [ altAnswers,
@@ -42,14 +42,14 @@ async function processVideoGames(contents, ImageStorage) {
         expression,
         prevLineAltText,
         // otherVisibleContext,
-        notes
+        notes,
       ] = [
         altAnswers,
         engMeaning,
         expression,
         prevLineAltText,
         // otherVisibleContext,
-        notes
+        notes,
       ].map(stripHtml);
 
       engMeaning = engMeaning.replace(/"/g, "'");
@@ -58,7 +58,7 @@ async function processVideoGames(contents, ImageStorage) {
       let imageProps = {};
 
       const oldCard = await tryCatch(
-        Card.findOne({ cardId })
+        Card.findOne({ cardId }),
       );
       const hasImage = oldCard && oldCard.mediaUrls;
 
@@ -75,7 +75,7 @@ async function processVideoGames(contents, ImageStorage) {
           game,
         };
         imageProps = await tryCatch(
-          persistImages(imageInfo, ImageStorage)
+          persistImages(imageInfo, ImageStorage),
         );
       }
 
@@ -113,7 +113,7 @@ function formatQuestionText(
   engMeaning,
   expression,
   game,
-  notes
+  notes,
 ) {
   const hint = formatHint(expression);
   const [min, max] = minMaxChars(hint);

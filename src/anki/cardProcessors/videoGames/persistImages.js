@@ -1,3 +1,5 @@
+/* eslint-disable prefer-const */
+
 import { tryCatch } from 'Utils';
 import {
   formatHint,
@@ -20,7 +22,7 @@ export default async function persistImages(imageInfo, ImageStorage) {
 
   const lowerSliceIndex = prevLineImages.length;
   const upperSliceIndex = lowerSliceIndex + questionImages.length;
-  const mainImageSlice = [ lowerSliceIndex, upperSliceIndex ];
+  const mainImageSlice = [lowerSliceIndex, upperSliceIndex];
 
   const imageProps = {
     mainImageSlice,
@@ -41,7 +43,7 @@ export default async function persistImages(imageInfo, ImageStorage) {
 
     for (const img of imageNames) {
       imageUrl = await tryCatch(
-        ImageStorage.upload(img, options)
+        ImageStorage.upload(img, options),
       );
 
       if (imageProps.mediaUrls.length !== altTextIndex) {
@@ -50,35 +52,35 @@ export default async function persistImages(imageInfo, ImageStorage) {
 
       imageProps.mediaUrls.push({
         altText,
-        image: imageUrl
+        image: imageUrl,
       });
     }
-  }
+  };
 
   await tryCatch(
-    addMediaUrls(prevLineImages, prevLineAltText, 0)
+    addMediaUrls(prevLineImages, prevLineAltText, 0),
   );
 
   await tryCatch(
-    addMediaUrls(questionImages, questionAltText, prevLineImages.length)
+    addMediaUrls(questionImages, questionAltText, prevLineImages.length),
   );
 
   await tryCatch(
-    addMediaUrls(answerImages, answerAltText, upperSliceIndex)
+    addMediaUrls(answerImages, answerAltText, upperSliceIndex),
   );
 
   return imageProps;
 }
 
-// private 
+// private
 
 function formatAnswerAltText(expression) {
   const altText = expression.replace(/\{\{.*?::(.+?)::.*?\}\}/g, '[$1]');
-  return '```ini\n' + altText + '```';
+  return `${'```'}ini\n${altText}${'```'}`;
 }
 
 function formatQuestionAltText(expression) {
   const hint = formatHint(expression);
   const altText = expression.replace(/\{\{.+?\}\}/g, hint);
-  return '```ini\n' + altText + '```';
+  return `${'```'}ini\n${altText}${'```'}`;
 }
