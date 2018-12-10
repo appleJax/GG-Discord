@@ -10,7 +10,7 @@ import {
   stripHtml,
 } from 'Anki/utils';
 
-function processDJG(contents) {
+async function processDJG(contents) {
   const deck = contents.name;
   const newCards = [];
 

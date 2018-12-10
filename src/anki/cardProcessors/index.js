@@ -9,6 +9,15 @@ import processIKnowCore from './iKnowCore';
 import processVideoGamesJP from './videoGames/jp';
 import processVideoGamesEN from './videoGames/en';
 
+const Processor = {
+  DBJG: processDJG,
+  DIJG: processDJG,
+  'Gamegogakuen JP': processVideoGamesJP,
+  'Gamegogakuen EN': processVideoGamesEN,
+  'iKnow Core 2000': processIKnowCore,
+  'iKnow Core 6000': processIKnowCore,
+};
+
 export function processUpload(zipfilePath) {
   return tryCatch(new Promise((resolve, reject) => {
     const stream = fs.createReadStream(zipfilePath)
@@ -29,22 +38,10 @@ export function processUpload(zipfilePath) {
 export async function processAnkiJson(filePath, storage = ImageStorage) {
   const contents = JSON.parse(fs.readFileSync(filePath, 'utf8'));
 
-  let cards;
-  if (contents.name === 'Gamegogakuen JP') {
-    cards = await tryCatch(
-      processVideoGamesJP(contents, storage),
-    );
-  } else if (contents.name === 'Gamegogakuen EN') {
-    cards = await tryCatch(
-      processVideoGamesEN(contents, storage),
-    );
-  } else if (contents.notes.length > 0) {
-    cards = processDJG(contents);
-  } else {
-    cards = await tryCatch(
-      processIKnowCore(contents, storage),
-    );
-  }
+  const process = Processor[contents.name];
+  const cards = await tryCatch(
+    process(contents, storage),
+  );
 
   return cards;
 }

@@ -1,7 +1,7 @@
-jest.mock('Models/Card');
-
 import path from 'path';
 import { processAnkiJson } from 'Anki/cardProcessors';
+
+jest.mock('Models/Card');
 
 describe('it should produce the correct cards for the DB*G decks', () => {
   test('single cloze', async () => {
@@ -20,7 +20,7 @@ describe('it should produce the correct cards for the DB*G decks', () => {
 
     const expectedCard = {
       cardId: 'id',
-      deck: 'DIJG-SingleCloze',
+      deck: 'DIJG',
       answers: ['CLOZE', 'altanswer'],
       questionText,
       answerText,
@@ -46,7 +46,7 @@ describe('it should produce the correct cards for the DB*G decks', () => {
 
     const expectedFirstCard = {
       cardId: 'id',
-      deck: 'DIJG-MultipleCloze',
+      deck: 'DIJG',
       answers: ['C'],
       questionText: questionText1,
       answerText: answerText1,
@@ -65,7 +65,7 @@ describe('it should produce the correct cards for the DB*G decks', () => {
 
     const expectedSecondCard = {
       cardId: 'id1',
-      deck: 'DIJG-MultipleCloze',
+      deck: 'DIJG',
       answers: ['C2', 'c2Alt'],
       questionText: questionText2,
       answerText: answerText2,
@@ -84,7 +84,7 @@ describe('it should produce the correct cards for the DB*G decks', () => {
 
     const expectedThirdCard = {
       cardId: 'id2',
-      deck: 'DIJG-MultipleCloze',
+      deck: 'DIJG',
       answers: ['C3', 'c3Alt1', 'c3Alt2'],
       questionText: questionText3,
       answerText: answerText3,
