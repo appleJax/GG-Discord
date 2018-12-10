@@ -4,7 +4,6 @@ import urlencode from 'urlencode';
 import { Card } from 'Models';
 import { tryCatch } from 'Utils';
 import {
-  formatHint,
   getAnswers,
   minMaxChars,
   stripHtml,
@@ -115,8 +114,7 @@ function formatQuestionText(
   game,
   notes,
 ) {
-  const hint = formatHint(expression);
-  const [min, max] = minMaxChars(hint);
+  const [min, max] = minMaxChars(expression);
   const minMax = min === max ? min : `${min} or ${max}`;
   let tweetText = `What ${minMax} character answer means "${engMeaning}"?`;
 

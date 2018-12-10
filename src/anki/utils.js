@@ -55,7 +55,7 @@ export function formatQuestionText(engMeaning, expression) {
   const hint = formatHint(expression);
   const japaneseWithHint = expression.replace(/{{.+?}}/g, hint);
 
-  const [min, max] = minMaxChars(hint);
+  const [min, max] = minMaxChars(expression);
   let minMax = min === max ? min : `${min} or ${max}`;
   let s1 = 's';
   let s2 = '';
@@ -100,13 +100,13 @@ export function getImageNames(string) {
 export function getClozes(expression) {
   const rawClozes = expression.match(/{{.+?}}/g);
   const uniqueClozes = [];
-  rawClozes.forEach(cloze => {
+  rawClozes.forEach((cloze) => {
     if (!uniqueClozes.includes(cloze)) {
       uniqueClozes.push(cloze);
     }
   });
 
-  return uniqueClozes.map((cloze, i, allClozes) => {
+  return uniqueClozes.map((_, i, allClozes) => {
     const clozesToReplace = allClozes.slice(0, i).concat(allClozes.slice(i + 1));
 
     let tempExpression = expression;
@@ -127,7 +127,8 @@ export function getClozes(expression) {
   });
 }
 
-export function minMaxChars(hint) {
+export function minMaxChars(expression) {
+  const hint = formatHint(expression);
   return [minChars(hint), maxChars(hint)];
 }
 

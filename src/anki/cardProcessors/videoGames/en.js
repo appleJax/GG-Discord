@@ -3,12 +3,7 @@
 import urlencode from 'urlencode';
 import { Card } from 'Models';
 import { tryCatch } from 'Utils';
-import {
-  formatHint,
-  getAnswers,
-  minMaxChars,
-  stripHtml,
-} from 'Anki/utils';
+import { minMaxChars, stripHtml } from 'Anki/utils';
 import persistImages from './persistImages';
 
 async function processVideoGames(contents, ImageStorage) {
@@ -52,7 +47,6 @@ async function processVideoGames(contents, ImageStorage) {
         notes,
       ].map(stripHtml);
 
-      jpMeaning = jpMeaning.replace(/"/g, "'");
       const answers = getAnswers(expression, altAnswers);
 
       let imageProps = {};
@@ -117,13 +111,53 @@ function formatQuestionText(
   notes,
 ) {
   const hint = formatHint(expression);
-  const [min, max] = minMaxChars(hint);
+  const englishWithHint = expression.replace(/{{.+?}}/g, hint);
+  const [min, max] = minMaxChars(expression);
   const minMax = min === max ? min : `${min} or ${max}`;
-  let tweetText = `What ${minMax} character answer means "${jpMeaning}"?`;
 
-  if (notes) tweetText += `\nNotes: ${notes}`;
+  let questionText = `どの(${wordCount(expression)})つの言葉に分けられた(${minMax})文字で「(${jpMeaning})」のような意味合いになりますか？`;
+  questionText += `${'```ini\n'}${englishWithHint}${'```'}`;
 
-  tweetText += `\nGame: ${game.replace(/\s+JP$/, '')}`;
+  if (notes) questionText += `\nNotes: ${notes}`;
 
-  return tweetText;
+  questionText += `\nGame: ${game.replace(/\s+EN$/, '')}`;
+
+  return questionText;
+}
+
+function getAnswers(expression, altAnswers, i) {
+  const officialAnswer = expression.match(/::(.+?)::/)[1];
+  let otherAnswers = [];
+
+  if (altAnswers) {
+    otherAnswers = altAnswers
+      .split('::')[i || 0];
+
+    if (otherAnswers) {
+      otherAnswers = otherAnswers.split(',');
+    }
+  }
+
+  return [officialAnswer].concat(otherAnswers).filter(Boolean);
+}
+
+function formatHint(expression) {
+  const legend = expression.match(/::.+?::(.+?)}}/)[1];
+
+  return legend.split(/\s+/).reduce((hint, group) => (
+    /[?≠x]/.test(group)
+      ? `${hint}[${group}]`
+      : `${hint}[${charCount(group)}]`
+  ), '');
+}
+
+function charCount(symbols) {
+  return symbols.split('').reduce(
+    (count, char) => count + (/-/.test(char) ? 5 : 1)
+    , 0,
+  );
+}
+
+function wordCount(expression) {
+  return expression.match(/::.+?::(.+?)}}/)[1].split(/\s+/).length;
 }
