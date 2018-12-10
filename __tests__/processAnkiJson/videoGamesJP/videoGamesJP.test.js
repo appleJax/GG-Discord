@@ -18,7 +18,7 @@ beforeEach(() => {
 
 describe('videoGame decks', () => {
   test('it should format cards correctly', async () => {
-    const file = path.resolve(__dirname, 'videoGames.json');
+    const file = path.resolve(__dirname, 'videoGamesJP.json');
     const cards = await processAnkiJson(file, mockStorage);
     const card = cards[0];
 

@@ -6,7 +6,8 @@ import { UPLOADS_PATH } from 'Anki/utils';
 import ImageStorage from 'Config/cloudinary';
 import processDJG from './D_JG';
 import processIKnowCore from './iKnowCore';
-import processVideoGames from './videoGames';
+import processVideoGamesJP from './videoGames/jp';
+import processVideoGamesEN from './videoGames/en';
 
 export function processUpload(zipfilePath) {
   return tryCatch(new Promise((resolve, reject) => {
@@ -16,7 +17,7 @@ export function processUpload(zipfilePath) {
     stream.on('close', async () => {
       const files = fs.readdirSync(UPLOADS_PATH);
       const newCards = await tryCatch(
-        extractCardInfo(files)
+        extractCardInfo(files),
       );
 
       cleanUp(files);
@@ -31,13 +32,17 @@ export async function processAnkiJson(filePath, storage = ImageStorage) {
   let cards;
   if (contents.name === 'Gamegogakuen JP') {
     cards = await tryCatch(
-      processVideoGames(contents, storage)
+      processVideoGamesJP(contents, storage),
+    );
+  } else if (contents.name === 'Gamegogakuen EN') {
+    cards = await tryCatch(
+      processVideoGamesEN(contents, storage),
     );
   } else if (contents.notes.length > 0) {
     cards = processDJG(contents);
   } else {
     cards = await tryCatch(
-      processIKnowCore(contents, storage)
+      processIKnowCore(contents, storage),
     );
   }
 
@@ -54,7 +59,7 @@ async function extractCardInfo(files) {
 
     if (stats.isFile() && file.match(/.+\.json$/)) {
       const newCards = await tryCatch(
-        processAnkiJson(currentFile)
+        processAnkiJson(currentFile),
       );
       allNewCards = allNewCards.concat(newCards);
     }
