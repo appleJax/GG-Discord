@@ -81,6 +81,7 @@ export default {
       endDelay,
       hardMode,
       incorrectAnswers: [],
+      isFinished: false,
       paceDelay,
       points: [],
       questions,

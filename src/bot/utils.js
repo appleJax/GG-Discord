@@ -30,6 +30,11 @@ export async function prepareNextQuestion(channel, activeQuiz) {
   const deckName = DECKS[channel.id];
   const lastQuestion = questionPosition[0];
 
+  if (activeQuiz.questions.length === 0) {
+    activeQuiz.isFinished = true;
+    return;
+  }
+
   activeQuiz.onDeckQuestion = activeQuiz.questions.pop();
   activeQuiz.currentQuestion = { answers: [] };
 

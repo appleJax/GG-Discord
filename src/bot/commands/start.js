@@ -112,6 +112,7 @@ export default {
       currentQuestion,
       endDelay,
       hardMode: false,
+      isFinished: false,
       paceDelay,
       points: [],
       questions,

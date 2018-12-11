@@ -185,7 +185,7 @@ export default (client) => {
       saveQuizProgress(msg, activeQuiz),
     );
 
-    if (questions.length === 0) {
+    if (activeQuiz.isFinished) {
       setTimeout(
         () => endQuiz(channel, activeQuiz),
         activeQuiz.endDelay,
