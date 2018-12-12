@@ -8,6 +8,7 @@ const schema = new Schema({
   username: String,
   tag: String,
   correctAnswers: t(Number, 0),
+  nextPercentMilestone: t(Number, 0.25),
   subScores: t([String], []), // roomIds
 });
 

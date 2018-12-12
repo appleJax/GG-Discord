@@ -36,7 +36,7 @@ export async function prepareNextQuestion(channel, activeQuiz) {
   }
 
   activeQuiz.onDeckQuestion = activeQuiz.questions.pop();
-  activeQuiz.currentQuestion = { answers: [] };
+  activeQuiz.currentQuestion.answers = [];
 
   let personalSurvivalRecord = Infinity;
   if (survivalMode && solo) {

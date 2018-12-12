@@ -79,6 +79,7 @@ async function saveQuizProgress(msg, activeQuiz) {
         username: msg.author.username,
         tag: msg.member.user.tag,
         correctAnswers: 1,
+        nextPercentMilestone: 0.25,
         subScores: [deckName],
       }),
     );
@@ -93,6 +94,7 @@ async function saveQuizProgress(msg, activeQuiz) {
   if (!deck) {
     deck = {
       name: deckName,
+      correctAnswers: 1,
       survivalRecord: 0,
       users: [],
     };
@@ -115,8 +117,16 @@ async function saveQuizProgress(msg, activeQuiz) {
     if (uniqueCardsCorrect.length === totalCards) {
       deckUser.deckLaps = (deckUser.deckLaps || 0) + 1;
       deckUser.uniqueCardsCorrect = [cardId];
+      msg.reply(`congratulations! 🏆 You just completed ${deckUser.deckLaps * 100}% of this deck!`);
+      deckUser.nextPercentMilestone += 0.25;
     } else if (!uniqueCardsCorrect.includes(cardId)) {
       uniqueCardsCorrect.push(cardId);
+
+      const percentCorrect = deckUser.deckLaps + (uniqueCardsCorrect.length / totalCards);
+      if (percentCorrect >= deckUser.nextPercentMilestone) {
+        msg.reply(`congratulations! 🏅 You just completed ${deckUser.nextPercentMilestone * 100}% of this deck!`);
+        deckUser.nextPercentMilestone += 0.25;
+      }
     }
 
     await tryCatch(
@@ -137,6 +147,7 @@ async function saveQuizProgress(msg, activeQuiz) {
               correctAnswers: 1,
               uniqueCardsCorrect: [cardId],
               deckLaps: 0,
+              nextPercentMilestone: 0.25,
               survivalRecord: 0,
             },
           },

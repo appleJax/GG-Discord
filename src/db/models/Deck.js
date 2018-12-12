@@ -15,6 +15,7 @@ const schema = new Schema({
       correctAnswers: t(Number, 0),
       uniqueCardsCorrect: t([String], []),
       deckLaps: t(Number, 0),
+      nextPercentMilestone: t(Number, 0.25),
       survivalRecord: t(Number, 0),
     }], [],
   ),
