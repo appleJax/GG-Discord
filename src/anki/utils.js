@@ -1,4 +1,5 @@
 import path from 'path';
+import unescape from 'unescape';
 
 export const UPLOADS_PATH = path.resolve(__dirname, 'uploads');
 
@@ -141,7 +142,11 @@ export function splitSpeakers(phrase) {
 }
 
 export function stripHtml(string) {
-  return string.replace(/<.*?>|&.*?;/g, '');
+  return unescape(
+    string
+      .replace(/<.*?>/g, '')
+      .replace(/&nbsp;/g, ' '),
+  );
 }
 
 // private functions
