@@ -6,6 +6,7 @@ import {
   Colors,
   askNextQuestion,
   endQuiz,
+  notifyMilestones,
   prepareNextQuestion,
   sendImage,
   sendWithRetry,
@@ -60,8 +61,9 @@ export default (client) => {
       return;
     }
 
+    prepareNextQuestion(activeQuiz);
     await tryCatch(
-      prepareNextQuestion(channel, activeQuiz),
+      notifyMilestones(channel, activeQuiz),
     );
 
     activeQuiz.nextQuestion = setTimeout(
@@ -99,7 +101,6 @@ export default (client) => {
     const roomId = channel.id;
     const response = msg.content.toLowerCase();
     const activeQuiz = client.quizzes.get(roomId);
-    const { currentQuestion } = activeQuiz;
 
     if (!activeQuiz.survivalMode && response.startsWith(STOP_COMMAND)) {
       clearTimeout(activeQuiz.questionTimeout);
@@ -134,9 +135,13 @@ export default (client) => {
       return;
     }
 
-    const isCorrectAnswer = currentQuestion.answers.includes(response);
-    const isWrongAnswer = !isCorrectAnswer;
+    const isCorrectAnswer = activeQuiz.currentQuestion.answers.includes(response);
+    if (isCorrectAnswer) {
+      prepareNextQuestion(activeQuiz);
+      clearTimeout(activeQuiz.questionTimeout);
+    }
 
+    const isWrongAnswer = !isCorrectAnswer;
     if (isWrongAnswer) {
       if (activeQuiz.hardMode) {
         const wrongAnswerMsg = new Discord.RichEmbed()
@@ -159,11 +164,11 @@ export default (client) => {
       return;
     }
 
-    clearTimeout(activeQuiz.questionTimeout);
-
     await tryCatch(
-      prepareNextQuestion(channel, activeQuiz),
+      notifyMilestones(channel, activeQuiz),
     );
+
+    const { currentQuestion } = activeQuiz;
 
     if (isCorrectAnswer) {
       const congrats = new Discord.RichEmbed()

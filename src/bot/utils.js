@@ -19,7 +19,11 @@ export const Colors = {
   RED: '#CA0401',
 };
 
-export async function prepareNextQuestion(channel, activeQuiz) {
+export async function notifyMilestones(channel, activeQuiz) {
+  if (activeQuiz.isFinished) {
+    return;
+  }
+
   const {
     questionPosition,
     solo,
@@ -29,14 +33,6 @@ export async function prepareNextQuestion(channel, activeQuiz) {
 
   const deckName = DECKS[channel.id];
   const lastQuestion = questionPosition[0];
-
-  if (activeQuiz.questions.length === 0) {
-    activeQuiz.isFinished = true;
-    return;
-  }
-
-  activeQuiz.onDeckQuestion = activeQuiz.questions.pop();
-  activeQuiz.currentQuestion.answers = [];
 
   let personalSurvivalRecord = Infinity;
   if (survivalMode && solo) {
@@ -68,6 +64,17 @@ export async function prepareNextQuestion(channel, activeQuiz) {
 
     sendWithRetry(channel, tiedSurvivalRecord);
   }
+}
+
+export function prepareNextQuestion(activeQuiz) {
+  activeQuiz.currentQuestion.answers = [];
+
+  if (activeQuiz.questions.length === 0) {
+    activeQuiz.isFinished = true;
+    return;
+  }
+
+  activeQuiz.onDeckQuestion = activeQuiz.questions.pop();
 }
 
 export async function askNextQuestion(channel) {
