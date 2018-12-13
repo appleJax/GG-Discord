@@ -99,7 +99,7 @@ export default (client) => {
     const roomId = channel.id;
     const response = msg.content.toLowerCase();
     const activeQuiz = client.quizzes.get(roomId);
-    const { currentQuestion, questions } = activeQuiz;
+    const { currentQuestion } = activeQuiz;
 
     if (!activeQuiz.survivalMode && response.startsWith(STOP_COMMAND)) {
       clearTimeout(activeQuiz.questionTimeout);

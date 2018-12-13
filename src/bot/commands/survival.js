@@ -22,7 +22,7 @@ const usage = `["${TURBO}"] - removes the 10-second answer review period between
 export default {
   name: 'survival',
   description: `This quiz serves questions continuously until one expires without being answered correctly. You have ${SECONDS_PER_QUESTION} seconds to answer each question.`,
-  usageShort: `["${TURBO}"]`,
+  usageShort: `["${TURBO}"] ["${HARDMODE}"]`,
   usage,
   async execute(msg, args) {
     const self = this;
