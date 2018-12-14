@@ -14,6 +14,7 @@ async function saveQuizProgress(msg, activeQuiz) {
   const { id: userId, username } = msg.author;
   const userIndex = activeQuiz.points.findIndex(stat => stat.userId === userId);
 
+  // TODO - abstract updateActiveQuiz
   if (userIndex >= 0) {
     activeQuiz.points[userIndex].correctAnswers += 1;
   } else {
@@ -31,6 +32,8 @@ async function saveQuizProgress(msg, activeQuiz) {
     ).exec(),
   );
 
+
+  // TODO - abstract incrementGlobalCorrectAnswers
   await tryCatch(
     User.updateOne(
       { username: 'everyone' },
@@ -49,6 +52,7 @@ async function saveQuizProgress(msg, activeQuiz) {
     return;
   }
 
+  // TODO - abstract updateOrCreateUser
   const user = await tryCatch(
     User.findOne({ userId }).lean().exec(),
   );
@@ -85,10 +89,11 @@ async function saveQuizProgress(msg, activeQuiz) {
     );
   }
 
+  // TODO - abstract updateOrCreateDeck
   const { cardId } = activeQuiz.currentQuestion;
 
   let deck = await tryCatch(
-    Deck.findOne({ name: deckName }).lean().exec(),
+    Deck.findOne({ name: deckName }, { _id: 0 }).lean().exec(),
   );
 
   if (!deck) {
@@ -98,10 +103,6 @@ async function saveQuizProgress(msg, activeQuiz) {
       survivalRecord: 0,
       users: [],
     };
-
-    await tryCatch(
-      Deck.create(deck),
-    );
   }
 
   const deckUser = deck.users.find(obj => obj.userId === userId);
@@ -128,33 +129,25 @@ async function saveQuizProgress(msg, activeQuiz) {
         deckUser.nextPercentMilestone += 0.25;
       }
     }
-
-    await tryCatch(
-      Deck.updateOne(
-        { name: deckName },
-        { $set: { users: deck.users } },
-      ).exec(),
-    );
   } else {
-    await tryCatch(
-      Deck.updateOne(
-        { name: deckName },
-        {
-          $push: {
-            users: {
-              userId,
-              username,
-              correctAnswers: 1,
-              uniqueCardsCorrect: [cardId],
-              deckLaps: 0,
-              nextPercentMilestone: 0.25,
-              survivalRecord: 0,
-            },
-          },
-        },
-      ).exec(),
-    );
+    deck.users.push({
+      userId,
+      username,
+      correctAnswers: 1,
+      uniqueCardsCorrect: [cardId],
+      deckLaps: 0,
+      nextPercentMilestone: 0.25,
+      survivalRecord: 0,
+    });
   }
+
+  await tryCatch(
+    Deck.replaceOne(
+      { name: deckName },
+      deck,
+      { overwrite: true, upsert: true },
+    ),
+  );
 }
 
 export default saveQuizProgress;
