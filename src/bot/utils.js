@@ -44,7 +44,6 @@ export async function notifyMilestones(channel, activeQuiz) {
 
     const currentUser = deck && deck.users.find(user => user.userId === solo.id);
     if (currentUser) {
-      /* eslint-disable-next-line */
       personalSurvivalRecord = currentUser.survivalRecord;
     }
   }

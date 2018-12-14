@@ -7,8 +7,9 @@ import {
   User,
 } from 'Models';
 import DECKS from 'Config/decks';
+import notifyGlobalPercentMilestone from './notifyGlobalPercentMilestone';
 
-async function saveQuizProgress(msg, activeQuiz) {
+export default async function saveQuizProgress(msg, activeQuiz) {
   const roomId = msg.channel.id;
   const deckName = DECKS[roomId];
   const { id: userId, username } = msg.author;
@@ -31,7 +32,6 @@ async function saveQuizProgress(msg, activeQuiz) {
       { $set: { points: activeQuiz.points } },
     ).exec(),
   );
-
 
   // TODO - abstract incrementGlobalCorrectAnswers
   await tryCatch(
@@ -148,6 +148,8 @@ async function saveQuizProgress(msg, activeQuiz) {
       { overwrite: true, upsert: true },
     ),
   );
-}
 
-export default saveQuizProgress;
+  await tryCatch(
+    notifyGlobalPercentMilestone(msg, userId),
+  );
+}
