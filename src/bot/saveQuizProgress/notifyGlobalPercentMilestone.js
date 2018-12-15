@@ -43,7 +43,7 @@ export default async function notifyGlobalPercentMilestone(msg, userId) {
   const currentPercentage = uniqueCardsCorrect / totalCards;
 
   if (currentPercentage > user.nextPercentMilestone) {
-    msg.reply(`congratulations! You just completed ${user.nextPercentMilestone * 100}% of all cards in the database!`);
+    msg.reply(`congratulations! 🌸 You just completed ${user.nextPercentMilestone * 100}% of all cards in the database!`);
 
     await tryCatch(
       User.updateOne(
