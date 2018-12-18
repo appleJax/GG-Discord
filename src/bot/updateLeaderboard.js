@@ -19,12 +19,17 @@ export default async function updateLeaderboard(channel) {
   users = users.filter(user => user.username !== 'everyone');
 
   const messageChunks = [];
-  const userAggregate = [];
 
   const totalCards = await tryCatch(
     Card.count().exec(),
   );
 
+  // TODO - abstract aggregateUniqueCardsCorrect(users)
+  // example:
+  // const globalSortedUniqueCardsCorrect = await tryCatch(
+  //   aggregateUniqueCardsCorrect(users),
+  // );
+  const userAggregate = [];
   const deckCache = new Map();
 
   for (const user of users) {
@@ -56,7 +61,11 @@ export default async function updateLeaderboard(channel) {
   }
 
   userAggregate.sort((a, b) => b.uniqueCardsCorrect - a.uniqueCardsCorrect);
+  // end calculateUniqueCardsCorrect
 
+  // TODO - abstract createOverallStatsBox()
+  // example:
+  // let stats = createOverallStatsBox();
   let currentScore = Infinity;
   let skip = 1;
   let rank = 0;
@@ -97,6 +106,7 @@ export default async function updateLeaderboard(channel) {
   }
 
   stats += '```';
+  // end createOverallStatsBox
 
   const decks = await tryCatch(
     Deck.find()
@@ -108,7 +118,9 @@ export default async function updateLeaderboard(channel) {
   let deckUsers;
   let deckCards;
 
+  // TODO - abstract createDeckStatsBox(deck);
   for (const deck of decks) {
+    // TODO - abstract calculateCorrectAnswers
     deckUsers = deck.users.sort(
       (a, b) => b.uniqueCardsCorrect.length - a.uniqueCardsCorrect.length,
     ).slice(0, 10);
@@ -137,6 +149,7 @@ export default async function updateLeaderboard(channel) {
       stats += `\n${rank}. ${user.username}: ${formatNumber(user.correctAnswers)}`;
     }
 
+    // TODO - abstract calculateUniqueCardsCorrect
     deckUsers = deck.users.sort((a, b) => b.correctAnswers - a.correctAnswers).slice(0, 10);
 
     currentScore = Infinity;
@@ -158,6 +171,7 @@ export default async function updateLeaderboard(channel) {
       stats += `\n${rank}. ${user.username}: ${formatNumber(user.uniqueCardsCorrect.length)} ${percentage(user.uniqueCardsCorrect.length, deckCards, user.deckLaps)}`;
     }
 
+    // TODO - abstract calculateSurvivalRecord
     if (deck.survivalRecord > 0) {
       stats += '\n\nSurvival Record:';
       deckUsers = deck.users.concat({
@@ -189,6 +203,11 @@ export default async function updateLeaderboard(channel) {
     stats += '```';
   }
 
+  // TODO - abstract deleteOldLeaderboard()
+  // example:
+  // await tryCatch(
+  //   deleteOldLeaderboard(),
+  // );
   const leaderboard = channel.client.channels.get(DECKS.leaderboard);
   const oldMessages = await tryCatch(
     leaderboard.fetchMessages(),
@@ -199,7 +218,9 @@ export default async function updateLeaderboard(channel) {
       leaderboard.bulkDelete(oldMessages.size),
     );
   }
+  // end deleteOldLeaderboard
 
+  // TODO - abstract postNewLeaderboard(stats)
   while (stats.length > 1950) {
     messageChunks.push(`${stats.slice(0, 1950)}${'```'}`);
     stats = `${'```'}${stats.slice(1950)}`;
