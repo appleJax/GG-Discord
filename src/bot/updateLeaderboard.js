@@ -123,7 +123,7 @@ export default async function updateLeaderboard(channel) {
     // TODO - abstract calculateCorrectAnswers
     deckUsers = deck.users.sort(
       (a, b) => b.uniqueCardsCorrect.length - a.uniqueCardsCorrect.length,
-    ).slice(0, 10);
+    );
 
     deckCards = await tryCatch(
       Card.count({ deck: deck.name }).exec(),
@@ -150,7 +150,7 @@ export default async function updateLeaderboard(channel) {
     }
 
     // TODO - abstract calculateUniqueCardsCorrect
-    deckUsers = deck.users.sort((a, b) => b.correctAnswers - a.correctAnswers).slice(0, 10);
+    deckUsers = deck.users.sort((a, b) => b.correctAnswers - a.correctAnswers);
 
     currentScore = Infinity;
     skip = 1;
@@ -182,8 +182,7 @@ export default async function updateLeaderboard(channel) {
 
     deckUsers = deckUsers
       .filter(u => u.survivalRecord > 0)
-      .sort((a, b) => b.survivalRecord - a.survivalRecord)
-      .slice(0, 10);
+      .sort((a, b) => b.survivalRecord - a.survivalRecord);
 
     currentScore = Infinity;
     skip = 1;
