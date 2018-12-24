@@ -1,7 +1,7 @@
 import DECKS from 'Config/decks';
 import { Card, Deck, User } from 'Models';
 import { formatNumber, tryCatch } from 'Utils';
-import { percentage } from './utils';
+import { percentage, RankCalculator } from './utils';
 
 export default async function updateLeaderboard(channel) {
   let users = await tryCatch(
@@ -63,45 +63,27 @@ export default async function updateLeaderboard(channel) {
   userAggregate.sort((a, b) => b.uniqueCardsCorrect - a.uniqueCardsCorrect);
   // end calculateUniqueCardsCorrect
 
+  const rankCalculator = RankCalculator();
+
   // TODO - abstract createOverallStatsBox()
   // example:
   // let stats = createOverallStatsBox();
-  let currentScore = Infinity;
-  let skip = 1;
-  let rank = 0;
-
   let stats = '```asciidoc\n= Overall =';
-
   stats += '\n\nTotal Cards Correct:';
   stats += `\n(everyone: ${formatNumber(everyone.correctAnswers)})`;
 
   for (const user of users) {
-    if (user.correctAnswers < currentScore) {
-      rank += skip;
-      skip = 1;
-      currentScore = user.correctAnswers;
-    } else {
-      skip++;
-    }
+    const rank = rankCalculator.rank(user.correctAnswers);
     stats += `\n${rank}. ${user.username}: ${formatNumber(user.correctAnswers)}`;
   }
-
-  currentScore = Infinity;
-  skip = 1;
-  rank = 0;
 
   if (userAggregate.length > 0) {
     stats += `\n\nUnique Cards Correct (out of ${formatNumber(totalCards)}):`;
   }
 
+  rankCalculator.reset();
   for (const user of userAggregate) {
-    if (user.uniqueCardsCorrect < currentScore) {
-      rank += skip;
-      skip = 1;
-      currentScore = user.uniqueCardsCorrect;
-    } else {
-      skip++;
-    }
+    const rank = rankCalculator.rank(user.uniqueCardsCorrect);
     stats += `\n${rank}. ${user.username}: ${formatNumber(user.uniqueCardsCorrect)} ${percentage(user.uniqueCardsCorrect, totalCards)}`;
   }
 
@@ -129,45 +111,26 @@ export default async function updateLeaderboard(channel) {
       Card.count({ deck: deck.name }).exec(),
     );
 
-    currentScore = Infinity;
-    skip = 1;
-    rank = 0;
-
     stats += `\n${'```asciidoc'}\n= ${deck.name} =`;
-
     stats += '\n\nTotal Cards Correct:';
     stats += `\n(everyone: ${formatNumber(deck.correctAnswers)})`;
 
+    rankCalculator.reset();
     for (const user of deckUsers) {
-      if (user.correctAnswers < currentScore) {
-        rank += skip;
-        skip = 1;
-        currentScore = user.correctAnswers;
-      } else {
-        skip++;
-      }
+      const rank = rankCalculator.rank(user.correctAnswers);
       stats += `\n${rank}. ${user.username}: ${formatNumber(user.correctAnswers)}`;
     }
 
     // TODO - abstract calculateUniqueCardsCorrect
     deckUsers = deck.users.sort((a, b) => b.correctAnswers - a.correctAnswers);
 
-    currentScore = Infinity;
-    skip = 1;
-    rank = 0;
-
     if (deckUsers.length > 0) {
       stats += `\n\nUnique Cards Correct (out of ${formatNumber(deckCards)}):`;
     }
 
+    rankCalculator.reset();
     for (const user of deckUsers) {
-      if (user.uniqueCardsCorrect.length < currentScore) {
-        rank += skip;
-        skip = 1;
-        currentScore = user.uniqueCardsCorrect.length;
-      } else {
-        skip++;
-      }
+      const rank = rankCalculator.rank(user.uniqueCardsCorrect.length);
       stats += `\n${rank}. ${user.username}: ${formatNumber(user.uniqueCardsCorrect.length)} ${percentage(user.uniqueCardsCorrect.length, deckCards, user.deckLaps)}`;
     }
 
@@ -184,18 +147,9 @@ export default async function updateLeaderboard(channel) {
       .filter(u => u.survivalRecord > 0)
       .sort((a, b) => b.survivalRecord - a.survivalRecord);
 
-    currentScore = Infinity;
-    skip = 1;
-    rank = 0;
-
+    rankCalculator.reset();
     for (const user of deckUsers) {
-      if (user.survivalRecord < currentScore) {
-        rank += skip;
-        skip = 1;
-        currentScore = user.survivalRecord;
-      } else {
-        skip++;
-      }
+      const rank = rankCalculator.rank(user.survivalRecord);
       stats += `\n${rank}. ${user.username}: ${formatNumber(user.survivalRecord)}`;
     }
 

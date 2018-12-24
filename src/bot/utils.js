@@ -282,6 +282,30 @@ export function percentage(uniqueCardsCorrect, totalCards, deckLaps) {
   return `(${lapPercentage + cardPercentage}%)`;
 }
 
+export function RankCalculator() {
+  let rank = 0;
+  let skip = 1;
+  let currentValue = Infinity;
+
+  return {
+    rank(value) {
+      if (value < currentValue) {
+        rank += skip;
+        skip = 1;
+        currentValue = value;
+      } else {
+        skip++;
+      }
+      return rank;
+    },
+    reset() {
+      rank = 0;
+      skip = 1;
+      currentValue = Infinity;
+    },
+  };
+}
+
 export function sendImage(channel, image) {
   const message = new Discord.RichEmbed()
     .setColor(Colors.BLUE)
