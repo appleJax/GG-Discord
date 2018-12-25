@@ -1,3 +1,5 @@
+/* eslint-disable prefer-template */
+
 import DECKS from 'Config/decks';
 import { Card, Deck, User } from 'Models';
 import { formatNumber, tryCatch } from 'Utils';
@@ -131,7 +133,7 @@ export default async function updateLeaderboard(channel) {
     rankCalculator.reset();
     for (const user of deckUsers) {
       const rank = rankCalculator.rank(user.uniqueCardsCorrect.length);
-      stats += `\n${rank}. ${user.username}: ${formatNumber(user.uniqueCardsCorrect.length)} ${percentage(user.uniqueCardsCorrect.length, deckCards, user.deckLaps)}`;
+      stats += `\n${rank}. ${user.username}: ${user.deckLaps ? '🏆'.repeat(user.deckLaps) + ' ' : ''}${formatNumber(user.uniqueCardsCorrect.length)} ${percentage(user.uniqueCardsCorrect.length, deckCards, user.deckLaps)}`;
     }
 
     // TODO - abstract calculateSurvivalRecord
