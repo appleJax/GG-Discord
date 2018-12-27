@@ -3,7 +3,8 @@
 import DECKS from 'Config/decks';
 import { Card, Deck, User } from 'Models';
 import { formatNumber, tryCatch } from 'Utils';
-import { percentage, RankCalculator } from './utils';
+import { percentage, RankCalculator } from '../utils';
+import aggregateUniqueCardsCorrect from './aggregateUniqueCardsCorrect';
 
 export default async function updateLeaderboard(channel) {
   let users = await tryCatch(
@@ -26,44 +27,9 @@ export default async function updateLeaderboard(channel) {
     Card.count().exec(),
   );
 
-  // TODO - abstract aggregateUniqueCardsCorrect(users)
-  // example:
-  // const globalSortedUniqueCardsCorrect = await tryCatch(
-  //   aggregateUniqueCardsCorrect(users),
-  // );
-  const userAggregate = [];
-  const deckCache = new Map();
-
-  for (const user of users) {
-    let uniqueCardsCorrect = 0;
-    let deck;
-    let subScore;
-
-    for (const deckName of user.subScores) {
-      if (deckCache.has(deckName)) {
-        deck = deckCache.get(deckName);
-      } else {
-        deck = await tryCatch(
-          Deck.findOne({ name: deckName }).lean().exec(),
-        );
-
-        if (!deck) {
-          continue;
-        }
-        deckCache.set(deckName, deck);
-      }
-      subScore = deck.users.find(record => record.userId === user.userId);
-      uniqueCardsCorrect += subScore.uniqueCardsCorrect.length;
-    }
-
-    userAggregate.push({
-      username: user.username,
-      uniqueCardsCorrect,
-    });
-  }
-
-  userAggregate.sort((a, b) => b.uniqueCardsCorrect - a.uniqueCardsCorrect);
-  // end calculateUniqueCardsCorrect
+  const globalSortedUniqueCardsCorrect = await tryCatch(
+    aggregateUniqueCardsCorrect(users),
+  );
 
   const rankCalculator = RankCalculator();
 
@@ -79,12 +45,12 @@ export default async function updateLeaderboard(channel) {
     stats += `\n${rank}. ${user.username}: ${formatNumber(user.correctAnswers)}`;
   }
 
-  if (userAggregate.length > 0) {
+  if (globalSortedUniqueCardsCorrect.length > 0) {
     stats += `\n\nUnique Cards Correct (out of ${formatNumber(totalCards)}):`;
   }
 
   rankCalculator.reset();
-  for (const user of userAggregate) {
+  for (const user of globalSortedUniqueCardsCorrect) {
     const rank = rankCalculator.rank(user.uniqueCardsCorrect);
     stats += `\n${rank}. ${user.username}: ${formatNumber(user.uniqueCardsCorrect)} ${percentage(user.uniqueCardsCorrect, totalCards)}`;
   }
