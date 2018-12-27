@@ -5,6 +5,8 @@ import { Card, Deck, User } from 'Models';
 import { formatNumber, tryCatch } from 'Utils';
 import { percentage, RankCalculator } from '../utils';
 import aggregateUniqueCardsCorrect from './aggregateUniqueCardsCorrect';
+import deleteOldLeaderboard from './deleteOldLeaderboard';
+import postNewLeaderboard from './postNewLeaderboard';
 
 export default async function updateLeaderboard(channel) {
   let users = await tryCatch(
@@ -20,8 +22,6 @@ export default async function updateLeaderboard(channel) {
 
   const everyone = users.find(user => user.username === 'everyone');
   users = users.filter(user => user.username !== 'everyone');
-
-  const messageChunks = [];
 
   const totalCards = await tryCatch(
     Card.count().exec(),
@@ -124,34 +124,13 @@ export default async function updateLeaderboard(channel) {
     stats += '```';
   }
 
-  // TODO - abstract deleteOldLeaderboard()
-  // example:
-  // await tryCatch(
-  //   deleteOldLeaderboard(),
-  // );
   const leaderboard = channel.client.channels.get(DECKS.leaderboard);
-  const oldMessages = await tryCatch(
-    leaderboard.fetchMessages(),
+
+  await tryCatch(
+    deleteOldLeaderboard(leaderboard),
   );
 
-  if (oldMessages.size) {
-    await tryCatch(
-      leaderboard.bulkDelete(oldMessages.size),
-    );
-  }
-  // end deleteOldLeaderboard
-
-  // TODO - abstract postNewLeaderboard(stats)
-  while (stats.length > 1950) {
-    messageChunks.push(`${stats.slice(0, 1950)}${'```'}`);
-    stats = `${'```'}${stats.slice(1950)}`;
-  }
-
-  messageChunks.push(stats);
-
-  for (const chunk of messageChunks) {
-    await tryCatch(
-      leaderboard.send(chunk),
-    );
-  }
+  await tryCatch(
+    postNewLeaderboard(leaderboard, stats),
+  );
 }
