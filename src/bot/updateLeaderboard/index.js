@@ -3,8 +3,8 @@
 import DECKS from 'Config/decks';
 import { Card, Deck, User } from 'Models';
 import { formatNumber, tryCatch } from 'Utils';
-import { percentage, RankCalculator } from '../utils';
-import aggregateUniqueCardsCorrect from './aggregateUniqueCardsCorrect';
+import { percentage, RankCalculator } from 'Bot/utils';
+import createOverallStatsBox from './createOverallStatsBox';
 import deleteOldLeaderboard from './deleteOldLeaderboard';
 import postNewLeaderboard from './postNewLeaderboard';
 
@@ -23,40 +23,12 @@ export default async function updateLeaderboard(channel) {
   const everyone = users.find(user => user.username === 'everyone');
   users = users.filter(user => user.username !== 'everyone');
 
-  const totalCards = await tryCatch(
-    Card.count().exec(),
+  let stats = await tryCatch(
+    createOverallStatsBox(everyone, users),
   );
 
-  const globalSortedUniqueCardsCorrect = await tryCatch(
-    aggregateUniqueCardsCorrect(users),
-  );
 
   const rankCalculator = RankCalculator();
-
-  // TODO - abstract createOverallStatsBox()
-  // example:
-  // let stats = createOverallStatsBox();
-  let stats = '```asciidoc\n= Overall =';
-  stats += '\n\nTotal Cards Correct:';
-  stats += `\n(everyone: ${formatNumber(everyone.correctAnswers)})`;
-
-  for (const user of users) {
-    const rank = rankCalculator.rank(user.correctAnswers);
-    stats += `\n${rank}. ${user.username}: ${formatNumber(user.correctAnswers)}`;
-  }
-
-  if (globalSortedUniqueCardsCorrect.length > 0) {
-    stats += `\n\nUnique Cards Correct (out of ${formatNumber(totalCards)}):`;
-  }
-
-  rankCalculator.reset();
-  for (const user of globalSortedUniqueCardsCorrect) {
-    const rank = rankCalculator.rank(user.uniqueCardsCorrect);
-    stats += `\n${rank}. ${user.username}: ${formatNumber(user.uniqueCardsCorrect)} ${percentage(user.uniqueCardsCorrect, totalCards)}`;
-  }
-
-  stats += '```';
-  // end createOverallStatsBox
 
   const decks = await tryCatch(
     Deck.find()
