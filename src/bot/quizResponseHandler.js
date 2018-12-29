@@ -102,7 +102,7 @@ export default (client) => {
     const response = msg.content.toLowerCase();
     const activeQuiz = client.quizzes.get(roomId);
 
-    if (!activeQuiz.survivalMode && response.startsWith(STOP_COMMAND)) {
+    if (isValidStopCommand(msg, activeQuiz)) {
       clearTimeout(activeQuiz.questionTimeout);
       clearTimeout(activeQuiz.nextQuestion);
       const stopMsg = new Discord.RichEmbed()
@@ -237,3 +237,10 @@ export default (client) => {
     ).exec().catch(console.error);
   };
 };
+
+// private
+
+function isValidStopCommand(msg, activeQuiz) {
+  return msg.content.toLowerCase().startsWith(STOP_COMMAND)
+    && (!activeQuiz.survivalMode || (activeQuiz.solo && activeQuiz.solo.id === msg.author.id));
+}
