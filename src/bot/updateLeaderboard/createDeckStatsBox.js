@@ -22,7 +22,6 @@ export default async function createDeckStatsBox(deck) {
     deckStats += `\n${rank}. ${user.username}: ${formatNumber(user.correctAnswers)}`;
   }
 
-  // TODO - abstract calculateUniqueCardsCorrect
   deckUsers = deck.users.sort((a, b) => b.correctAnswers - a.correctAnswers);
 
   if (deckUsers.length > 0) {
@@ -35,7 +34,6 @@ export default async function createDeckStatsBox(deck) {
     deckStats += `\n${rank}. ${user.username}: ${formatNumber(user.uniqueCardsCorrect.length)} ${percentage(user.uniqueCardsCorrect.length, deckCards, user.deckLaps)} ${'🏆'.repeat(user.deckLaps)}`;
   }
 
-  // TODO - abstract calculateSurvivalRecord
   if (deck.survivalRecord > 0) {
     deckStats += '\n\nSurvival Record:';
     deckUsers = deck.users.concat({
