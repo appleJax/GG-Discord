@@ -22,11 +22,11 @@ describe('videoGame decks', () => {
     const cards = await processAnkiJson(file, mockStorage);
     const card = cards[0];
 
-    let questionText = 'What 4 or 5 character answer means "japanese"?';
+    let questionText = 'What 3 words ([5] [5] [7]) mean "japanese"?';
     questionText += '\nNotes: notes';
     questionText += '\nGame: Game #1';
 
-    let answerText = '答え: CLOZE, altAnswer1, altAnswer2';
+    let answerText = '答え: three words missing, altAnswer1, altAnswer2';
     answerText += '\n英語: "japanese"';
     answerText += '\n辞典: https://ejje.weblio.jp/content/web%20lookup';
 
@@ -34,7 +34,7 @@ describe('videoGame decks', () => {
       cardId: 'id1',
       deck: 'Gamegogakuen EN',
       game: 'Game #1',
-      answers: ['CLOZE', 'altAnswer1', 'altAnswer2'],
+      answers: ['three words missing', 'altAnswer1', 'altAnswer2'],
       questionText,
       answerText,
       mainImageSlice: [1, 2],

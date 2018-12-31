@@ -8,18 +8,18 @@
       "notes": [
         {
           "fields": [
-            "id1", 
-            "some{{c1::CLOZE::?.O.≠(A,I)}}other{{c1::CLOZE::?.O.≠(A,I)}}text",
-            "", 
-            "japanese", 
-            "", 
-            "", 
+            "id1",
+            "some text with {{c1::three words missing::- - -..}}",
+            "",
+            "japanese",
+            "",
+            "",
             "<img src=\"questionImage.png\">",
             "<img src=\"answerImage.png\">",
-            "", 
-            "<img src=\"prevLineImage.png\">", 
-            "prevLineAltText", 
-            "", 
+            "",
+            "<img src=\"prevLineImage.png\">",
+            "prevLineAltText",
+            "",
             "altAnswer1, altAnswer2",
             "web lookup",
             "notes"
