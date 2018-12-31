@@ -22,19 +22,19 @@ describe('videoGame decks', () => {
     const cards = await processAnkiJson(file, mockStorage);
     const card = cards[0];
 
-    let questionText = 'What 3 words ([5] [5] [7]) mean "japanese"?';
+    let questionText = 'どの(3)つの言葉に分けられた(8 or 9)文字で「(japanese)」のような意味合いになりますか？';
     questionText += '\nNotes: notes';
     questionText += '\nGame: Game #1';
 
-    let answerText = '答え: three words missing, altAnswer1, altAnswer2';
-    answerText += '\n英語: "japanese"';
-    answerText += '\n辞典: https://ejje.weblio.jp/content/web%20lookup';
+    let answerText = 'Answers: to the test, altAnswer1, altAnswer2';
+    answerText += '\nJapanese: 「japanese」';
+    answerText += '\nLookup: https://ejje.weblio.jp/content/web%20lookup';
 
     const expectedCard = {
       cardId: 'id1',
       deck: 'Gamegogakuen EN',
       game: 'Game #1',
-      answers: ['three words missing', 'altAnswer1', 'altAnswer2'],
+      answers: ['to the test', 'altAnswer1', 'altAnswer2'],
       questionText,
       answerText,
       mainImageSlice: [1, 2],
@@ -44,11 +44,11 @@ describe('videoGame decks', () => {
           image: 'url/prevLineImage.png',
         },
         {
-          altText: '```ini\nsome[?][]O[][≠A,I]other[?][]O[][≠A,I]text```',
+          altText: "```ini\nIt's time to put your training [2] [3] [.≠i..]!```",
           image: 'url/questionImage.png',
         },
         {
-          altText: '```ini\nsome[CLOZE]other[CLOZE]text```',
+          altText: "```ini\nIt's time to put your traning [to the test]!```",
           image: 'url/answerImage.png',
         },
       ],
