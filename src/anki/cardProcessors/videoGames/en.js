@@ -66,6 +66,7 @@ async function processVideoGames(contents, ImageStorage) {
           questionImages,
           answerImages,
           expression,
+          hint: formatHint(expression),
           game,
         };
         imageProps = await tryCatch(
@@ -92,10 +93,17 @@ export default processVideoGames;
 
 // private
 
+function charCount(symbols) {
+  return symbols.split('').reduce(
+    (count, char) => count + (/-/.test(char) ? 5 : 1)
+    , 0,
+  );
+}
+
 function formatAnswerText(answers, jpMeaning, webLookup) {
   const s = answers.length > 1 ? 's' : '';
   let answerText = `Answer${s}: ${answers.join(', ')}`;
-  answerText += `\nJapanese: "${jpMeaning}"`;
+  answerText += `\nJapanese: 「${jpMeaning}」`;
 
   if (webLookup) {
     answerText += `\nWeblookup: https://ejje.weblio.jp/content/${urlencode(webLookup)}`;
@@ -110,35 +118,16 @@ function formatQuestionText(
   game,
   notes,
 ) {
-  const hint = formatHint(expression);
-  const englishWithHint = expression.replace(/{{.+?}}/g, hint);
-  const [min, max] = minMaxChars(expression);
+  const [min, max] = minMaxChars(expression.replace(/\s+/g, ''));
   const minMax = min === max ? min : `${min} or ${max}`;
 
   let questionText = `どの(${wordCount(expression)})つの言葉に分けられた(${minMax})文字で「(${jpMeaning})」のような意味合いになりますか？`;
-  questionText += `${'```ini\n'}${englishWithHint}${'```'}`;
 
   if (notes) questionText += `\nNotes: ${notes}`;
 
   questionText += `\nGame: ${game.replace(/\s+EN$/, '')}`;
 
   return questionText;
-}
-
-function getAnswers(expression, altAnswers, i) {
-  const officialAnswer = expression.match(/::(.+?)::/)[1];
-  let otherAnswers = [];
-
-  if (altAnswers) {
-    otherAnswers = altAnswers
-      .split('::')[i || 0];
-
-    if (otherAnswers) {
-      otherAnswers = otherAnswers.split(',');
-    }
-  }
-
-  return [officialAnswer].concat(otherAnswers).filter(Boolean);
 }
 
 function formatHint(expression) {
@@ -151,11 +140,20 @@ function formatHint(expression) {
   ), '');
 }
 
-function charCount(symbols) {
-  return symbols.split('').reduce(
-    (count, char) => count + (/-/.test(char) ? 5 : 1)
-    , 0,
-  );
+function getAnswers(expression, altAnswers, i) {
+  const officialAnswer = expression.match(/::(.+?)::/)[1];
+  let otherAnswers = [];
+
+  if (altAnswers) {
+    otherAnswers = altAnswers
+      .split('::')[i || 0];
+
+    if (otherAnswers) {
+      otherAnswers = otherAnswers.split(',').map(str => str.trim());
+    }
+  }
+
+  return [officialAnswer].concat(otherAnswers).filter(Boolean);
 }
 
 function wordCount(expression) {

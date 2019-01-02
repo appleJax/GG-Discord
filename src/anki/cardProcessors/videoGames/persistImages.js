@@ -1,10 +1,7 @@
 /* eslint-disable prefer-const */
 
 import { tryCatch } from 'Utils';
-import {
-  formatHint,
-  getImageNames,
-} from 'Anki/utils';
+import { getImageNames } from 'Anki/utils';
 
 export default async function persistImages(imageInfo, ImageStorage) {
   let {
@@ -13,6 +10,7 @@ export default async function persistImages(imageInfo, ImageStorage) {
     questionImages,
     answerImages,
     expression,
+    hint,
     game,
   } = imageInfo;
 
@@ -29,7 +27,7 @@ export default async function persistImages(imageInfo, ImageStorage) {
     mediaUrls: [],
   };
 
-  const questionAltText = formatQuestionAltText(expression);
+  const questionAltText = formatQuestionAltText(expression, hint);
   const answerAltText = formatAnswerAltText(expression);
 
   const addMediaUrls = async (imageNames, altText, altTextIndex) => {
@@ -79,8 +77,7 @@ function formatAnswerAltText(expression) {
   return `${'```'}ini\n${altText}${'```'}`;
 }
 
-function formatQuestionAltText(expression) {
-  const hint = formatHint(expression);
+function formatQuestionAltText(expression, hint) {
   const altText = expression.replace(/\{\{.+?\}\}/g, hint);
   return `${'```'}ini\n${altText}${'```'}`;
 }

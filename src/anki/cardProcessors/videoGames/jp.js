@@ -4,6 +4,7 @@ import urlencode from 'urlencode';
 import { Card } from 'Models';
 import { tryCatch } from 'Utils';
 import {
+  formatHint,
   getAnswers,
   minMaxChars,
   stripHtml,
@@ -71,6 +72,7 @@ async function processVideoGames(contents, ImageStorage) {
           questionImages,
           answerImages,
           expression,
+          hint: formatHint(expression),
           game,
         };
         imageProps = await tryCatch(
