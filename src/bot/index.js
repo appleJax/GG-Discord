@@ -1,5 +1,4 @@
 import { tryCatch } from 'Utils';
-/* eslint-disable-next-line */
 import client from './config';
 import rehydrateActiveQuizzes from './rehydrateActiveQuizzes';
 import notifyError from './notifyError';
