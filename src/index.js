@@ -36,9 +36,8 @@ if (!process.env.ADMIN) {
   bot.start();
 }
 
-const PORT = app.get('port');
-
 async function startApp() {
+  const PORT = app.get('port');
   await connectDB();
   app.listen(PORT, () => console.log('Listening on port', PORT));
 }
