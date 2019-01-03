@@ -34,7 +34,7 @@ module.exports = {
     new CleanWebpackPlugin(`${__dirname}/dist`),
     new CopyWebpackPlugin([
       { from: `${__dirname}/src/admin` },
-      { from: `${__dirname}/src/bot/commands`, to: 'commands'  },
+      { from: `${__dirname}/src/bot/commands`, to: 'commands' },
     ]),
     new webpack.DefinePlugin({
       'process.env.ADMIN_PW': JSON.stringify(envVars.common.ADMIN_PW),
