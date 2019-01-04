@@ -2,7 +2,8 @@ import Discord from 'discord.js';
 import { Card, Deck, Quiz } from 'Models';
 import { formatNumber, tryCatch } from 'Utils';
 import DECKS from 'Config/decks';
-import updateLeaderboard from './updateLeaderboard';
+import handleQuestionTimeout from 'Bot/handleQuestionTimeout';
+import updateLeaderboard from 'Bot/updateLeaderboard';
 
 export const END_DELAY = 2000;
 export const PACE_DELAY = 12000;
@@ -106,7 +107,7 @@ export async function askNextQuestion(channel) {
   });
 
   activeQuiz.questionTimeout = setTimeout(
-    () => channel.client.nextQuestion(channel),
+    () => handleQuestionTimeout(channel),
     activeQuiz.secondsPerQuestion * 1000,
   );
 

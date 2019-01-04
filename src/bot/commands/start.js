@@ -2,6 +2,7 @@ import Discord from 'discord.js';
 import { tryCatch } from 'Utils';
 import DECKS from 'Config/decks';
 import { Quiz } from 'Models';
+import handleQuestionTimeout from 'Bot/handleQuestionTimeout';
 import {
   END_DELAY,
   PACE_DELAY,
@@ -62,8 +63,8 @@ export default {
   usageShort: `[quizSize] [secondsPerQuestion] ["${TURBO}"]`,
   usage,
   async execute(msg, args) {
-    const self = this;
     const { channel } = msg;
+    const { client } = channel;
     const roomId = channel.id;
     const soloRooms = DECKS.soloSurvival;
 
@@ -137,10 +138,10 @@ export default {
     }
 
     activeQuiz.questionTimeout = setTimeout(
-      () => self.nextQuestion(channel),
+      () => handleQuestionTimeout(channel),
       activeQuiz.secondsPerQuestion * 1000,
     );
-    this.quizzes.set(roomId, activeQuiz);
+    client.quizzes.set(roomId, activeQuiz);
 
     const questionTimeout = Date.now() + (activeQuiz.secondsPerQuestion * 1000);
 

@@ -1,5 +1,6 @@
 import { tryCatch } from 'Utils';
 import { Quiz } from 'Models';
+import handleQuestionTimeout from 'Bot/handleQuestionTimeout';
 import { askNextQuestion, endQuiz } from 'Bot/utils';
 
 export default async function rehydrateActiveQuizzes(client) {
@@ -47,7 +48,7 @@ function setEndQuizTimeout(timeLeft, channel, activeQuiz) {
 
 function setQuestionTimeout(timeLeft, channel) {
   return setTimeout(
-    () => channel.client.nextQuestion(channel),
+    () => handleQuestionTimeout(channel),
     timeLeft,
   );
 }

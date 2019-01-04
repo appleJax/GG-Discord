@@ -3,6 +3,7 @@ import { tryCatch } from 'Utils';
 import { Quiz } from 'Models';
 import { sendWithRetry } from 'Bot/utils';
 import DECKS from 'Config/decks';
+import handleQuestionTimeout from 'Bot/handleQuestionTimeout';
 import {
   END_DELAY,
   PACE_DELAY,
@@ -13,7 +14,7 @@ import {
   fetchCards,
   fetchSurvivalRecord,
   sendImage,
-} from '../utils';
+} from 'Bot/utils';
 
 const SECONDS_PER_QUESTION = 60;
 const usage = `["${TURBO}"] - removes the 10-second answer review period between questions`
@@ -25,8 +26,8 @@ export default {
   usageShort: `["${TURBO}"] ["${HARDMODE}"]`,
   usage,
   async execute(msg, args) {
-    const self = this;
     const { channel } = msg;
+    const { client } = channel;
     const roomId = channel.id;
     const deckName = DECKS[roomId];
 
@@ -108,10 +109,10 @@ export default {
     }
 
     activeQuiz.questionTimeout = setTimeout(
-      () => self.nextQuestion(channel),
+      () => handleQuestionTimeout(channel),
       activeQuiz.secondsPerQuestion * 1000,
     );
-    this.quizzes.set(roomId, activeQuiz);
+    client.quizzes.set(roomId, activeQuiz);
 
     const questionTimeout = Date.now() + (activeQuiz.secondsPerQuestion * 1000);
 
