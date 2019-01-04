@@ -16,10 +16,8 @@ client.quizzes = new Discord.Collection();
 const commandFiles = fs.readdirSync(path.resolve(__dirname, 'commands'));
 
 export default async function initBot() {
-  /* eslint-disable-next-line */
   for (const file of commandFiles) {
     const command = await import(`./commands/${file}`).then(_module => _module.default);
-
     client.commands.set(command.name, command);
     client.cooldowns.set(command.name, new Discord.Collection());
   }
