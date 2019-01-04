@@ -3,7 +3,8 @@ import bodyParser from 'body-parser';
 import path from 'path';
 import session from 'express-session';
 import connectDB from 'Config/mongo';
-import bot from './bot';
+import { tryCatch } from 'Utils';
+import initBot from './bot';
 import route from './routes/admin';
 
 const { SESSION_SECRET } = process.env;
@@ -32,16 +33,20 @@ app.use(session(options));
 
 route(app);
 
-if (!process.env.ADMIN) {
-  bot.start();
-}
-
 async function startApp() {
   const PORT = app.get('port');
-  await connectDB();
+  await tryCatch(
+    connectDB(),
+  );
+
+  if (!process.env.ADMIN) {
+    const bot = await tryCatch(
+      initBot(),
+    );
+    bot.start();
+  }
+
   app.listen(PORT, () => console.log('Listening on port', PORT));
 }
 
 startApp();
-
-export default app;
