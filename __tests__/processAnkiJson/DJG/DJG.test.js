@@ -1,12 +1,13 @@
-import path from 'path';
+/* eslint-disable camelcase */
 import { processAnkiJson } from 'Anki/cardProcessors';
+import DJG_multipleCloze from './DJG_multipleCloze';
+import DJG_singleCloze from './DJG_singleCloze';
 
 jest.mock('Models/Card');
 
 describe('it should produce the correct cards for the DB*G decks', () => {
   test('single cloze', async () => {
-    const file = path.resolve(__dirname, 'DJG_singleCloze.json');
-    const cards = await processAnkiJson(file);
+    const cards = await processAnkiJson(DJG_singleCloze);
     const firstCard = cards[0];
 
     let questionText = 'What 5 characters make the sentence roughly mean:';
@@ -31,8 +32,7 @@ describe('it should produce the correct cards for the DB*G decks', () => {
   });
 
   test('multiple clozes', async () => {
-    const file = path.resolve(__dirname, 'DJG_multipleCloze.json');
-    const cards = await processAnkiJson(file);
+    const cards = await processAnkiJson(DJG_multipleCloze);
     const firstCard = cards[0];
 
     let questionText1 = 'What character makes the sentence roughly mean:';
