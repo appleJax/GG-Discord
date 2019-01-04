@@ -1,5 +1,6 @@
 import path from 'path';
 import { processAnkiJson } from 'Anki/cardProcessors';
+import videoGamesJP from './videoGamesJP';
 
 jest.mock('Models/Card');
 
@@ -18,8 +19,7 @@ beforeEach(() => {
 
 describe('videoGame decks', () => {
   test('it should format cards correctly', async () => {
-    const file = path.resolve(__dirname, 'videoGamesJP.json');
-    const cards = await processAnkiJson(file, mockStorage);
+    const cards = await processAnkiJson(videoGamesJP, mockStorage);
     const card = cards[0];
 
     let questionText = 'What 4 or 5 character answer means "english"?';
