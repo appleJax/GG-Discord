@@ -56,8 +56,6 @@ export default async function handleMessage(msg) {
     const expirationTime = timestamps.get(msg.author.id) + cooldownAmount;
 
     if (now < expirationTime) {
-      // const timeLeft = (expirationTime - now) / 1000;
-      // msg.reply(`please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`);
       return;
     }
   }
@@ -68,6 +66,7 @@ export default async function handleMessage(msg) {
   try {
     command.execute.call(client, msg, args);
   } catch (err) {
+    /* eslint-disable-next-line */
     console.error(err);
     msg.reply('sorry, something went wrong. Please try again.');
   }

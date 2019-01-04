@@ -19,7 +19,7 @@ const Processor = {
 };
 
 export function processUpload(zipfilePath) {
-  return tryCatch(new Promise((resolve, reject) => {
+  return tryCatch(new Promise((resolve) => {
     const stream = fs.createReadStream(zipfilePath)
       .pipe(unzip.Extract({ path: path.resolve(__dirname, 'uploads') }));
 
