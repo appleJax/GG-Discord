@@ -1,5 +1,6 @@
 import DECKS from 'Config/decks';
 import { tryCatch } from 'Utils';
+import handleQuizResponse from './handleQuizResponse';
 import {
   PREFIX, commandNotFound, parseInput, shouldIgnore,
 } from './utils';
@@ -16,7 +17,7 @@ export default (client) => {
 
     if (client.quizzes.get(roomId)) {
       await tryCatch(
-        client.handleQuizResponse(msg),
+        handleQuizResponse(msg),
       );
       return;
     }
