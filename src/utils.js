@@ -35,9 +35,9 @@ export function isCorrect(uname, pw) {
 
 export function tryCatch(promise) {
   return promise
-    .then(data => data)
     .catch((err) => {
       console.error('Error:', err);
+      console.error('Stack Trace:', err.stack);
       return {};
     });
 }
