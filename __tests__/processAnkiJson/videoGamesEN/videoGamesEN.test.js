@@ -1,6 +1,6 @@
 import path from 'path';
 import { processAnkiJson } from 'Anki/cardProcessors';
-import videoGamesEN from './videoGamesEN';
+import videoGamesEN from './videoGamesEN.json';
 
 jest.mock('Models/Card');
 

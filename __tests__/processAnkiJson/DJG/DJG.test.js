@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 import { processAnkiJson } from 'Anki/cardProcessors';
-import DJG_multipleCloze from './DJG_multipleCloze';
-import DJG_singleCloze from './DJG_singleCloze';
+import DJG_multipleCloze from './DJG_multipleCloze.json';
+import DJG_singleCloze from './DJG_singleCloze.json';
 
 jest.mock('Models/Card');
 

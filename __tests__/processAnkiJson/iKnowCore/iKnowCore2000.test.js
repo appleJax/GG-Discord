@@ -1,6 +1,5 @@
-import path from 'path';
 import { processAnkiJson } from 'Anki/cardProcessors';
-import iKnowCore2000 from './iKnowCore2000';
+import iKnowCore2000 from './iKnowCore2000.json';
 
 jest.mock('Models/Card');
 

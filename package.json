@@ -61,6 +61,7 @@
   },
   "jest": {
     "automock": false,
+    "testPathIgnorePatterns": ["node_modules", ".*\\.json\\.js"],
     "moduleNameMapper": {
       "^Anki(.*)$": "<rootDir>/src/anki$1",
       "^Bot(.*)$": "<rootDir>/src/bot$1",
