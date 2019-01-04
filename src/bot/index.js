@@ -1,7 +1,8 @@
 import { tryCatch } from 'Utils';
-import client from './config';
-import rehydrateActiveQuizzes from './rehydrateActiveQuizzes';
-import notifyError from './notifyError';
+import client from 'Bot/config';
+import handleMessage from 'Bot/handleMessage';
+import notifyError from 'Bot/notifyError';
+import rehydrateActiveQuizzes from 'Bot/rehydrateActiveQuizzes';
 
 const { BOT_TOKEN } = process.env;
 
@@ -18,7 +19,7 @@ client.on('error', (err) => {
   console.error(err.stack);
 });
 
-client.on('message', client.handleMsg);
+client.on('message', handleMessage);
 
 export default ({
   start: () => client.login(BOT_TOKEN),
