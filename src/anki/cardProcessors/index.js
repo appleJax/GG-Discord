@@ -35,15 +35,9 @@ export function processUpload(zipfilePath) {
   }));
 }
 
-export async function processAnkiJson(filePath, storage = ImageStorage) {
-  const contents = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-
+export async function processAnkiJson(contents, storage = ImageStorage) {
   const process = Processor[contents.name];
-  const cards = await tryCatch(
-    process(contents, storage),
-  );
-
-  return cards;
+  return process(contents, storage);
 }
 
 // private functions
@@ -55,8 +49,9 @@ async function extractCardInfo(files) {
     const stats = fs.statSync(currentFile);
 
     if (stats.isFile() && file.match(/.+\.json$/)) {
+      const contents = JSON.parse(fs.readFileSync(currentFile, 'utf8'));
       const newCards = await tryCatch(
-        processAnkiJson(currentFile),
+        processAnkiJson(contents),
       );
       allNewCards = allNewCards.concat(newCards);
     }
