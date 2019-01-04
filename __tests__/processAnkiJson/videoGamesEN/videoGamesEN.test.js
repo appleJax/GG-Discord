@@ -1,5 +1,6 @@
 import path from 'path';
 import { processAnkiJson } from 'Anki/cardProcessors';
+import videoGamesEN from './videoGamesEN';
 
 jest.mock('Models/Card');
 
@@ -18,8 +19,7 @@ beforeEach(() => {
 
 describe('videoGame decks', () => {
   test('it should format cards correctly', async () => {
-    const file = path.resolve(__dirname, 'videoGamesEN.json');
-    const cards = await processAnkiJson(file, mockStorage);
+    const cards = await processAnkiJson(videoGamesEN, mockStorage);
     const card = cards[0];
 
     let questionText = 'どの(3)つの言葉に分けられた(8 or 9)文字で「(japanese)」のような意味合いになりますか？';
