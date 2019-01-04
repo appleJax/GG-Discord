@@ -1,14 +1,15 @@
-jest.mock('Models/Card');
-
 import path from 'path';
 import { processAnkiJson } from 'Anki/cardProcessors';
+import iKnowCore2000 from './iKnowCore2000';
+
+jest.mock('Models/Card');
 
 const mockStorage = {
   calls: 0,
   upload() {
     return Promise.resolve(`url#${++this.calls}`);
-  }
-}
+  },
+};
 
 beforeEach(() => {
   mockStorage.calls = 0;
@@ -16,8 +17,7 @@ beforeEach(() => {
 
 describe('iKnowCore2000 decks', () => {
   test('it should format cards correctly', async () => {
-    const file = path.resolve(__dirname, 'iKnowCore2000.json');
-    const cards = await processAnkiJson(file, mockStorage);
+    const cards = await processAnkiJson(iKnowCore2000, mockStorage);
     const firstCard = cards[0];
 
     let questionText1 = 'What 4 or 5 characters make the sentence roughly mean:';
@@ -37,10 +37,10 @@ describe('iKnowCore2000 decks', () => {
       answerText: answerText1,
       mainImageSlice: [0, 1],
       mediaUrls: [
-        { 
-          image: 'url#1'
-        }
-      ]
+        {
+          image: 'url#1',
+        },
+      ],
     };
 
     const secondCard = cards[1];
