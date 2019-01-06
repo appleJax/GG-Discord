@@ -1,5 +1,8 @@
-import { validateArgs } from 'Bot/commands/start';
-import { QUIZ_SIZE, SECONDS_PER_QUESTION } from '../src/bot/commands/start';
+import {
+  QUIZ_SIZE,
+  SECONDS_PER_QUESTION,
+  validateArgs,
+} from 'Bot/commands/start';
 
 describe('validating arguments for start command', () => {
   it('should return the default values if no args are present', () => {
