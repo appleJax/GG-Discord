@@ -93,7 +93,6 @@ export default {
       deck: DECKS[roomId],
     };
 
-    /* eslint-disable-next-line */
     const questions = await tryCatch(
       fetchCards(deckQuery, argsResult.quizSize),
     );

@@ -47,7 +47,6 @@ export default {
       fetchSurvivalRecord(deckName),
     );
 
-    /* eslint-disable-next-line */
     const questions = await tryCatch(
       fetchCards(deckQuery, 10),
     );
