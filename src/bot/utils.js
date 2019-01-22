@@ -68,13 +68,11 @@ export async function notifyMilestones(channel, activeQuiz) {
 
 export function prepareNextQuestion(activeQuiz) {
   activeQuiz.currentQuestion.answers = [];
-
-  if (activeQuiz.questions.length === 0) {
-    activeQuiz.isFinished = true;
-    return;
-  }
-
   activeQuiz.onDeckQuestion = activeQuiz.questions.pop();
+
+  if (activeQuiz.onDeckQuestion == null) {
+    activeQuiz.isFinished = true;
+  }
 }
 
 export async function askNextQuestion(channel) {
