@@ -249,10 +249,12 @@ export async function endQuiz(channel, activeQuiz = {}) {
 }
 
 export function fetchCards(deckQuery, quizSize) {
-  return Card.aggregate([
-    { $match: deckQuery },
-    { $sample: { size: quizSize } },
-  ]);
+  return Promise.resolve(
+    Card.aggregate([
+      { $match: deckQuery },
+      { $sample: { size: quizSize } },
+    ]),
+  );
 }
 
 export function fetchSurvivalRecord(deckName) {
