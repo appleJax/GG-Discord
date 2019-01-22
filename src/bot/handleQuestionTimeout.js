@@ -19,8 +19,10 @@ export default async function handleQuestionTimeout(channel) {
     return;
   }
 
+  const { currentQuestion } = activeQuiz;
+
   clearTimeout(activeQuiz.questionTimeout);
-  const { currentQuestion, questions } = activeQuiz;
+  prepareNextQuestion(activeQuiz);
 
   const revealAnswer = new Discord.RichEmbed()
     .setColor(Colors.GOLD)
@@ -36,7 +38,7 @@ export default async function handleQuestionTimeout(channel) {
     });
   }
 
-  if (activeQuiz.survivalMode || questions.length === 0) {
+  if (activeQuiz.survivalMode || activeQuiz.isFinished) {
     setTimeout(
       () => endQuiz(channel, activeQuiz),
       activeQuiz.endDelay,
@@ -56,7 +58,6 @@ export default async function handleQuestionTimeout(channel) {
     return;
   }
 
-  prepareNextQuestion(activeQuiz);
   await tryCatch(
     notifyMilestones(channel, activeQuiz),
   );
