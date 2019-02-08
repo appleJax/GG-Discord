@@ -1,3 +1,5 @@
 # GG Discord Bot
 
-quiz bot for GG's discord channels
+Quiz Bot for GG's Discord server.
+
+https://discord.gg/NXSgjT8
