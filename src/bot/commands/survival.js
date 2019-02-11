@@ -1,7 +1,6 @@
 import Discord from 'discord.js';
 import { tryCatch } from 'Utils';
 import { Quiz } from 'Models';
-import { sendWithRetry } from 'Bot/utils';
 import DECKS from 'Config/decks';
 import handleQuestionTimeout from 'Bot/handleQuestionTimeout';
 import {
@@ -14,11 +13,12 @@ import {
   fetchCards,
   fetchSurvivalRecord,
   sendImage,
+  sendWithRetry,
 } from 'Bot/utils';
 
 const SECONDS_PER_QUESTION = 60;
 const usage = `["${TURBO}"] - removes the 10-second answer review period between questions`
-  + `\n["${HARDMODE}"] - first wrong answer will trigger the next question`;
+  + `\n["${HARDMODE}"] - first wrong answer will end quiz`;
 
 export default {
   name: 'survival',
