@@ -38,7 +38,7 @@
     "uuid": "^3.3.2"
   },
   "devDependencies": {
-    "@babel/core": "7.0.0-beta.46",
+    "@babel/core": "^7.7.7",
     "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.46",
     "@babel/plugin-syntax-dynamic-import": "^7.0.0",
     "@babel/preset-env": "^7.0.0-beta.46",
@@ -61,7 +61,10 @@
   },
   "jest": {
     "automock": false,
-    "testPathIgnorePatterns": ["node_modules", ".*\\.json\\.js"],
+    "testPathIgnorePatterns": [
+      "node_modules",
+      ".*\\.json\\.js"
+    ],
     "moduleNameMapper": {
       "^Anki(.*)$": "<rootDir>/src/anki$1",
       "^Bot(.*)$": "<rootDir>/src/bot$1",
