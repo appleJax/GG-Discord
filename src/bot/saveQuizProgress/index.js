@@ -1,5 +1,4 @@
 import { tryCatch } from 'Utils';
-import { isPatron } from 'Bot/utils';
 import {
   Card,
   Deck,
@@ -47,10 +46,6 @@ export default async function saveQuizProgress(msg, activeQuiz) {
       { $inc: { correctAnswers: 1 } },
     ),
   );
-
-  if (!isPatron(msg.member)) {
-    return;
-  }
 
   // TODO - abstract updateOrCreateUser
   const user = await tryCatch(
