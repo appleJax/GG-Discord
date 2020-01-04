@@ -64,3 +64,5 @@ typings/
 dist
 uploads
 TODO.txt
+.vscode
+yarn.lock
