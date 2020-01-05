@@ -6,7 +6,6 @@ const envVars = require('./.env.js');
 
 module.exports = {
   entry: [
-    '@babel/polyfill',
     './src/index.js',
   ],
   target: 'node',
