@@ -263,12 +263,6 @@ export function fetchSurvivalRecord(deckName) {
     .then(deck => (deck && deck.survivalRecord) || 0);
 }
 
-export function isPatron(member) {
-  return !!member.roles.find(
-    role => ['Quiz Patron', 'admin'].includes(role.name),
-  );
-}
-
 export function parseInput(msg) {
   const args = msg.content.substr(PREFIX.length).trim().split(/\s+/);
   const command = args.shift().toLowerCase();
@@ -318,7 +312,7 @@ export function sendImage(channel, image) {
 
 export function sendWithRetry(channel, msg) {
   return channel.send(msg)
-    .catch(() => {
+    .catch((e) => {
       setTimeout(() => {
         channel.send(msg)
           .catch(() => {

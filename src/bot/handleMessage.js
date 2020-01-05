@@ -8,6 +8,7 @@ import {
 const quizRooms = Object.keys(DECKS);
 
 export default async function handleMessage(msg) {
+  console.log('Received message');
   const { channel } = msg;
   const { client } = channel;
   const roomId = channel.id;
@@ -23,7 +24,10 @@ export default async function handleMessage(msg) {
     return;
   }
 
-  if (shouldIgnore(msg)) return;
+  if (shouldIgnore(msg)) {
+    console.log('Ignoring message');
+    return;
+  }
 
   const [commandName, args] = parseInput(msg);
   const command = client.commands.get(commandName)
@@ -64,6 +68,7 @@ export default async function handleMessage(msg) {
   setTimeout(() => timestamps.delete(msg.author.id), cooldownAmount);
 
   try {
+    console.log('Executing command');
     command.execute.call(client, msg, args);
   } catch (err) {
     /* eslint-disable-next-line */

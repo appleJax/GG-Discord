@@ -83,6 +83,7 @@ export default {
     }
 
     const argsResult = validateArgs(args);
+    console.log('Args result:', argsResult);
 
     if (argsResult.error) {
       msg.reply(`you passed an invalid argument ${argsResult.error}`);
@@ -136,13 +137,20 @@ export default {
       });
     }
 
-    activeQuiz.questionTimeout = setTimeout(
+    const timeoutRef = setTimeout(
       () => handleQuestionTimeout(channel),
       activeQuiz.secondsPerQuestion * 1000,
     );
-    client.quizzes.set(roomId, activeQuiz);
 
-    const questionTimeout = Date.now() + (activeQuiz.secondsPerQuestion * 1000);
+    client.quizzes.set(
+      roomId,
+      {
+        ...activeQuiz,
+        questionTimeout: timeoutRef,
+      },
+    );
+
+    const timeoutMs = Date.now() + (activeQuiz.secondsPerQuestion * 1000);
 
     await tryCatch(
       Quiz.create({
@@ -152,9 +160,10 @@ export default {
         questions: activeQuiz.questions.map(obj => obj._id),
         timer: {
           name: 'questionTimeout',
-          time: questionTimeout,
+          time: timeoutMs,
         },
       }),
     );
+    console.log('Quiz created');
   },
 };
