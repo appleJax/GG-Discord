@@ -3,10 +3,10 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
 const envVars = require('./.env.js');
+// require('core-js/stable');
 
 module.exports = {
   entry: [
-    '@babel/polyfill',
     './src/index.js',
   ],
   target: 'node',
