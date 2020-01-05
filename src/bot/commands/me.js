@@ -2,7 +2,7 @@ import { User } from 'Models';
 import { tryCatch } from 'Utils';
 import formatUserStats from 'Bot/formatUserStats';
 
-const PATREON_LINK = 'https://www.patreon.com/gamegogakuen';
+// const PATREON_LINK = 'https://www.patreon.com/gamegogakuen';
 
 export default {
   name: 'me',

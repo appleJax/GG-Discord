@@ -312,7 +312,7 @@ export function sendImage(channel, image) {
 
 export function sendWithRetry(channel, msg) {
   return channel.send(msg)
-    .catch(() => {
+    .catch((e) => {
       setTimeout(() => {
         channel.send(msg)
           .catch(() => {
