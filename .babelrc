@@ -2,14 +2,24 @@
   "presets": [
     [ "@babel/preset-env",
       { "targets": {
-          "node": "current"
+          "node": "10"
         },
         "useBuiltIns": "usage"
       }
     ]
   ],
   "plugins": [
-    // "@babel/plugin-proposal-object-rest-spread",
-    "@babel/plugin-syntax-dynamic-import"
+    "@babel/plugin-syntax-dynamic-import",
+    [
+      "@babel/plugin-transform-runtime",
+      {
+        "absoluteRuntime": false,
+        "corejs": 3,
+        "helpers": true,
+        "regenerator": true,
+        "useESModules": false,
+        "version": "7.0.0-beta.0"
+      }
+    ]
   ]
 }

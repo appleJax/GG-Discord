@@ -1,8 +1,9 @@
+import 'core-js/stable';
+import regeneratorRuntime from 'regenerator-runtime/runtime';
 import uuid from 'uuid/v1';
 import { processUpload } from 'Anki/cardProcessors';
 import { tryCatch } from 'Utils';
 import { Card } from 'Models';
-import regeneratorRuntime from 'regenerator-runtime/runtime';
 
 const QUEUE = {};
 
@@ -62,5 +63,4 @@ export default ({
 
     res.json({ status, message });
   },
-
 });
