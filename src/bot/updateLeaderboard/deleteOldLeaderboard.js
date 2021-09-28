@@ -1,13 +1,9 @@
-import { tryCatch } from 'Utils';
+import { tryCatch } from "Utils";
 
 export default async function deleteOldLeaderboard(leaderboard) {
-  const oldMessages = await tryCatch(
-    leaderboard.fetchMessages(),
-  );
+  const oldMessages = await tryCatch(leaderboard.fetchMessages());
 
   if (oldMessages.size) {
-    await tryCatch(
-      leaderboard.bulkDelete(oldMessages.size),
-    );
+    await Promise.all(oldMessages.deleteAll());
   }
 }

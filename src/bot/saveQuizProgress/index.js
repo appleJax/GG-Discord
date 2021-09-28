@@ -1,18 +1,15 @@
-import { tryCatch } from 'Utils';
-import {
-  Card,
-  Deck,
-  Quiz,
-  User,
-} from 'Models';
-import DECKS from 'Config/decks';
-import notifyGlobalPercentMilestone from './notifyGlobalPercentMilestone';
+import { tryCatch } from "Utils";
+import { Card, Deck, Quiz, User } from "Models";
+import DECKS from "Config/decks";
+import notifyGlobalPercentMilestone from "./notifyGlobalPercentMilestone";
 
 export default async function saveQuizProgress(msg, activeQuiz) {
   const roomId = msg.channel.id;
   const deckName = DECKS[roomId];
   const { id: userId, username } = msg.author;
-  const userIndex = activeQuiz.points.findIndex(stat => stat.userId === userId);
+  const userIndex = activeQuiz.points.findIndex(
+    (stat) => stat.userId === userId
+  );
 
   // TODO - abstract updateActiveQuiz
   if (userIndex >= 0) {
@@ -26,31 +23,20 @@ export default async function saveQuizProgress(msg, activeQuiz) {
   }
 
   await tryCatch(
-    Quiz.updateOne(
-      { roomId },
-      { $set: { points: activeQuiz.points } },
-    ).exec(),
+    Quiz.updateOne({ roomId }, { $set: { points: activeQuiz.points } }).exec()
   );
 
   // TODO - abstract incrementGlobalCorrectAnswers
   await tryCatch(
-    User.updateOne(
-      { username: 'everyone' },
-      { $inc: { correctAnswers: 1 } },
-    ),
+    User.updateOne({ username: "everyone" }, { $inc: { correctAnswers: 1 } })
   );
 
   await tryCatch(
-    Deck.updateOne(
-      { name: deckName },
-      { $inc: { correctAnswers: 1 } },
-    ),
+    Deck.updateOne({ name: deckName }, { $inc: { correctAnswers: 1 } })
   );
 
   // TODO - abstract updateOrCreateUser
-  const user = await tryCatch(
-    User.findOne({ userId }).lean().exec(),
-  );
+  const user = await tryCatch(User.findOne({ userId }).lean().exec());
 
   if (user) {
     const { subScores } = user;
@@ -68,8 +54,8 @@ export default async function saveQuizProgress(msg, activeQuiz) {
             username: msg.author.username,
             tag: msg.member.user.tag,
           },
-        },
-      ).exec(),
+        }
+      ).exec()
     );
   } else {
     await tryCatch(
@@ -80,7 +66,7 @@ export default async function saveQuizProgress(msg, activeQuiz) {
         correctAnswers: 1,
         nextPercentMilestone: 0.25,
         subScores: [deckName],
-      }),
+      })
     );
   }
 
@@ -88,7 +74,7 @@ export default async function saveQuizProgress(msg, activeQuiz) {
   const { cardId } = activeQuiz.currentQuestion;
 
   let deck = await tryCatch(
-    Deck.findOne({ name: deckName }, { _id: 0 }).lean().exec(),
+    Deck.findOne({ name: deckName }, { _id: 0 }).lean().exec()
   );
 
   if (!deck) {
@@ -100,27 +86,34 @@ export default async function saveQuizProgress(msg, activeQuiz) {
     };
   }
 
-  const deckUser = deck.users.find(obj => obj.userId === userId);
+  const deckUser = deck.users.find((obj) => obj.userId === userId);
 
   if (deckUser) {
     deckUser.correctAnswers += 1;
     const { uniqueCardsCorrect } = deckUser;
 
-    const totalCards = await tryCatch(
-      Card.count({ deck: deckName }).exec(),
-    );
+    const totalCards = await tryCatch(Card.count({ deck: deckName }).exec());
 
     if (uniqueCardsCorrect.length === totalCards) {
       deckUser.deckLaps = (deckUser.deckLaps || 0) + 1;
       deckUser.uniqueCardsCorrect = [cardId];
-      msg.reply(`congratulations! 🏆 You just completed ${deckUser.deckLaps * 100}% of this deck!`);
+      msg.reply(
+        `congratulations! 🏆 You just completed ${
+          deckUser.deckLaps * 100
+        }% of this deck!`
+      );
       deckUser.nextPercentMilestone += 0.25;
     } else if (!uniqueCardsCorrect.includes(cardId)) {
       uniqueCardsCorrect.push(cardId);
 
-      const percentCorrect = deckUser.deckLaps + (uniqueCardsCorrect.length / totalCards);
+      const percentCorrect =
+        deckUser.deckLaps + uniqueCardsCorrect.length / totalCards;
       if (percentCorrect >= deckUser.nextPercentMilestone) {
-        msg.reply(`congratulations! 🏅 You just completed ${deckUser.nextPercentMilestone * 100}% of this deck!`);
+        msg.reply(
+          `congratulations! 🏅 You just completed ${
+            deckUser.nextPercentMilestone * 100
+          }% of this deck!`
+        );
         deckUser.nextPercentMilestone += 0.25;
       }
     }
@@ -137,14 +130,8 @@ export default async function saveQuizProgress(msg, activeQuiz) {
   }
 
   await tryCatch(
-    Deck.replaceOne(
-      { name: deckName },
-      deck,
-      { overwrite: true, upsert: true },
-    ),
+    Deck.replaceOne({ name: deckName }, deck, { overwrite: true, upsert: true })
   );
 
-  await tryCatch(
-    notifyGlobalPercentMilestone(msg, userId),
-  );
+  await tryCatch(notifyGlobalPercentMilestone(msg, userId));
 }
