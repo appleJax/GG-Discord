@@ -37,6 +37,7 @@ export default async function saveQuizProgress(msg, activeQuiz) {
 
   // TODO - abstract updateOrCreateUser
   const user = await tryCatch(User.findOne({ userId }).lean().exec());
+  const userTag = `${msg.author.username}#${msg.author.discriminator}`;
 
   if (user) {
     const { subScores } = user;
@@ -52,7 +53,7 @@ export default async function saveQuizProgress(msg, activeQuiz) {
           $set: {
             subScores,
             username: msg.author.username,
-            tag: msg.member.user.tag,
+            tag: userTag,
           },
         }
       ).exec()
@@ -62,7 +63,7 @@ export default async function saveQuizProgress(msg, activeQuiz) {
       User.create({
         userId,
         username: msg.author.username,
-        tag: msg.member.user.tag,
+        tag: userTag,
         correctAnswers: 1,
         nextPercentMilestone: 0.25,
         subScores: [deckName],
