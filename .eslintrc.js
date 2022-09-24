@@ -1,11 +1,12 @@
 module.exports = {
-  "extends": "airbnb-base",
-  "plugins": ["jest"],
-  "parser": "babel-eslint",
-  "env": {
-    "jest/globals": true
+  extends: "airbnb-base",
+  plugins: ["jest"],
+  parser: "babel-eslint",
+  env: {
+    "jest/globals": true,
   },
-  "rules": {
+  rules: {
+    quotes: "double",
     "comma-style": 0,
     "import/no-unresolved": 0,
     "import/prefer-default-export": 0,
@@ -17,5 +18,5 @@ module.exports = {
     "no-underscore-dangle": 0,
     "no-labels": 0,
     "no-continue": 0,
-  }
+  },
 };
