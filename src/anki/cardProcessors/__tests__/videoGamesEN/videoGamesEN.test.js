@@ -1,8 +1,8 @@
-import path from 'path';
-import { processAnkiJson } from 'Anki/cardProcessors';
-import videoGamesEN from './videoGamesEN.json';
+import path from "node:path";
+import { processAnkiJson } from "Anki/cardProcessors";
+import videoGamesEN from "./videoGamesEN.json";
 
-jest.mock('Models/Card');
+jest.mock("Models/Card");
 
 const mockStorage = {
   calls: 0,
@@ -17,39 +17,40 @@ beforeEach(() => {
   mockStorage.calls = 0;
 });
 
-describe('videoGame decks', () => {
-  test('it should format cards correctly', async () => {
+describe("videoGame decks", () => {
+  test("it should format cards correctly", async () => {
     const cards = await processAnkiJson(videoGamesEN, mockStorage);
     const card = cards[0];
 
-    let questionText = 'どの(3)つの言葉に分けられた(8 or 9)文字で「(japanese)」のような意味合いになりますか？';
-    questionText += '\nNotes: notes';
-    questionText += '\nGame: Game #1';
+    let questionText =
+      "どの(3)つの言葉に分けられた(8 or 9)文字で「(japanese)」のような意味合いになりますか？";
+    questionText += "\nNotes: notes";
+    questionText += "\nGame: Game #1";
 
-    let answerText = 'Answers: to the test, altAnswer1, altAnswer2';
-    answerText += '\nJapanese: 「japanese」';
-    answerText += '\nWeblookup: https://ejje.weblio.jp/content/web%20lookup';
+    let answerText = "Answers: to the test, altAnswer1, altAnswer2";
+    answerText += "\nJapanese: 「japanese」";
+    answerText += "\nWeblookup: https://ejje.weblio.jp/content/web%20lookup";
 
     const expectedCard = {
-      cardId: 'id1',
-      deck: 'Gamegogakuen EN',
-      game: 'Game #1',
-      answers: ['to the test', 'altAnswer1', 'altAnswer2'],
+      cardId: "id1",
+      deck: "Gamegogakuen EN",
+      game: "Game #1",
+      answers: ["to the test", "altAnswer1", "altAnswer2"],
       questionText,
       answerText,
       mainImageSlice: [1, 2],
       mediaUrls: [
         {
-          altText: 'prevLineAltText',
-          image: 'url/prevLineImage.png',
+          altText: "prevLineAltText",
+          image: "url/prevLineImage.png",
         },
         {
           altText: "```ini\nIt's time to put your training [2][3][.≠i?.]!```",
-          image: 'url/questionImage.png',
+          image: "url/questionImage.png",
         },
         {
           altText: "```ini\nIt's time to put your training [to the test]!```",
-          image: 'url/answerImage.png',
+          image: "url/answerImage.png",
         },
       ],
     };
