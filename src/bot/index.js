@@ -35,7 +35,7 @@ export default async function initBot() {
     console.error(err.stack);
   });
 
-  client.on("message", handleMessage);
+  client.on("messageCreate", handleMessage);
 
   return {
     start: () => client.login(BOT_TOKEN),

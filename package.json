@@ -23,7 +23,7 @@
     "body-parser": "^1.18.2",
     "cloudinary": "^1.11.0",
     "core-js": "^3.6.1",
-    "discord.js": "^12",
+    "discord.js": "13",
     "dotenv": "^5.0.1",
     "express": "^4.16.3",
     "express-authorization": "^1.0.0",
