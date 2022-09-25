@@ -40,7 +40,7 @@ export default async function updateLeaderboard(channel) {
     );
   }
 
-  const leaderboard = channel.client.channels.get(DECKS.leaderboard);
+  const leaderboard = channel.client.channels.cache.get(DECKS.leaderboard);
 
   await tryCatch(
     deleteOldLeaderboard(leaderboard),

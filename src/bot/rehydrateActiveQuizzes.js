@@ -16,7 +16,7 @@ export default async function rehydrateActiveQuizzes(client) {
 
   activeQuizzes.forEach((activeQuiz) => {
     const { roomId, timer } = activeQuiz;
-    const channel = client.channels.get(roomId);
+    const channel = client.channels.cache.get(roomId);
     const timeLeft = Math.max(0, timer.time - Date.now());
 
     switch ((timer || {}).name) {
