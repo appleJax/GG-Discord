@@ -1,4 +1,4 @@
-import Discord from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import { tryCatch } from "Utils";
 import { Quiz } from "Models";
 import {
@@ -29,7 +29,7 @@ export default async function handleQuizResponse(msg) {
   if (isValidStopCommand(msg, activeQuiz)) {
     clearTimeout(activeQuiz.questionTimeout);
     clearTimeout(activeQuiz.nextQuestion);
-    const stopMsg = new Discord.RichEmbed()
+    const stopMsg = new EmbedBuilder()
       .setColor(Colors.RED)
       .setDescription("Stopping quiz... 😢");
 
@@ -71,7 +71,7 @@ export default async function handleQuizResponse(msg) {
   const isWrongAnswer = !isCorrectAnswer;
   if (isWrongAnswer) {
     if (activeQuiz.hardMode) {
-      const wrongAnswerMsg = new Discord.RichEmbed()
+      const wrongAnswerMsg = new EmbedBuilder()
         .setColor(Colors.RED)
         .setDescription(
           `Sorry, ${response} is not correct. You get only one guess per question.`
@@ -100,12 +100,12 @@ export default async function handleQuizResponse(msg) {
   const { currentQuestion } = activeQuiz;
 
   if (isCorrectAnswer) {
-    const congrats = new Discord.RichEmbed()
-      .setColor(Colors.GREEN)
-      .addField(
-        `${msg.author.username} answered correctly!`,
-        currentQuestion.answerText
-      );
+    const congrats = new EmbedBuilder().setColor(Colors.GREEN).addFields([
+      {
+        name: `${msg.author.username} answered correctly!`,
+        value: currentQuestion.answerText,
+      },
+    ]);
 
     sendWithRetry(channel, congrats);
   }

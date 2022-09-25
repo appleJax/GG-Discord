@@ -1,8 +1,8 @@
-import Discord from 'discord.js';
-import { tryCatch } from 'Utils';
-import { Quiz } from 'Models';
-import DECKS from 'Config/decks';
-import handleQuestionTimeout from 'Bot/handleQuestionTimeout';
+import { EmbedBuilder } from "discord.js";
+import { tryCatch } from "Utils";
+import { Quiz } from "Models";
+import DECKS from "Config/decks";
+import handleQuestionTimeout from "Bot/handleQuestionTimeout";
 import {
   END_DELAY,
   PACE_DELAY,
@@ -14,14 +14,15 @@ import {
   fetchSurvivalRecord,
   sendImage,
   sendWithRetry,
-} from 'Bot/utils';
+} from "Bot/utils";
 
 const SECONDS_PER_QUESTION = 60;
-const usage = `["${TURBO}"] - removes the 10-second answer review period between questions`
-  + `\n["${HARDMODE}"] - first wrong answer will end quiz`;
+const usage =
+  `["${TURBO}"] - removes the 10-second answer review period between questions` +
+  `\n["${HARDMODE}"] - first wrong answer will end quiz`;
 
 export default {
-  name: 'survival',
+  name: "survival",
   description: `This quiz serves questions continuously until one expires without being answered correctly. You have ${SECONDS_PER_QUESTION} seconds to answer each question.`,
   usageShort: `["${TURBO}"] ["${HARDMODE}"]`,
   usage,
@@ -43,18 +44,14 @@ export default {
       };
     }
 
-    const survivalRecord = await tryCatch(
-      fetchSurvivalRecord(deckName),
-    );
+    const survivalRecord = await tryCatch(fetchSurvivalRecord(deckName));
 
-    const questions = await tryCatch(
-      fetchCards(deckQuery, 10),
-    );
+    const questions = await tryCatch(fetchCards(deckQuery, 10));
 
     if (!questions || questions.length === 0) {
-      const errorMsg = new Discord.RichEmbed()
+      const errorMsg = new EmbedBuilder()
         .setColor(Colors.RED)
-        .setDescription('Sorry, something went wrong');
+        .setDescription("Sorry, something went wrong");
 
       sendWithRetry(channel, errorMsg);
       return;
@@ -70,7 +67,9 @@ export default {
     }
 
     let hardMode = false;
-    const hardModeIndex = args.findIndex(arg => String(arg).toLowerCase() === HARDMODE);
+    const hardModeIndex = args.findIndex(
+      (arg) => String(arg).toLowerCase() === HARDMODE
+    );
     if (hardModeIndex >= 0) {
       hardMode = true;
       args.splice(hardModeIndex, 1);
@@ -85,7 +84,7 @@ export default {
       paceDelay,
       points: [],
       questions,
-      questionPosition: [1, '??'],
+      questionPosition: [1, "??"],
       rebukes: [],
       secondsPerQuestion: SECONDS_PER_QUESTION,
       solo,
@@ -93,14 +92,20 @@ export default {
       survivalMode: true,
     };
 
-    const startMsg = new Discord.RichEmbed()
-      .setColor(Colors.BLUE)
-      .addField(`Starting quiz, see how long you can survive! Current record: ${survivalRecord} correct answers`, currentQuestion.questionText);
+    const startMsg = new EmbedBuilder().setColor(Colors.BLUE).addFields([
+      {
+        name: `Starting quiz, see how long you can survive! Current record: ${survivalRecord} correct answers`,
+        value: currentQuestion.questionText,
+      },
+    ]);
 
     sendWithRetry(channel, startMsg);
 
     if (currentQuestion.mediaUrls) {
-      const questionImages = currentQuestion.mediaUrls.slice(0, currentQuestion.mainImageSlice[1]);
+      const questionImages = currentQuestion.mediaUrls.slice(
+        0,
+        currentQuestion.mainImageSlice[1]
+      );
 
       questionImages.forEach((image) => {
         sendImage(channel, image, activeQuiz);
@@ -109,30 +114,27 @@ export default {
 
     const timeoutRef = setTimeout(
       () => handleQuestionTimeout(channel),
-      activeQuiz.secondsPerQuestion * 1000,
+      activeQuiz.secondsPerQuestion * 1000
     );
 
-    client.quizzes.set(
-      roomId,
-      {
-        ...activeQuiz,
-        questionTimeout: timeoutRef,
-      },
-    );
+    client.quizzes.set(roomId, {
+      ...activeQuiz,
+      questionTimeout: timeoutRef,
+    });
 
-    const timeoutMs = Date.now() + (activeQuiz.secondsPerQuestion * 1000);
+    const timeoutMs = Date.now() + activeQuiz.secondsPerQuestion * 1000;
 
     await tryCatch(
       Quiz.create({
         ...activeQuiz,
         roomId,
         currentQuestion: activeQuiz.currentQuestion._id,
-        questions: activeQuiz.questions.map(obj => obj._id),
+        questions: activeQuiz.questions.map((obj) => obj._id),
         timer: {
-          name: 'questionTimeout',
+          name: "questionTimeout",
           time: timeoutMs,
         },
-      }),
+      })
     );
   },
 };

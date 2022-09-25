@@ -1,6 +1,6 @@
-import Discord from 'discord.js';
-import { tryCatch } from 'Utils';
-import { Quiz } from 'Models';
+import { EmbedBuilder } from "discord.js";
+import { tryCatch } from "Utils";
+import { Quiz } from "Models";
 import {
   Colors,
   askNextQuestion,
@@ -9,7 +9,7 @@ import {
   prepareNextQuestion,
   sendImage,
   sendWithRetry,
-} from 'Bot/utils';
+} from "Bot/utils";
 
 export default async function handleQuestionTimeout(channel) {
   const roomId = channel.id;
@@ -24,14 +24,16 @@ export default async function handleQuestionTimeout(channel) {
   clearTimeout(activeQuiz.questionTimeout);
   prepareNextQuestion(activeQuiz);
 
-  const revealAnswer = new Discord.RichEmbed()
+  const revealAnswer = new EmbedBuilder()
     .setColor(Colors.GOLD)
-    .addField("Time's up!", currentQuestion.answerText);
+    .addFields([{ name: "Time's up!", value: currentQuestion.answerText }]);
 
   sendWithRetry(channel, revealAnswer);
 
   if (currentQuestion.mediaUrls) {
-    const answerImages = currentQuestion.mediaUrls.slice(currentQuestion.mainImageSlice[1]);
+    const answerImages = currentQuestion.mediaUrls.slice(
+      currentQuestion.mainImageSlice[1]
+    );
 
     answerImages.forEach((image) => {
       sendImage(channel, image);
@@ -39,32 +41,29 @@ export default async function handleQuestionTimeout(channel) {
   }
 
   if (activeQuiz.survivalMode || activeQuiz.isFinished) {
-    setTimeout(
-      () => endQuiz(channel, activeQuiz),
-      activeQuiz.endDelay,
-    );
+    setTimeout(() => endQuiz(channel, activeQuiz), activeQuiz.endDelay);
 
     const endQuizTime = Date.now() + activeQuiz.endDelay;
     Quiz.updateOne(
       { roomId },
       {
         $set: {
-          'timer.name': 'endQuiz',
-          'timer.time': endQuizTime,
+          "timer.name": "endQuiz",
+          "timer.time": endQuizTime,
         },
-      },
-    ).exec().catch(console.error);
+      }
+    )
+      .exec()
+      .catch(console.error);
 
     return;
   }
 
-  await tryCatch(
-    notifyMilestones(channel, activeQuiz),
-  );
+  await tryCatch(notifyMilestones(channel, activeQuiz));
 
   activeQuiz.nextQuestion = setTimeout(
     () => askNextQuestion(channel),
-    activeQuiz.paceDelay,
+    activeQuiz.paceDelay
   );
 
   const askNextQuestionTime = Date.now() + activeQuiz.paceDelay;
@@ -73,18 +72,14 @@ export default async function handleQuestionTimeout(channel) {
     roomId,
     currentQuestion: activeQuiz.currentQuestion._id,
     onDeckQuestion: activeQuiz.onDeckQuestion._id,
-    questions: activeQuiz.questions.map(obj => obj._id),
+    questions: activeQuiz.questions.map((obj) => obj._id),
     questionTimeout: null,
     nextQuestion: null,
     timer: {
-      name: 'askNextQuestion',
+      name: "askNextQuestion",
       time: askNextQuestionTime,
     },
-
   };
 
-  Quiz.replaceOne(
-    { roomId },
-    updatedQuiz,
-  ).exec().catch(console.error);
+  Quiz.replaceOne({ roomId }, updatedQuiz).exec().catch(console.error);
 }

@@ -1,8 +1,8 @@
-import Discord from 'discord.js';
-import { tryCatch } from 'Utils';
-import DECKS from 'Config/decks';
-import { Quiz } from 'Models';
-import handleQuestionTimeout from 'Bot/handleQuestionTimeout';
+import { EmbedBuilder } from "discord.js";
+import { tryCatch } from "Utils";
+import DECKS from "Config/decks";
+import { Quiz } from "Models";
+import handleQuestionTimeout from "Bot/handleQuestionTimeout";
 import {
   END_DELAY,
   PACE_DELAY,
@@ -12,7 +12,7 @@ import {
   fetchCards,
   sendImage,
   sendWithRetry,
-} from 'Bot/utils';
+} from "Bot/utils";
 
 // exported for testing
 export const QUIZ_SIZE = {
@@ -28,9 +28,10 @@ export const SECONDS_PER_QUESTION = {
   max: 180,
 };
 
-const usage = `[quizSize] - number of questions (defaults to ${QUIZ_SIZE.default}, max is ${QUIZ_SIZE.max})`
-  + `\n[secondsPerQuestion] - timeout for each question (in seconds - defaults to ${SECONDS_PER_QUESTION.default}, max is ${SECONDS_PER_QUESTION.max})`
-  + `\n["${TURBO}"] - removes the 10-second answer review period between questions`;
+const usage =
+  `[quizSize] - number of questions (defaults to ${QUIZ_SIZE.default}, max is ${QUIZ_SIZE.max})` +
+  `\n[secondsPerQuestion] - timeout for each question (in seconds - defaults to ${SECONDS_PER_QUESTION.default}, max is ${SECONDS_PER_QUESTION.max})` +
+  `\n["${TURBO}"] - removes the 10-second answer review period between questions`;
 
 // exported for testing
 export function validateArgs([size, seconds]) {
@@ -44,22 +45,26 @@ export function validateArgs([size, seconds]) {
       paramValue = Math.round(Number(param));
       argsResult[name] = paramValue;
 
-      if (Number.isNaN(paramValue) || paramValue < values.min || paramValue > values.max) {
+      if (
+        Number.isNaN(paramValue) ||
+        paramValue < values.min ||
+        paramValue > values.max
+      ) {
         argsResult.error = `("${param}"). \`${name}\` must be between ${values.min} and ${values.max}.`;
       }
     }
   };
 
-  validate(seconds, 'secondsPerQuestion', SECONDS_PER_QUESTION);
-  validate(size, 'quizSize', QUIZ_SIZE);
+  validate(seconds, "secondsPerQuestion", SECONDS_PER_QUESTION);
+  validate(size, "quizSize", QUIZ_SIZE);
 
   return argsResult;
 }
 
 export default {
-  name: 'start',
-  aliases: ['s'],
-  description: 'Start a new quiz',
+  name: "start",
+  aliases: ["s"],
+  description: "Start a new quiz",
   usageShort: `[quizSize] [secondsPerQuestion] ["${TURBO}"]`,
   usage,
   async execute(msg, args) {
@@ -69,13 +74,17 @@ export default {
     const soloRooms = DECKS.soloSurvival;
 
     if (soloRooms.includes(roomId)) {
-      msg.reply('this is a solo survival room. You can use `gg!start` in any of the Public Quiz Arcade channels.');
+      msg.reply(
+        "this is a solo survival room. You can use `gg!start` in any of the Public Quiz Arcade channels."
+      );
       return;
     }
 
     let endDelay = END_DELAY;
     let paceDelay = PACE_DELAY;
-    const turboIndex = args.findIndex(arg => String(arg).toLowerCase() === TURBO);
+    const turboIndex = args.findIndex(
+      (arg) => String(arg).toLowerCase() === TURBO
+    );
     if (turboIndex >= 0) {
       endDelay = TURBO_DELAY;
       paceDelay = TURBO_DELAY;
@@ -83,7 +92,7 @@ export default {
     }
 
     const argsResult = validateArgs(args);
-    console.log('Args result:', argsResult);
+    console.log("Args result:", argsResult);
 
     if (argsResult.error) {
       msg.reply(`you passed an invalid argument ${argsResult.error}`);
@@ -95,13 +104,13 @@ export default {
     };
 
     const questions = await tryCatch(
-      fetchCards(deckQuery, argsResult.quizSize),
+      fetchCards(deckQuery, argsResult.quizSize)
     );
 
     if (!questions || questions.length === 0) {
-      const errorMsg = new Discord.RichEmbed()
+      const errorMsg = new EmbedBuilder()
         .setColor(Colors.RED)
-        .setDescription('Sorry, something went wrong');
+        .setDescription("Sorry, something went wrong");
 
       sendWithRetry(channel, errorMsg);
       return;
@@ -121,16 +130,20 @@ export default {
       secondsPerQuestion: argsResult.secondsPerQuestion,
     };
 
-    const startMsg = new Discord.RichEmbed()
-      .setColor(Colors.BLUE)
-      .addField(`Starting quiz, first question (1/${argsResult.quizSize}):`, currentQuestion.questionText);
+    const startMsg = new EmbedBuilder().setColor(Colors.BLUE).addFields([
+      {
+        name: `Starting quiz, first question (1/${argsResult.quizSize}):`,
+        value: currentQuestion.questionText,
+      },
+    ]);
 
-    await tryCatch(
-      sendWithRetry(channel, startMsg),
-    );
+    await tryCatch(sendWithRetry(channel, startMsg));
 
     if (currentQuestion.mediaUrls) {
-      const questionImages = currentQuestion.mediaUrls.slice(0, currentQuestion.mainImageSlice[1]);
+      const questionImages = currentQuestion.mediaUrls.slice(
+        0,
+        currentQuestion.mainImageSlice[1]
+      );
 
       questionImages.forEach((image) => {
         sendImage(channel, image, activeQuiz);
@@ -139,31 +152,28 @@ export default {
 
     const timeoutRef = setTimeout(
       () => handleQuestionTimeout(channel),
-      activeQuiz.secondsPerQuestion * 1000,
+      activeQuiz.secondsPerQuestion * 1000
     );
 
-    client.quizzes.set(
-      roomId,
-      {
-        ...activeQuiz,
-        questionTimeout: timeoutRef,
-      },
-    );
+    client.quizzes.set(roomId, {
+      ...activeQuiz,
+      questionTimeout: timeoutRef,
+    });
 
-    const timeoutMs = Date.now() + (activeQuiz.secondsPerQuestion * 1000);
+    const timeoutMs = Date.now() + activeQuiz.secondsPerQuestion * 1000;
 
     await tryCatch(
       Quiz.create({
         ...activeQuiz,
         roomId,
         currentQuestion: activeQuiz.currentQuestion._id,
-        questions: activeQuiz.questions.map(obj => obj._id),
+        questions: activeQuiz.questions.map((obj) => obj._id),
         timer: {
-          name: 'questionTimeout',
+          name: "questionTimeout",
           time: timeoutMs,
         },
-      }),
+      })
     );
-    console.log('Quiz created');
+    console.log("Quiz created");
   },
 };

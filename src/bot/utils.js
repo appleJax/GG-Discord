@@ -66,7 +66,7 @@ export async function notifyMilestones(channel, activeQuiz) {
         `👔 You are now tied with the deck record of ${survivalRecord} correct answer${s} in a row!`
       );
 
-    sendWithRetry(channel, { embeds: [tiedSurvivalRecord] });
+    sendWithRetry(channel, tiedSurvivalRecord);
   }
 }
 
@@ -91,9 +91,12 @@ export async function askNextQuestion(channel) {
   const [currentPosition, totalQuestions] = activeQuiz.questionPosition;
   const position = `${currentPosition}/${totalQuestions}`;
 
-  const nextMessage = new EmbedBuilder()
-    .setColor(Colors.BLUE)
-    .addField(`Next Question (${position}):`, currentQuestion.questionText);
+  const nextMessage = new EmbedBuilder().setColor(Colors.BLUE).addFields([
+    {
+      name: `Next Question (${position}):`,
+      value: currentQuestion.questionText,
+    },
+  ]);
 
   let questionImages = [];
   if (currentQuestion.mediaUrls) {
@@ -103,7 +106,7 @@ export async function askNextQuestion(channel) {
     );
   }
 
-  await tryCatch(sendWithRetry(channel, { embeds: [nextMessage] }));
+  await tryCatch(sendWithRetry(channel, nextMessage));
 
   questionImages.forEach((image) => {
     sendImage(channel, image);
@@ -251,7 +254,7 @@ export async function endQuiz(channel, activeQuiz = {}) {
       .setDescription(`That's it, thanks for playing!${summary("start")}`);
   }
 
-  sendWithRetry(channel, { embeds: [endMsg] });
+  sendWithRetry(channel, endMsg);
 
   const roomId = channel.id;
   channel.client.quizzes.set(roomId, null);
@@ -317,11 +320,11 @@ export function sendImage(channel, image) {
     .setImage(image.image)
     .setDescription(image.altText || "");
 
-  sendWithRetry(channel, { embeds: [message] });
+  sendWithRetry(channel, message);
 }
 
 export function sendWithRetry(channel, msg) {
-  return channel.send(msg).catch((e) => {
+  return channel.send({ embeds: [msg] }).catch((e) => {
     setTimeout(() => {
       channel.send(msg).catch(() => {
         setTimeout(() => {

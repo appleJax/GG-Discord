@@ -20,13 +20,13 @@ export default {
       });
 
       /* eslint-disable-next-line */
-      helpMessage.addFields(
+      helpMessage.addFields([
         { name: `Here's a list of all my commands:`, value: commandList },
         {
           name: "\u200B",
           value: `ℹ️ You can use \`${PREFIX}help [command name]\` to get info on a specific command.`,
-        }
-      );
+        },
+      ]);
     } else {
       const targetCommand = args[0].toLowerCase();
       const { commands } = msg.client;
@@ -53,6 +53,6 @@ export default {
       helpMessage.setDescription(description);
     }
 
-    return sendWithRetry(msg.channel, { embeds: [helpMessage] });
+    return sendWithRetry(msg.channel, helpMessage);
   },
 };

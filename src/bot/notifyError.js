@@ -1,11 +1,11 @@
-import Discord from 'discord.js';
-import { Colors } from 'Bot/utils';
-import { tryCatch } from 'Utils';
-import { Quiz } from 'Models';
+import { EmbedBuilder } from "discord.js";
+import { Colors } from "Bot/utils";
+import { tryCatch } from "Utils";
+import { Quiz } from "Models";
 
 export default async function notifyError(client) {
   const activeQuizzes = await tryCatch(
-    Quiz.find().select('roomId').lean().exec(),
+    Quiz.find().select("roomId").lean().exec()
   );
 
   let room;
@@ -13,10 +13,12 @@ export default async function notifyError(client) {
 
   activeQuizzes.forEach(({ roomId }) => {
     room = client.channels.cache.get(roomId);
-    errorMsg = new Discord.RichEmbed()
+    errorMsg = new EmbedBuilder()
       .setColor(Colors.RED)
-      .setDescription('Sorry, there was a connection error with Discord. You may need to re-enter your answer.');
+      .setDescription(
+        "Sorry, there was a connection error with Discord. You may need to re-enter your answer."
+      );
 
-    room.send(errorMsg);
+    room.send({ embeds: [errorMsg] });
   });
 }
