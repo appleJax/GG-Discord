@@ -4,7 +4,6 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const nodeExternals = require("webpack-node-externals");
 const envVars = require("./.env.js");
-// require('core-js/stable');
 
 module.exports = {
   entry: ["./src/index.js"],
@@ -13,6 +12,7 @@ module.exports = {
     publicPath: "/",
     globalObject: "this",
   },
+  target: "node",
   externalsPresets: { node: true },
   node: {
     __dirname: false,
