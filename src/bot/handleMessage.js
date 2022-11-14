@@ -1,14 +1,12 @@
-import DECKS from 'Config/decks';
-import { tryCatch } from 'Utils';
-import handleQuizResponse from 'Bot/handleQuizResponse';
-import {
-  PREFIX, commandNotFound, parseInput, shouldIgnore,
-} from 'Bot/utils';
+import DECKS from "Config/decks";
+import { tryCatch } from "Utils";
+import handleQuizResponse from "Bot/handleQuizResponse";
+import { PREFIX, commandNotFound, parseInput, shouldIgnore } from "Bot/utils";
 
 const quizRooms = Object.keys(DECKS);
 
 export default async function handleMessage(msg) {
-  console.log('Received message');
+  console.log("Received message");
   const { channel } = msg;
   const { client } = channel;
   const roomId = channel.id;
@@ -18,33 +16,34 @@ export default async function handleMessage(msg) {
   }
 
   if (client.quizzes.get(roomId)) {
-    await tryCatch(
-      handleQuizResponse(msg),
-    );
+    await tryCatch(handleQuizResponse(msg));
     return;
   }
 
   if (shouldIgnore(msg)) {
-    console.log('Ignoring message');
+    console.log("Ignoring message");
     return;
   }
 
   const [commandName, args] = parseInput(msg);
-  const command = client.commands.get(commandName)
-    || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
+  const command =
+    client.commands.get(commandName) ||
+    client.commands.find(
+      (cmd) => cmd.aliases && cmd.aliases.includes(commandName)
+    );
 
   if (!command) {
     msg.reply(commandNotFound(commandName));
     return;
   }
 
-  if (!command.directMsg && channel.type !== 'text') {
-    msg.reply('I can\'t execute that command inside DMs!');
+  if (command.guildOnly && channel.type === "DM") {
+    msg.reply("I can't execute that command inside DMs!");
     return;
   }
 
   if (command.args && !args.length) {
-    let helpMessage = 'that command requires arguments.';
+    let helpMessage = "that command requires arguments.";
     if (command.usage) {
       helpMessage += `\nThe proper usage would be: \`${PREFIX}${command.name} ${command.usage}\``;
     }
@@ -68,11 +67,11 @@ export default async function handleMessage(msg) {
   setTimeout(() => timestamps.delete(msg.author.id), cooldownAmount);
 
   try {
-    console.log('Executing command');
+    console.log("Executing command");
     command.execute.call(client, msg, args);
   } catch (err) {
     /* eslint-disable-next-line */
     console.error(err);
-    msg.reply('sorry, something went wrong. Please try again.');
+    msg.reply("sorry, something went wrong. Please try again.");
   }
 }
