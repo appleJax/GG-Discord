@@ -6,7 +6,6 @@ const nodeExternals = require("webpack-node-externals");
 const envVars = require("./.env.js");
 
 module.exports = {
-  entry: ["./src/index.js"],
   output: {
     path: path.resolve(__dirname, "dist"),
     publicPath: "/",
@@ -38,6 +37,7 @@ module.exports = {
       patterns: [
         { from: `${__dirname}/src/admin` },
         { from: `${__dirname}/src/bot/commands`, to: "commands" },
+        { from: `${__dirname}/src/bot/slashCommands`, to: "slashCommands" },
       ],
     }),
     new webpack.DefinePlugin({

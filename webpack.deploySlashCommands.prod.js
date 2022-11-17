@@ -4,10 +4,11 @@ const common = require("./webpack.common");
 const envVars = require("./.env.js");
 
 module.exports = merge(common, {
-  mode: "production",
-  entry: ["./src/index.js"],
+  mode: "development",
+  entry: ["./scripts/deploySlashCommands.js"],
   plugins: [
     new webpack.DefinePlugin({
+      "process.env.BOT_ID": JSON.stringify(envVars.prod.BOT_ID),
       "process.env.BOT_TOKEN": JSON.stringify(envVars.prod.BOT_TOKEN),
       "process.env.CLOUDINARY_NAME": JSON.stringify(
         envVars.prod.CLOUDINARY_NAME

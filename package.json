@@ -9,7 +9,9 @@
     "serve:prod": "webpack --config webpack.prod.js && ADMIN=true node ./dist/main.js",
     "shipit": "git checkout -b deploy && npm run buildit && rm .gitignore && echo 'node_modules\n.env.js' > .gitignore && rm -rf uploads && git add . && git commit -m 'build' && git push -f heroku deploy:master && git checkout master && git branch -D deploy",
     "start": "node ./dist/main.js",
-    "test": "jest --runInBand"
+    "test": "jest --runInBand",
+    "deploySlashCommands:prod": "webpack --config webpack.deploySlashCommands.prod.js && NODE_ENV=production node dist/main.js",
+    "deploySlashCommands:staging": "webpack --config webpack.deploySlashCommands.staging.js && NODE_ENV=staging node dist/main.js"
   },
   "keywords": [],
   "author": "",
