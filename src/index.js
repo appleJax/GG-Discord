@@ -12,7 +12,7 @@ const { SESSION_SECRET } = process.env;
 
 const app = express();
 
-app.set("port", process.env.PORT || 3030);
+app.set("port", process.env.PORT || 8080);
 app.set("view engine", "pug");
 app.set("views", path.resolve("dist/views"));
 app.use(express.static(path.resolve("dist/public")));
