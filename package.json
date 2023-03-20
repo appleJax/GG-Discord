@@ -16,7 +16,7 @@
   "keywords": [],
   "author": "",
   "engines": {
-    "node": "^18.9.1"
+    "node": "^18.15.0"
   },
   "license": "MIT",
   "dependencies": {
@@ -25,7 +25,7 @@
     "body-parser": "^1.18.2",
     "cloudinary": "^1.11.0",
     "core-js": "^3.6.1",
-    "discord.js": "^14.4.0",
+    "discord.js": "^14.8.0",
     "dotenv": "^5.0.1",
     "express": "^4.16.3",
     "express-authorization": "^1.0.0",

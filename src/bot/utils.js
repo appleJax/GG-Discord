@@ -8,7 +8,7 @@ import updateLeaderboard from "Bot/updateLeaderboard";
 export const END_DELAY = 2000;
 export const PACE_DELAY = 12000;
 export const TURBO_DELAY = 10;
-export const PREFIX = "gg!";
+export const PREFIX = "/";
 export const TURBO = "turbo";
 export const HARDMODE = "hardmode";
 

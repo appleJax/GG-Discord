@@ -20,6 +20,9 @@ export default {
 
     const userStats = await tryCatch(formatUserStats(user));
 
-    return interaction.reply(`Your stats:\n${userStats}`);
+    return interaction.reply({
+      content: `Your stats:\n${userStats}`,
+      ephemeral: true,
+    });
   },
 };

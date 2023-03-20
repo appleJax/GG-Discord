@@ -10,6 +10,7 @@ module.exports = merge(common, {
     new webpack.DefinePlugin({
       "process.env.BOT_ID": JSON.stringify(envVars.staging.BOT_ID),
       "process.env.BOT_TOKEN": JSON.stringify(envVars.staging.BOT_TOKEN),
+      "process.env.GUILD_ID": JSON.stringify(envVars.staging.GUILD_ID),
       "process.env.CLOUDINARY_NAME": JSON.stringify(
         envVars.staging.CLOUDINARY_NAME
       ),

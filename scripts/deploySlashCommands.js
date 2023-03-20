@@ -2,8 +2,15 @@ import { REST, Routes } from "discord.js";
 import fs from "node:fs";
 
 const commands = [];
-// Grab all the command files from the commands directory you created earlier
-const commandFiles = fs.readdirSync("src/bot/slashCommands");
+
+// OPTIONAL: manually specify which commands to deploy
+// e.g. ["start.js", "survival.js"]
+let commandFiles;
+
+if (!commandFiles) {
+  // Grab all the command files from the commands directory
+  commandFiles = fs.readdirSync("src/bot/slashCommands");
+}
 
 // Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
 for (const file of commandFiles) {
@@ -33,7 +40,6 @@ const rest = new REST({ version: "10" }).setToken(process.env.BOT_TOKEN);
       `Successfully reloaded ${data.length} application (/) commands.`
     );
   } catch (error) {
-    // And of course, make sure you catch and log any errors!
     console.error(error);
   }
 })();
