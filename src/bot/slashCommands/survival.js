@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from "discord.js";
+import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
 import { tryCatch } from "Utils";
 import { Quiz } from "Models";
 import DECKS from "Config/decks";
@@ -35,7 +35,6 @@ export default {
         .setDescription("First wrong answer will end quiz")
     ),
   async execute(interaction) {
-    interaction.deferReply();
     const { channel, client, member } = interaction;
     const roomId = channel.id;
     const deckName = DECKS[roomId];
@@ -99,7 +98,7 @@ export default {
       },
     ]);
 
-    sendWithRetry(channel, startMsg);
+    await interaction.reply({ embeds: [startMsg] });
 
     if (currentQuestion.mediaUrls) {
       const questionImages = currentQuestion.mediaUrls.slice(

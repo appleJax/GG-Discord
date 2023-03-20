@@ -4,7 +4,7 @@ const common = require("./webpack.common");
 const envVars = require("./.env.js");
 
 module.exports = merge(common, {
-  mode: "development",
+  mode: "production",
   entry: ["./scripts/deploySlashCommands.js"],
   plugins: [
     new webpack.DefinePlugin({

@@ -54,7 +54,6 @@ export default {
     ),
 
   async execute(interaction) {
-    interaction.deferReply();
     const { channel, client } = interaction;
     const roomId = channel.id;
     const soloRooms = DECKS.soloSurvival;
@@ -88,7 +87,7 @@ export default {
         .setColor(Colors.RED)
         .setDescription("Sorry, something went wrong");
 
-      sendWithRetry(channel, errorMsg);
+      interaction.reply({ embeds: [errorMsg] });
       return;
     }
 
@@ -117,7 +116,7 @@ export default {
       },
     ]);
 
-    await tryCatch(sendWithRetry(channel, startMsg));
+    await interaction.reply({ embeds: [startMsg] });
 
     if (currentQuestion.mediaUrls) {
       const questionImages = currentQuestion.mediaUrls.slice(

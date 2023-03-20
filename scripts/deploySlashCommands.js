@@ -3,14 +3,7 @@ import fs from "node:fs";
 
 const commands = [];
 
-// OPTIONAL: manually specify which commands to deploy
-// e.g. ["start.js", "survival.js"]
-let commandFiles;
-
-if (!commandFiles) {
-  // Grab all the command files from the commands directory
-  commandFiles = fs.readdirSync("src/bot/slashCommands");
-}
+const commandFiles = fs.readdirSync("src/bot/slashCommands");
 
 // Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
 for (const file of commandFiles) {
@@ -25,6 +18,7 @@ const rest = new REST({ version: "10" }).setToken(process.env.BOT_TOKEN);
     console.log(
       `Started refreshing ${commands.length} application (/) commands.`
     );
+    console.log("NODE_ENV:", process.env.NODE_ENV);
 
     const endpoint =
       process.env.NODE_ENV === "production"

@@ -1,8 +1,8 @@
 import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
 import { tryCatch } from "Utils";
 import { Colors, sendWithRetry } from "Bot/utils";
+import updateLeaderboard from "Bot/updateLeaderboard";
 import { Quiz } from "Models";
-import updateLeaderboard from "./updateLeaderboard";
 
 export default {
   data: new SlashCommandBuilder()
@@ -11,6 +11,10 @@ export default {
       "Stop the current quiz (only works when quiz is in progress)"
     ),
   async execute(interaction) {
+    const { channel, client } = interaction;
+    const roomId = channel.id;
+    const activeQuiz = client.quizzes.get(roomId);
+
     if (
       activeQuiz.survivalMode ||
       (activeQuiz.solo && activeQuiz.solo.id !== interaction.member.id)
@@ -22,19 +26,13 @@ export default {
       return;
     }
 
-    interaction.deferReply();
-
-    const { channel, client } = interaction;
-    const roomId = channel.id;
-    const activeQuiz = client.quizzes.get(roomId);
-
     clearTimeout(activeQuiz.questionTimeout);
     clearTimeout(activeQuiz.nextQuestion);
     const stopMsg = new EmbedBuilder()
       .setColor(Colors.RED)
       .setDescription("Stopping quiz... 😢");
 
-    sendWithRetry(channel, stopMsg);
+    await interaction.reply({ embeds: [stopMsg] });
 
     if (activeQuiz.points.length > 0) {
       await tryCatch(updateLeaderboard(channel));
