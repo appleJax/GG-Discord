@@ -10,7 +10,6 @@ import {
   Colors,
   fetchCards,
   sendImage,
-  sendWithRetry,
 } from "Bot/utils";
 
 // exported for testing
@@ -54,12 +53,13 @@ export default {
     ),
 
   async execute(interaction) {
+    await interaction.deferReply();
     const { channel, client } = interaction;
     const roomId = channel.id;
     const soloRooms = DECKS.soloSurvival;
 
     if (soloRooms.includes(roomId)) {
-      interaction.reply(
+      interaction.editReply(
         "this is a solo survival room. You can use `/start` in any of the Public Quiz Arcade channels."
       );
       return;
@@ -87,8 +87,7 @@ export default {
         .setColor(Colors.RED)
         .setDescription("Sorry, something went wrong");
 
-      interaction.reply({ embeds: [errorMsg] });
-      return;
+      return interaction.editReply({ embeds: [errorMsg] });
     }
 
     const secondsPerQuestion =
@@ -116,7 +115,7 @@ export default {
       },
     ]);
 
-    await interaction.reply({ embeds: [startMsg] });
+    await interaction.editReply({ embeds: [startMsg] });
 
     if (currentQuestion.mediaUrls) {
       const questionImages = currentQuestion.mediaUrls.slice(

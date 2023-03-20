@@ -11,7 +11,6 @@ import {
   fetchCards,
   fetchSurvivalRecord,
   sendImage,
-  sendWithRetry,
 } from "Bot/utils";
 
 const SECONDS_PER_QUESTION = 60;
@@ -35,6 +34,7 @@ export default {
         .setDescription("First wrong answer will end quiz")
     ),
   async execute(interaction) {
+    await interaction.deferReply();
     const { channel, client, member } = interaction;
     const roomId = channel.id;
     const deckName = DECKS[roomId];
@@ -60,8 +60,7 @@ export default {
         .setColor(Colors.RED)
         .setDescription("Sorry, something went wrong");
 
-      sendWithRetry(channel, errorMsg);
-      return;
+      return interaction.editReply({ embeds: [errorMsg] });
     }
 
     const currentQuestion = questions.pop();
@@ -98,7 +97,7 @@ export default {
       },
     ]);
 
-    await interaction.reply({ embeds: [startMsg] });
+    await interaction.editReply({ embeds: [startMsg] });
 
     if (currentQuestion.mediaUrls) {
       const questionImages = currentQuestion.mediaUrls.slice(

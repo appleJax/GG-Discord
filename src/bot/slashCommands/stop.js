@@ -11,12 +11,13 @@ export default {
       "Stop the current quiz (only works when quiz is in progress)"
     ),
   async execute(interaction) {
+    await interaction.deferReply();
     const { channel, client } = interaction;
     const roomId = channel.id;
     const activeQuiz = client.quizzes.get(roomId);
 
     if (!activeQuiz) {
-      return interaction.reply({
+      return interaction.editReply({
         content: "There are no currently active quizzes",
         ephemeral: true,
       });
@@ -26,7 +27,7 @@ export default {
       activeQuiz.survivalMode ||
       (activeQuiz.solo && activeQuiz.solo.id !== interaction.member.id)
     ) {
-      return interaction.reply({
+      return interaction.editReply({
         content: "Sorry, the stop command is not allowed in this scenario",
         ephemeral: true,
       });
@@ -38,7 +39,7 @@ export default {
       .setColor(Colors.RED)
       .setDescription("Stopping quiz... 😢");
 
-    await interaction.reply({ embeds: [stopMsg] });
+    await interaction.editReply({ embeds: [stopMsg] });
 
     if (activeQuiz.points.length > 0) {
       await tryCatch(updateLeaderboard(channel));
