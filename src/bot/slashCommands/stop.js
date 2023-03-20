@@ -1,6 +1,6 @@
 import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
 import { tryCatch } from "Utils";
-import { Colors, sendWithRetry } from "Bot/utils";
+import { Colors } from "Bot/utils";
 import updateLeaderboard from "Bot/updateLeaderboard";
 import { Quiz } from "Models";
 
@@ -15,15 +15,21 @@ export default {
     const roomId = channel.id;
     const activeQuiz = client.quizzes.get(roomId);
 
+    if (!activeQuiz) {
+      return interaction.reply({
+        content: "There are no currently active quizzes",
+        ephemeral: true,
+      });
+    }
+
     if (
       activeQuiz.survivalMode ||
       (activeQuiz.solo && activeQuiz.solo.id !== interaction.member.id)
     ) {
-      interaction.reply({
+      return interaction.reply({
         content: "Sorry, the stop command is not allowed in this scenario",
         ephemeral: true,
       });
-      return;
     }
 
     clearTimeout(activeQuiz.questionTimeout);
