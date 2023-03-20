@@ -2,7 +2,6 @@ import { EmbedBuilder } from "discord.js";
 import { tryCatch } from "Utils";
 import { Quiz } from "Models";
 import {
-  PREFIX,
   Colors,
   askNextQuestion,
   endQuiz,
@@ -12,9 +11,6 @@ import {
   sendWithRetry,
 } from "Bot/utils";
 import saveQuizProgress from "./saveQuizProgress";
-import updateLeaderboard from "./updateLeaderboard";
-
-const STOP_COMMAND = `${PREFIX}stop`;
 
 export default async function handleQuizResponse(msg) {
   if (msg.author.bot) {
@@ -25,24 +21,6 @@ export default async function handleQuizResponse(msg) {
   const roomId = channel.id;
   const response = msg.content.toLowerCase();
   const activeQuiz = client.quizzes.get(roomId);
-
-  if (isValidStopCommand(msg, activeQuiz)) {
-    clearTimeout(activeQuiz.questionTimeout);
-    clearTimeout(activeQuiz.nextQuestion);
-    const stopMsg = new EmbedBuilder()
-      .setColor(Colors.RED)
-      .setDescription("Stopping quiz... 😢");
-
-    sendWithRetry(channel, stopMsg);
-
-    if (activeQuiz.points.length > 0) {
-      await tryCatch(updateLeaderboard(channel));
-    }
-
-    client.quizzes.set(roomId, null);
-    Quiz.deleteOne({ roomId }).exec().catch(console.error);
-    return;
-  }
 
   if (activeQuiz.solo && activeQuiz.solo.id !== msg.author.id) {
     if (!activeQuiz.rebukes.includes(msg.author.id)) {
@@ -164,12 +142,3 @@ export default async function handleQuizResponse(msg) {
   Quiz.replaceOne({ roomId }, updatedQuiz).exec().catch(console.error);
 }
 
-// private
-
-function isValidStopCommand(msg, activeQuiz) {
-  return (
-    msg.content.toLowerCase().startsWith(STOP_COMMAND) &&
-    (!activeQuiz.survivalMode ||
-      (activeQuiz.solo && activeQuiz.solo.id === msg.author.id))
-  );
-}
