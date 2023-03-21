@@ -81,6 +81,7 @@ export default {
       isFinished: false,
       paceDelay,
       points: [],
+      pastQuestions: questions.map((q) => q.cardId),
       questions,
       questionPosition: [1, "??"],
       rebukes: [],

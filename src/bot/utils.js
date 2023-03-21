@@ -124,9 +124,13 @@ export async function askNextQuestion(channel) {
     if (activeQuiz.questions.length < 5) {
       const deckQuery = {
         deck: DECKS[channel.id],
+        cardId: { $nin: activeQuiz.pastQuestions },
       };
 
       const newCards = await tryCatch(fetchCards(deckQuery, 10));
+      activeQuiz.pastQuestions = activeQuiz.pastQuestions.concat(
+        newCards.map((q) => q.cardId)
+      );
       activeQuiz.questions = activeQuiz.questions.concat(newCards);
     }
   }
