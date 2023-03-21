@@ -91,12 +91,15 @@ export async function askNextQuestion(channel) {
   const [currentPosition, totalQuestions] = activeQuiz.questionPosition;
   const position = `${currentPosition}/${totalQuestions}`;
 
-  const nextMessage = new EmbedBuilder().setColor(Colors.BLUE).addFields([
-    {
-      name: `Next Question (${position}):`,
-      value: currentQuestion.questionText,
-    },
-  ]);
+  const nextMessage = new EmbedBuilder()
+    .setDescription("Next question")
+    .setColor(Colors.BLUE)
+    .addFields([
+      {
+        name: `Next Question (${position}):`,
+        value: currentQuestion.questionText,
+      },
+    ]);
 
   let questionImages = [];
   if (currentQuestion.mediaUrls) {
@@ -318,7 +321,7 @@ export function sendImage(channel, image) {
   const message = new EmbedBuilder()
     .setColor(Colors.BLUE)
     .setImage(image.image)
-    .setDescription(image.altText || "");
+    .setDescription(image.altText || "Question image");
 
   sendWithRetry(channel, message);
 }

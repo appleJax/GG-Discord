@@ -90,12 +90,15 @@ export default {
       survivalMode: true,
     };
 
-    const startMsg = new EmbedBuilder().setColor(Colors.BLUE).addFields([
-      {
-        name: `Starting quiz, see how long you can survive! Current record: ${survivalRecord} correct answers`,
-        value: currentQuestion.questionText,
-      },
-    ]);
+    const startMsg = new EmbedBuilder()
+      .setDescription("Start survival")
+      .setColor(Colors.BLUE)
+      .addFields([
+        {
+          name: `Starting quiz, see how long you can survive! Current record: ${survivalRecord} correct answers`,
+          value: currentQuestion.questionText,
+        },
+      ]);
 
     await interaction.editReply({ embeds: [startMsg] });
 

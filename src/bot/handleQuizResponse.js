@@ -78,12 +78,15 @@ export default async function handleQuizResponse(msg) {
   const { currentQuestion } = activeQuiz;
 
   if (isCorrectAnswer) {
-    const congrats = new EmbedBuilder().setColor(Colors.GREEN).addFields([
-      {
-        name: `${msg.author.username} answered correctly!`,
-        value: currentQuestion.answerText,
-      },
-    ]);
+    const congrats = new EmbedBuilder()
+      .setDescription("Correct answer acknowledgement")
+      .setColor(Colors.GREEN)
+      .addFields([
+        {
+          name: `${msg.author.username} answered correctly!`,
+          value: currentQuestion.answerText,
+        },
+      ]);
 
     sendWithRetry(channel, congrats);
   }
@@ -141,4 +144,3 @@ export default async function handleQuizResponse(msg) {
   };
   Quiz.replaceOne({ roomId }, updatedQuiz).exec().catch(console.error);
 }
-

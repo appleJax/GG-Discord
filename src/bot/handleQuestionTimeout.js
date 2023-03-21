@@ -25,6 +25,7 @@ export default async function handleQuestionTimeout(channel) {
   prepareNextQuestion(activeQuiz);
 
   const revealAnswer = new EmbedBuilder()
+    .setDescription("Timeout message")
     .setColor(Colors.GOLD)
     .addFields([{ name: "Time's up!", value: currentQuestion.answerText }]);
 

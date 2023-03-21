@@ -108,12 +108,15 @@ export default {
       secondsPerQuestion: secondsPerQuestion,
     };
 
-    const startMsg = new EmbedBuilder().setColor(Colors.BLUE).addFields([
-      {
-        name: `Starting quiz, first question (1/${quizSize}):`,
-        value: currentQuestion.questionText,
-      },
-    ]);
+    const startMsg = new EmbedBuilder()
+      .setDescription("Starting quiz")
+      .setColor(Colors.BLUE)
+      .addFields([
+        {
+          name: `Starting quiz, first question (1/${quizSize}):`,
+          value: currentQuestion.questionText,
+        },
+      ]);
 
     await interaction.editReply({ embeds: [startMsg] });
 
