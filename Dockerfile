@@ -22,7 +22,7 @@ ENV NODE_ENV production
 COPY . .
 
 RUN npm install -g pnpm
-RUN pnpm install
+RUN pnpm install --production=false
 RUN pnpm build
 
 FROM debian:bullseye
