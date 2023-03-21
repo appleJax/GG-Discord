@@ -9,8 +9,8 @@ export const END_DELAY = 2000;
 export const PACE_DELAY = 12000;
 export const TURBO_DELAY = 10;
 export const PREFIX = "/";
-export const TURBO = "turbo";
-export const HARDMODE = "hardmode";
+export const TURBO = "turbo_mode";
+export const HARDMODE = "hard_mode";
 
 export const Colors = {
   BLUE: "#1DA1F2",

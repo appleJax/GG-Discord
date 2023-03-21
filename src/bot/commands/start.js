@@ -65,7 +65,7 @@ export default {
   name: "start",
   aliases: ["s"],
   description: "Start a new quiz",
-  usageShort: `[quizSize] [secondsPerQuestion] ["${TURBO}"]`,
+  usageShort: `[quiz_size] [seconds_per_question] ["${TURBO}"]`,
   usage,
   async execute(msg, args) {
     const { channel } = msg;
@@ -75,7 +75,7 @@ export default {
 
     if (soloRooms.includes(roomId)) {
       msg.reply(
-        "this is a solo survival room. You can use `gg!start` in any of the Public Quiz Arcade channels."
+        "this is a solo survival room. You can use `/start` in any of the Public Quiz Arcade channels."
       );
       return;
     }

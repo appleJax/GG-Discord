@@ -23,6 +23,8 @@ COPY . .
 
 RUN npm install -g pnpm
 RUN pnpm install
+RUN pnpm build
+
 FROM debian:bullseye
 
 LABEL fly_launch_runtime="nodejs"
