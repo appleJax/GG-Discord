@@ -93,7 +93,7 @@ export default async function saveQuizProgress(msg, activeQuiz) {
     deckUser.correctAnswers += 1;
     const { uniqueCardsCorrect } = deckUser;
 
-    const totalCards = await tryCatch(Card.count({ deck: deckName }).exec());
+    const totalCards = await tryCatch(Card.countDocuments({ deck: deckName }).exec());
 
     if (uniqueCardsCorrect.length === totalCards) {
       deckUser.deckLaps = (deckUser.deckLaps || 0) + 1;

@@ -24,7 +24,7 @@ async function formatUserStats(user, deckCache = new Map()) {
       }
 
       totalCards = await tryCatch(
-        Card.count({ deck: deckName }).exec(),
+        Card.countDocuments({ deck: deckName }).exec(),
       );
 
       deck.totalCards = totalCards;
