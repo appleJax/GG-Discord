@@ -54,7 +54,7 @@ export function formatHint(expression) {
 
 export function formatQuestionText(engMeaning, expression) {
   const hint = formatHint(expression);
-  const japaneseWithHint = expression.replace(/{{.+?}}/g, hint);
+  const japaneseWithHint = expression.replace(/{{[^}]+?}}/g, hint);
 
   const [min, max] = minMaxChars(expression);
   let minMax = min === max ? min : `${min} or ${max}`;
@@ -97,7 +97,7 @@ export function getImageNames(string) {
 }
 
 export function getClozes(expression) {
-  const rawClozes = expression.match(/{{.+?}}/g);
+  const rawClozes = expression.match(/{{[^}]+?}}/g);
   const uniqueClozes = [];
   rawClozes.forEach((cloze) => {
     if (!uniqueClozes.includes(cloze)) {
@@ -142,13 +142,13 @@ export function splitSpeakers(phrase) {
 }
 
 export function stripHtml(string) {
-  return unescape(string.replace(/<.*?>/g, "").replace(/&nbsp;/g, " "));
+  return unescape(string.replace(/<[^>]*?>/g, "").replace(/&nbsp;/g, " "));
 }
 
 // private functions
 
 function fillAnswer(expression, answer) {
-  return expression.replace(/{{.+?}}/g, `[${answer}]`);
+  return expression.replace(/{{[^}]+?}}/g, `[${answer}]`);
 }
 
 function flatten(deep, flat = []) {

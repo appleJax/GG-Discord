@@ -5,11 +5,13 @@ import { tryCatch } from "Utils";
 import { UPLOADS_PATH } from "Anki/utils";
 import ImageStorage from "Config/cloudinary";
 import processDJG from "./D_JG";
+import processDAJG from "./DA_JG";
 import processIKnowCore from "./iKnowCore";
 import processVideoGamesJP from "./videoGames/jp";
 import processVideoGamesEN from "./videoGames/en";
 
 const Processor = {
+  DAJG: processDAJG,
   DBJG: processDJG,
   DIJG: processDJG,
   "Gamegogakuen JP": processVideoGamesJP,
