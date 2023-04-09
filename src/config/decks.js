@@ -1,17 +1,17 @@
 /* eslint-disable */
 let DECKS = {
-  "504554082984525854": "Gamegogakuen JP",
+  "504554082984525854": "Video Games",
   "": "Gamegogakuen EN",
-  "1092534251943121066": "DAJG",
-  "505262797572276254": "DBJG",
-  "448017333907095562": "DIJG",
+  "1092534251943121066": "DAJG (Advanced)",
+  "505262797572276254": "DBJG (Basic)",
+  "448017333907095562": "DIJG (Intermediate)",
   "507815046886457344": "iKnow Core 2000",
   "527771091930972181": "iKnow Core 6000",
   // solo survival
-  "518670203043840002": "Gamegogakuen JP",
-  "1092534300446052392": "DAJG",
-  "518669388044304385": "DBJG",
-  "518669675442339851": "DIJG",
+  "518670203043840002": "Video Games",
+  "1092534300446052392": "DAJG (Advanced)",
+  "518669388044304385": "DBJG (Basic)",
+  "518669675442339851": "DIJG (Intermediate)",
   "518669942829088783": "iKnow Core 2000",
   "527771910080299028": "iKnow Core 6000",
   soloSurvival: [
@@ -28,18 +28,18 @@ let DECKS = {
 
 if (process.env.NODE_ENV !== "production") {
   DECKS = {
-    "512832378427932692": "Gamegogakuen JP",
+    "512832378427932692": "Video Games",
     "529871415663656981": "Gamegogakuen EN",
-    "1092531786522824744": "DAJG",
-    "512832466575294484": "DBJG",
-    "512832494173945857": "DIJG",
+    "1092531786522824744": "DAJG (Advanced)",
+    "512832466575294484": "DBJG (Basic)",
+    "512832494173945857": "DIJG (Intermediate)",
     "512832558300397589": "iKnow Core 2000",
     "514602093391380480": "iKnow Core 6000",
     // solo survival
-    515423394926428160: "Gamegogakuen JP",
-    "1092531838003716136": "DAJG",
-    "515423356720250881": "DBJG",
-    "515423426962522152": "DIJG",
+    515423394926428160: "Video Games",
+    "1092531838003716136": "DAJG (Advanced)",
+    "515423356720250881": "DBJG (Basic)",
+    "515423426962522152": "DIJG (Intermediate)",
     "515423477281325067": "iKnow Core 2000",
     "515423516217311234": "iKnow Core 6000",
     soloSurvival: [

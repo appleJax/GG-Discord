@@ -16,7 +16,6 @@ async function processDJG(contents) {
 
   contents.notes.forEach((card) => {
     let [
-      cardId,
       expression,
       , // reading,
       , // jpMeaning,
@@ -31,6 +30,8 @@ async function processDJG(contents) {
       altAnswers,
       , // webLookup,
       pageNum,
+      , // pronunciation
+      cardId,
     ] = card.fields;
 
     [ engMeaning,

@@ -5,20 +5,9 @@ import { tryCatch } from "Utils";
 import { UPLOADS_PATH } from "Anki/utils";
 import ImageStorage from "Config/cloudinary";
 import processDJG from "./D_JG";
-import processDAJG from "./DA_JG";
 import processIKnowCore from "./iKnowCore";
 import processVideoGamesJP from "./videoGames/jp";
-import processVideoGamesEN from "./videoGames/en";
-
-const Processor = {
-  DAJG: processDAJG,
-  DBJG: processDJG,
-  DIJG: processDJG,
-  "Gamegogakuen JP": processVideoGamesJP,
-  "Gamegogakuen EN": processVideoGamesEN,
-  "iKnow Core 2000": processIKnowCore,
-  "iKnow Core 6000": processIKnowCore,
-};
+// import processVideoGamesEN from "./videoGames/en";
 
 export function processUpload(zipfilePath) {
   return tryCatch(
@@ -39,11 +28,28 @@ export function processUpload(zipfilePath) {
 }
 
 export async function processAnkiJson(contents, storage = ImageStorage) {
-  const process = Processor[contents.name];
-  return process(contents, storage);
-}
+  const allNewCards = [];
 
-// private functions
+  for (const deck of contents.children) {
+    for (const subDeck of deck.children) {
+      let newCards = [];
+      switch (deck.name) {
+        case "iKnow Core Series":
+          newCards = await tryCatch(processIKnowCore(subDeck, storage));
+          break;
+        case "Japanese Grammar Dictionaries":
+          newCards = await tryCatch(processDJG(subDeck, storage));
+          break;
+        case "Video Games":
+          newCards = await tryCatch(processVideoGamesJP(subDeck, storage));
+          break;
+      }
+      allNewCards.push(...newCards);
+    }
+  }
+
+  return allNewCards;
+}
 
 async function extractCardInfo(files) {
   let allNewCards = [];
