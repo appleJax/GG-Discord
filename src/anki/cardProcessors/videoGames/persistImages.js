@@ -1,7 +1,6 @@
 /* eslint-disable prefer-const */
 
-import { tryCatch } from 'Utils';
-import { getImageNames } from 'Anki/utils';
+import { getImageNames } from "Anki/utils";
 
 export default async function persistImages(imageInfo, ImageStorage) {
   let {
@@ -37,15 +36,13 @@ export default async function persistImages(imageInfo, ImageStorage) {
       unique_filename: false,
     };
 
-    let imageUrl = '';
+    let imageUrl = "";
 
     for (const img of imageNames) {
-      imageUrl = await tryCatch(
-        ImageStorage.upload(img, options),
-      );
+      imageUrl = await ImageStorage.upload(img, options);
 
       if (imageProps.mediaUrls.length !== altTextIndex) {
-        altText = '';
+        altText = "";
       }
 
       imageProps.mediaUrls.push({
@@ -55,17 +52,9 @@ export default async function persistImages(imageInfo, ImageStorage) {
     }
   };
 
-  await tryCatch(
-    addMediaUrls(prevLineImages, prevLineAltText, 0),
-  );
-
-  await tryCatch(
-    addMediaUrls(questionImages, questionAltText, prevLineImages.length),
-  );
-
-  await tryCatch(
-    addMediaUrls(answerImages, answerAltText, upperSliceIndex),
-  );
+  await addMediaUrls(prevLineImages, prevLineAltText, 0);
+  await addMediaUrls(questionImages, questionAltText, prevLineImages.length);
+  await addMediaUrls(answerImages, answerAltText, upperSliceIndex);
 
   return imageProps;
 }
@@ -73,11 +62,11 @@ export default async function persistImages(imageInfo, ImageStorage) {
 // private
 
 function formatAnswerAltText(expression) {
-  const altText = expression.replace(/\{\{.*?::(.+?)::.*?\}\}/g, '[$1]');
-  return `${'```'}ini\n${altText}${'```'}`;
+  const altText = expression.replace(/\{\{.*?::(.+?)::.*?\}\}/g, "[$1]");
+  return `${"```"}ini\n${altText}${"```"}`;
 }
 
 function formatQuestionAltText(expression, hint) {
   const altText = expression.replace(/\{\{.+?\}\}/g, hint);
-  return `${'```'}ini\n${altText}${'```'}`;
+  return `${"```"}ini\n${altText}${"```"}`;
 }

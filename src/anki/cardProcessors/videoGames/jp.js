@@ -75,9 +75,11 @@ async function processVideoGames(contents, ImageStorage) {
         hint: formatHint(expression),
         game,
       };
-      imageProps = await tryCatch(
-        persistImages(imageInfo, ImageStorage),
-      );
+      try {
+        imageProps = await persistImages(imageInfo, ImageStorage);
+      } catch (err) {
+        continue;
+      }
     }
 
     newCards.push({

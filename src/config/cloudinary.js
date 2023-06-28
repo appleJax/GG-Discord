@@ -1,4 +1,4 @@
-import cloudinary from 'cloudinary';
+import cloudinary from "cloudinary";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_NAME,
@@ -11,8 +11,7 @@ const ImageStorage = {
     return new Promise((resolve, reject) => {
       cloudinary.v2.uploader.upload(imagePath, options, (err, result) => {
         if (err) {
-          console.error(err);
-          reject(err);
+          return reject(err);
         }
         resolve(result.secure_url);
       });
